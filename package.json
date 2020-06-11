@@ -1,0 +1,29 @@
+{
+  "name": "mtggenerator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "",
+  "dependencies": {
+    "mtgsdk": "^0.4.3"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^6.2.2",
+    "sinon": "^7.5.0",
+    "performance": "^1.1.1",
+    "sinon-chai": "^3.3.0"
+  },
+  "scripts": {
+    "test": "mocha --recursive"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/doriongilmore/mtgGenerator.git"
+  },
+  "author": "doriongilmore",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/doriongilmore/mtgGenerator/issues"
+  },
+  "homepage": "https://github.com/doriongilmore/mtgGenerator#readme"
+}
