@@ -32,23 +32,9 @@ export class APIMtg {
      *  @property {string} power
      *  @property {string} toughness
      *  @property {string} variations
-     */
-    /**
-     *  @typedef CardSearch
-     *  @description may have more supported properties, need to check which ones and which format is expected
-     *  @property {string} name
-     *  @property {string} type
-     *  @property {string} supertypes
-     *  @property {string} types
-     *  @property {string} subtypes
-     *  @property {string} rarity
-     *  @property {string} set
-     *  @property {string} setName
-     *  @property {string} text
-     *  @property {string} originalText
-     *  @property {string} artist
-     *  @property {string} power
-     *  @property {string} toughness
+     *  @property {string} names
+     *  @property {string} reserved
+     *  @property {string} source
      */
     /**
      *  @typedef Set
@@ -79,7 +65,7 @@ export class APIMtg {
 
     /**
      *
-     * @param {CardSearch} args
+     * @param {Card} args partial card with wanted subtype or text for example
      * @return {Promise<Array<Card>>}
      */
     static async findCardBy(args) {
