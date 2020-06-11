@@ -1,0 +1,9 @@
+{
+  "api": {
+    "endpoint": "http://doriongilmore.fr/e-media-dev",
+    "timeout": 5000,
+    "defaultHeaders": {
+      "common": {}
+    }
+  }
+}
