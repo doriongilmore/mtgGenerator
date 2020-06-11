@@ -1,23 +1,14 @@
 <template>
   <div class="mainContainer">
     <div class="menu">
-      <div class="item noHover">
-        <router-link to="/">
-          <div class="appTitle">Deck Generator</div>
-        </router-link>
-      </div>
-      <!--user menu-->
       <router-link to="/" class="item">
-        Recherche
+        <div class="appTitle">Accueil</div>
       </router-link>
-
       <router-link to="/" class="item">
-        Options
+        Recherche avancée
       </router-link>
-
-      <!--admin menu-->
-      <router-link v-if="isAdmin" to="/" class="item">
-        Utilisateurs
+      <router-link to="/" class="item">
+        Decks
       </router-link>
     </div>
     <div class="content" ref="content">
@@ -28,24 +19,17 @@
 
 <script>
 import { TweenLite, TimelineLite } from "gsap";
-import { mapState } from "vuex";
-import Button from "src/components/uiElements/Button.vue";
 
 export default {
   name: "MainContainer",
-  components: {
-    Button
-  },
+  components: {},
   data() {
     return {
       toOpen: "",
       currentOpen: ""
     };
   },
-  computed: {
-    ...mapState({
-    })
-  },
+  computed: {},
   mounted() {
     const menuItems = document.querySelectorAll(".item");
     const tl = new TimelineLite({
@@ -56,12 +40,10 @@ export default {
       tl.add(new TweenLite.to(menuItem, 0.1, { x: 0, y: 0 }));
     });
     tl.add(new TweenLite.to(this.$refs.content, 0.4, { x: 0, y: 0 }), 0);
-    tl.add(new TweenLite.to(this.$refs.audioPlayer, 0.4, { x: 0, y: 0 }), 0);
 
     tl.play();
   },
-  methods: {
-  }
+  methods: {},
 };
 </script>
 

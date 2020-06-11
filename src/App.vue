@@ -1,6 +1,6 @@
 <template>
   <div class="app">
-    <Archer></Archer>
+    <Background></Background>
     <!-- BG FIRST ! -->
     <MainContainer></MainContainer>
     <!-- MODALS LAST ! -->
@@ -10,7 +10,7 @@
 <script>
 //todo center svg
 import { mapState } from "vuex";
-import Archer from "src/components/backgrounds/Archer.vue";
+import Background from "src/components/Background.vue";
 import Modals from "src/components/Modals.vue";
 import MainContainer from "src/MainContainer.vue";
 
@@ -18,7 +18,7 @@ export default {
   name: "App",
   components: {
     Modals,
-    Archer,
+    Background,
     MainContainer,
   },
   data() {
