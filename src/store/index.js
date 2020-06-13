@@ -1,9 +1,9 @@
 import { modals } from "src/store/modals";
-import { users } from "src/store/users";
+import { mtg } from "src/store/mtg";
 
 export const storeOpts = {
   modules: {
     modals,
-    users,
+    mtg,
   }
 };

@@ -8,6 +8,12 @@ const config = require("config");
 
 module.exports = {
     mode: 'development',
+    node: {
+        console: false,
+        fs: 'empty',
+        net: 'empty',
+        tls: 'empty'
+    },
     resolve: {
         alias: {
             src: path.resolve(__dirname, 'src')

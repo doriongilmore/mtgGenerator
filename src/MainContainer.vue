@@ -1,14 +1,14 @@
 <template>
   <div class="mainContainer">
     <div class="menu">
-      <router-link to="/" class="item">
-        <div class="appTitle">Accueil</div>
-      </router-link>
-      <router-link to="/" class="item">
-        Recherche avancée
-      </router-link>
+      <a class="item" href="https://github.com/doriongilmore/mtgGenerator" target="_blank">
+        Github
+      </a>
       <router-link to="/" class="item">
         Decks
+      </router-link>
+      <router-link to="/deck" class="item">
+        Créer un deck
       </router-link>
     </div>
     <div class="content" ref="content">
@@ -73,16 +73,6 @@ a {
       background-color: rgba(255, 255, 255, 0.8);
       text-align: center;
       cursor: pointer;
-
-      .quickSearch {
-        display: flex;
-        width: 100%;
-
-        input[type="text"] {
-          flex-grow: 1;
-          outline: unset;
-        }
-      }
 
       .appTitle {
         /*background-image: url("/assets/logoblack.png");*/

@@ -6,9 +6,11 @@ UI only - will save your lists in browser's local storage, but you should save t
 
 #### Some features :
 - card search (name - color - capacity - etc.)
-  - see https://docs.magicthegathering.io/
-  - see https://github.com/MagicTheGathering/mtg-sdk-javascript
-  - inspiration from http://www.magiccorporation.com/gathering-cartes-search.html ?
+  - ~~do not see https://docs.magicthegathering.io/~~
+  - ~~do not see https://github.com/MagicTheGathering/mtg-sdk-javascript~~
+  - above api seemed slow and don't support french cards
+  - https://scryfall.com/ that I used in vb macro supports many languages and also has an api
+  - and an sdk is available https://github.com/Yuudaari/scryfall-sdk
 - deck creation/edition
 - import/export from/to text format (several formats supported)
   - some regexp in https://github.com/doriongilmore/mtgGenerator/blob/master/vbmacro/ImportDeckForm.frm

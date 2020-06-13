@@ -1,10 +1,10 @@
 <template>
     <div id="home">
-        <i>Mis à jour le <b>22/05/2020</b><br/></i>
-        <details>
-            <summary>TOTO</summary>
-            <b>Hello world</b>
-        </details>
+        <h3>
+            <a href="https://github.com/doriongilmore/mtgGenerator" target="_blank">
+                Github
+            </a>
+        </h3>
     </div>
 </template>
 
