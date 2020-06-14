@@ -11,6 +11,7 @@
     <Next v-else-if="icon === 'next'" />
     <Playlist v-else-if="icon === 'playlist'" />
     <Previous v-else-if="icon === 'previous'" />
+    <Search v-else-if="icon === 'search'" />
   </div>
 </template>
 
@@ -20,6 +21,7 @@ import Download from "src/assets/icons/Download.vue";
 import Next from "src/assets/icons/Next.vue";
 import Playlist from "src/assets/icons/Playlist.vue";
 import Previous from "src/assets/icons/Previous.vue";
+import Search from "src/assets/icons/Search.vue";
 
 export default {
   name: "Button",
@@ -30,6 +32,7 @@ export default {
     Next,
     Playlist,
     Previous,
+    Search,
   },
   methods: {
     onClick() {

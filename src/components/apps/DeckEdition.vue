@@ -69,20 +69,21 @@
         <div id="search">
             <div id="form">
                 <form v-on:submit="handleSearch">
-                    <div>
+                    <div class="searchHeader">
                         <label for="searchText">Nom de carte</label>
                         <input id="searchText" type="text" v-model="searchText"/>
-                        <div @click="handleSearch" class="fileSearchButton">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 490 490" >
-                                <path
-                                        fill="none"
-                                        stroke="#000"
-                                        stroke-width="36"
-                                        stroke-linecap="round"
-                                        d="m280,278a153,153 0 1,0-2,2l170,170m-91-117 110,110-26,26-110-110"
-                                />
-                            </svg>
-                        </div>
+                        <Button :icon="'search'" :handle-click="handleSearch" class="submit"></Button>
+<!--                        <div @click="handleSearch" class="fileSearchButton">-->
+<!--                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 490 490" >-->
+<!--                                <path-->
+<!--                                        fill="none"-->
+<!--                                        stroke="#000"-->
+<!--                                        stroke-width="36"-->
+<!--                                        stroke-linecap="round"-->
+<!--                                        d="m280,278a153,153 0 1,0-2,2l170,170m-91-117 110,110-26,26-110-110"-->
+<!--                                />-->
+<!--                            </svg>-->
+<!--                        </div>-->
                     </div>
 <!--                    <details>-->
 <!--                        <summary>Plus de filtres</summary>-->
@@ -94,9 +95,9 @@
             <div id="results">
                 <div class="header">
                     <div class="name">Name</div>
-                    <div class="manaCost">manaCost</div>
+                    <div class="manaCost">Coût</div>
                     <div class="type">type</div>
-                    <div class="setName">setName</div>
+                    <div class="setName">Edition</div>
                 </div>
                 <draggable
                         class="dragArea list-group"
@@ -136,24 +137,12 @@
 <script>
     import draggable from 'vuedraggable'
     import { CONST } from 'src/utils/CONST';
+    import DeckFactory from 'src/utils/DeckFactory';
     import Button from '../uiElements/Button.vue';
-    import moment from 'moment';
-
-    const momentNow = moment();
-    const emptyDeck = {
-        id: momentNow._d.getTime(),
-        name: 'Default Deck Name',
-        colors: '{}',
-        cardCount: 0,
-        lists: [
-            { name: 'Main List', list: [] }
-        ],
-        dateCreation: momentNow._d,
-        dateEdition: momentNow._d,
-    };
 
     export default {
         name: "DeckEdition",
+        props: ['deckToEdit'],
         components: { draggable, Button },
         data() {
             return {
@@ -162,15 +151,16 @@
                 cardToDisplay: null,
                 results: [],
                 tmpList: [],
-                deck: emptyDeck,
+                deck: this.deckToEdit || DeckFactory.getDeckToCreate(),
                 printConfig: CONST.printConfig,
             };
         },
-        created() {
+        beforeDestroy() {
+            window.localStorage.setItem(CONST.storageKeys.tmpDeck, this.deck);
         },
         methods: {
             notImplemented() {
-                console.warn('notImplemented');
+                console.warn('not implemented');
             },
             handleSearch() {
                 this.isSearching = true;
@@ -190,6 +180,11 @@
                     console.error(`error during search "${search}"`, error);
                 });
             },
+            /**
+             * Fires automatically when dragdrop detected, checks if allowed
+             * @param {Object} event (automatic)
+             * @return {boolean}
+             */
             onMove({ from, to, relatedContext, draggedContext }) {
                 const list = relatedContext.list;
                 const draggedElement = draggedContext.element;
@@ -203,16 +198,23 @@
 
                 return allowMove;
             },
+            /**
+             * Fires automatically when a dragdrop succeeds, clones a card
+             * add deck properties to a card from search result
+             * doesn't change cards from other lists
+             * @param {Card} card
+             * @return {Card}
+             */
             addCardToDeck(card) {
                 const printConfig = card.type_line.includes('Basic Land')
                     ? this.printConfig.DONT_PRINT.key
                     : this.printConfig.BORDER_3.key;
 
                 // Basic Land
-                return Object.assign({}, card, {
+                return Object.assign({
                     deckQte: 4,
                     printConfig
-                });
+                }, card);
             },
             createNewList() {
                 this.deck.lists.push({
@@ -322,6 +324,20 @@
     }
 
     #search {
+        .searchHeader {
+            display: grid;
+            grid-template-columns: auto 80% auto;
+            grid-template-areas: "label input submit";
+            label {
+                grid-area: label;
+            }
+            input {
+                grid-area: input;
+            }
+            .submit {
+                grid-area: submit;
+            }
+        }
         #results .header, #results .resultRow {
             grid-area: search;
             display: grid;
@@ -345,34 +361,6 @@
                 img {
                     max-height: 300px;
                 }
-            }
-        }
-
-
-        .fileSearchButton {
-            padding: 2px;
-            float: left;
-            width: 28px;
-            height: 28px;
-            display: flex;
-            border-left: 1px solid black;
-            cursor: pointer;
-
-            &:hover {
-                background-color: rgba(255, 255, 255, 0.8);
-                -webkit-box-shadow: inset 0 0 18px black;
-                box-shadow: inset 0 0 18px black;
-            }
-
-            &:active {
-                background-color: white;
-                -webkit-box-shadow: unset;
-                box-shadow: unset;
-            }
-
-            svg {
-                margin: auto;
-                width: 26px;
             }
         }
     }

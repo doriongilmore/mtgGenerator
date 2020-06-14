@@ -22,7 +22,7 @@ UI only - will save your lists in browser's local storage, but you should save t
   - color repartition
   - https://github.com/lwardlegit/mtgbuild seems to have nice stats
   - https://www.chartjs.org/
-- ready-to-print
+- ready-to-print :scream:
   - see resizeImage method in https://github.com/doriongilmore/mtgGenerator/blob/master/vbmacro/Magic.bas
   - https://stackoverflow.com/questions/742271/generating-pdf-files-with-javascript
   - first test probably with http://pdfkit.org/ taken from discussion above (nice demo http://pdfkit.org/demo/browser.html)

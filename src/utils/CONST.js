@@ -25,6 +25,10 @@ export const CONST = {
       }
     }
   },
+  storageKeys: {
+    deckList: 'deckList',
+    tmpDeck: 'tmpDeck',
+  },
   printConfig: {
     DONT_PRINT,
     BORDER_NONE,
