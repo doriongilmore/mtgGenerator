@@ -1,8 +1,32 @@
 <template>
     <div id="deckEdition">
 <!--    TOP LEFT    -->
-        <div id="deckList">
-            Toto
+        <div id="deckLists">
+            <div class="deckList" v-for="deckList in deckLists">
+                <h4>{{ deckList.name }}</h4>
+                <draggable
+                        class="dragArea list-group"
+                        :list="deckList.list"
+                        group="deck"
+                >
+                    <div class="list-group-item" v-for="element in deckList.list" :key="element.id">
+                        {{ element.name }} {{ element.deckQte }}
+                    </div>
+                </draggable>
+            </div>
+            <div class="deckList">
+                <h4>Nouvelle liste</h4>
+                <draggable
+                        class="dragArea list-group"
+                        :list="tmpList"
+                        group="deck"
+                        @change="createNewList"
+                >
+                    <div class="list-group-item" v-for="element in tmpList" :key="element.id">
+                        {{ element.name }} {{ element.deckQte }}
+                    </div>
+                </draggable>
+            </div>
         </div>
 
 <!--    TOP RIGHT    -->
@@ -27,20 +51,28 @@
                     <div class="type">type</div>
                     <div class="setName">setName</div>
                 </div>
-                <div
-                        v-for="result in results"
-                        :key="result.id"
-                        class="resultRow"
-                        v-on:click="cardToDisplay=cardToDisplay===result.id?null:result.id"
+                <draggable
+                        class="dragArea list-group"
+                        :list="results"
+                        :group="{ name: 'deck', pull: 'clone', put: false }"
+                        :clone="addCardToDeck"
                 >
-                    <div class="name">{{ result.name }}</div>
-                    <div class="manaCost">{{ result.mana_cost }}</div>
-                    <div class="type">{{ result.type_line }}</div>
-                    <div class="setName">{{ result.set_name }}</div>
-                    <div class="image" v-if="cardToDisplay===result.id">
-                        <img :src="getBestImage(result.image_uris)" alt="Rien à afficher :/"/>
+
+                    <div
+                            v-for="result in results"
+                            :key="result.id"
+                            class="resultRow"
+                            v-on:click="cardToDisplay=cardToDisplay===result.id?null:result.id"
+                    >
+                        <div class="name">{{ result.name }}</div>
+                        <div class="manaCost">{{ result.mana_cost }}</div>
+                        <div class="type">{{ result.type_line }}</div>
+                        <div class="setName">{{ result.set_name }}</div>
+                        <div class="image" v-if="cardToDisplay===result.id">
+                            <img :src="getBestImage(result.image_uris)" alt="Rien à afficher :/"/>
+                        </div>
                     </div>
-                </div>
+                </draggable>
             </div>
         </div>
 
@@ -55,15 +87,21 @@
 
 <script>
     import APIMtg from '../../http/mtg';
+    import draggable from 'vuedraggable'
 
     export default {
         name: "DeckEdition",
+        components: { draggable },
         data() {
             return {
                 searchText: 'Black Lotus',
                 isSearching: false,
                 cardToDisplay: null,
                 results: [],
+                tmpList: [],
+                deckLists: [
+                    { name: 'Liste principale', list: [] }
+                ],
             };
         },
         created() {
@@ -87,6 +125,19 @@
                     console.error(`error during search "${search}"`, error);
                 });
             },
+            addCardToDeck(card) {
+                return Object.assign({}, card, {
+                    deckQte: 4,
+                    printConfig: -1
+                });
+            },
+            createNewList() {
+                this.deckLists.push({
+                    name: 'Choisissez un nom',
+                    list: [...this.tmpList]
+                });
+                this.tmpList = [];
+            },
             getBestImage(images) {
                 return images.large || images.normal;
             }
@@ -100,7 +151,7 @@
     grid-template-columns: 40% 60%;
     grid-template-areas: "deckList search";
 
-    #deckList {
+    #deckLists {
         grid-area: deckList;
     }
 
