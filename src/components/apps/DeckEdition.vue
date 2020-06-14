@@ -37,11 +37,23 @@
                     <div>
                         <label for="searchText">Nom de carte</label>
                         <input id="searchText" type="text" v-model="searchText"/>
+                        <div @click="handleSearch" class="fileSearchButton">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 490 490" >
+                                <path
+                                        fill="none"
+                                        stroke="#000"
+                                        stroke-width="36"
+                                        stroke-linecap="round"
+                                        d="m280,278a153,153 0 1,0-2,2l170,170m-91-117 110,110-26,26-110-110"
+                                />
+                            </svg>
+                        </div>
                     </div>
 <!--                    <details>-->
 <!--                        <summary>Plus de filtres</summary>-->
 <!--                    </details>-->
-                    <input type="submit"/>
+
+                    <input type="submit" style="display: none"/>
                 </form>
             </div>
             <div id="results">
@@ -183,6 +195,32 @@
         }
 
 
+        .fileSearchButton {
+            padding: 2px;
+            float: left;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            border-left: 1px solid black;
+            cursor: pointer;
+
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.8);
+                -webkit-box-shadow: inset 0 0 18px black;
+                box-shadow: inset 0 0 18px black;
+            }
+
+            &:active {
+                background-color: white;
+                -webkit-box-shadow: unset;
+                box-shadow: unset;
+            }
+
+            svg {
+                margin: auto;
+                width: 26px;
+            }
+        }
     }
 
 }
