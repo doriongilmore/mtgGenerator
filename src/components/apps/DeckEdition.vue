@@ -3,10 +3,7 @@
 <!--    TOP LEFT    -->
         <div id="deckLists">
             <div id="deckHeader">
-                <div class="deckName">
-                    <input type="text" v-model="deck.name" />
-
-                </div>
+                <div class="deckName"><input type="text" v-model="deck.name" /></div>
                 <div class="buttons">
                     <Button :icon="'import'"></Button>
                     <Button :icon="'print'"></Button>
@@ -15,7 +12,16 @@
                 </div>
             </div>
             <div class="deckList" v-for="deckList in deck.lists">
-                <input type="text" v-model="deckList.name" />
+                <div class="listHeader">
+                    <div class="listName"><input type="text" v-model="deckList.name" /></div>
+                    <div class="cardCount">
+                        {{ getCardCount(deckList.list, true) }}
+                    </div>
+                    <div class="buttons">
+                        <Button :icon="'export'"></Button>
+                    </div>
+
+                </div>
                 <draggable
                         class="dragArea list-group"
                         :list="deckList.list"
@@ -217,6 +223,14 @@
             },
             getBestImage(images) {
                 return images.large || images.normal;
+            },
+            getCardCount(list, getString = false) {
+                const count = list.reduce((sum, card) => {
+                    return +card.deckQte + sum;
+                }, 0);
+                if (!getString) { return count }
+                const lib = `carte${count>1?'s':''}`;
+                return `${count} ${lib}`;
             }
         }
     }
@@ -250,6 +264,21 @@
             width: 80%;
             border: bisque solid 3px;
             /*background-color: rgba(208, 209, 212, 0.8);*/
+
+            .listHeader {
+                display: grid;
+                grid-template-columns: 60% 20% 10%;
+                grid-template-areas: "name cardCount buttons";
+                .listName {
+                    grid-area: name;
+                }
+                .cardCount {
+                    grid-area: cardCount;
+                }
+                .buttons {
+                    grid-area: buttons;
+                }
+            }
 
             .cardRow, .resultRow {
                 display: grid;
