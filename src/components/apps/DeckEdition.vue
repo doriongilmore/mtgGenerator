@@ -2,15 +2,44 @@
     <div id="deckEdition">
 <!--    TOP LEFT    -->
         <div id="deckLists">
-            <div class="deckList" v-for="deckList in deckLists">
-                <h4>{{ deckList.name }}</h4>
+            <div id="deckHeader">
+                <div class="deckName">
+                    <input type="text" v-model="deck.name" />
+
+                </div>
+                <div class="buttons">
+                    <Button :icon="'import'"></Button>
+                    <Button :icon="'print'"></Button>
+                    <Button :icon="'save'"></Button>
+                    <Button :icon="'delete'"></Button>
+                </div>
+            </div>
+            <div class="deckList" v-for="deckList in deck.lists">
+                <input type="text" v-model="deckList.name" />
                 <draggable
                         class="dragArea list-group"
                         :list="deckList.list"
                         group="deck"
+                        :move="onMove"
                 >
-                    <div class="list-group-item" v-for="element in deckList.list" :key="element.id">
-                        {{ element.name }} {{ element.deckQte }}
+                    <div class="cardRow" v-for="card in deckList.list" :key="card.id">
+                        <div class="name"
+                             v-on:click="cardToDisplay=cardToDisplay===card.id?null:card.id"
+                        >{{ card.name }}</div>
+                        <div class="manaCost">{{ card.mana_cost }}</div>
+                        <div class="deckQte">
+                            <input type="number" min="0" max="99" v-model="card.deckQte" />
+                        </div>
+                        <div class="printConfig">
+                            <select v-model="card.printConfig">
+                                <option v-for="conf in printConfig.list" :key="conf.key" :value="conf.key">
+                                    {{ conf.text }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="image" v-if="cardToDisplay===card.id">
+                            <img :src="getBestImage(card.image_uris)" alt="Rien à afficher :/"/>
+                        </div>
                     </div>
                 </draggable>
             </div>
@@ -22,8 +51,8 @@
                         group="deck"
                         @change="createNewList"
                 >
-                    <div class="list-group-item" v-for="element in tmpList" :key="element.id">
-                        {{ element.name }} {{ element.deckQte }}
+                    <div class="cardRow" v-for="element in tmpList" :key="element.id">
+<!--                        {{ element.name }} {{ element.deckQte }}-->
                     </div>
                 </draggable>
             </div>
@@ -68,6 +97,7 @@
                         :list="results"
                         :group="{ name: 'deck', pull: 'clone', put: false }"
                         :clone="addCardToDeck"
+                        :move="onMove"
                 >
 
                     <div
@@ -98,12 +128,27 @@
 </template>
 
 <script>
-    import APIMtg from '../../http/mtg';
     import draggable from 'vuedraggable'
+    import { CONST } from 'src/utils/CONST';
+    import Button from '../uiElements/Button.vue';
+    import moment from 'moment';
+
+    const momentNow = moment();
+    const emptyDeck = {
+        id: momentNow._d.getTime(),
+        name: 'Default Deck Name',
+        colors: '{}',
+        cardCount: 0,
+        lists: [
+            { name: 'Main List', list: [] }
+        ],
+        dateCreation: momentNow._d,
+        dateEdition: momentNow._d,
+    };
 
     export default {
         name: "DeckEdition",
-        components: { draggable },
+        components: { draggable, Button },
         data() {
             return {
                 searchText: 'Black Lotus',
@@ -111,14 +156,16 @@
                 cardToDisplay: null,
                 results: [],
                 tmpList: [],
-                deckLists: [
-                    { name: 'Liste principale', list: [] }
-                ],
+                deck: emptyDeck,
+                printConfig: CONST.printConfig,
             };
         },
         created() {
         },
         methods: {
+            notImplemented() {
+                console.warn('notImplemented');
+            },
             handleSearch() {
                 this.isSearching = true;
                 const cardName = this.searchText;
@@ -137,14 +184,32 @@
                     console.error(`error during search "${search}"`, error);
                 });
             },
+            onMove({ from, to, relatedContext, draggedContext }) {
+                const list = relatedContext.list;
+                const draggedElement = draggedContext.element;
+                const sameList = from === to;
+                const isPresent = !!list.find(el => el.id === draggedElement.id);
+                const allowMove = sameList || !isPresent;
+
+                if (!allowMove) {
+                    console.warn('object already present in this list.');
+                }
+
+                return allowMove;
+            },
             addCardToDeck(card) {
+                const printConfig = card.type_line.includes('Basic Land')
+                    ? this.printConfig.DONT_PRINT.key
+                    : this.printConfig.BORDER_3.key;
+
+                // Basic Land
                 return Object.assign({}, card, {
                     deckQte: 4,
-                    printConfig: -1
+                    printConfig
                 });
             },
             createNewList() {
-                this.deckLists.push({
+                this.deck.lists.push({
                     name: 'Choisissez un nom',
                     list: [...this.tmpList]
                 });
@@ -161,10 +226,70 @@
 #deckEdition {
     display: grid;
     grid-template-columns: 40% 60%;
-    grid-template-areas: "deckList search";
+    grid-template-areas: "deckLists search";
+
 
     #deckLists {
-        grid-area: deckList;
+        grid-area: deckLists;
+
+        input {
+            background-color: transparent;
+        }
+        #deckHeader {
+            display: grid;
+            grid-template-columns: 60% 30%;
+            grid-template-areas: "name buttons";
+            .deckName {
+                grid-area: name;
+            }
+            .buttons {
+                grid-area: buttons;
+            }
+        }
+        .deckList {
+            width: 80%;
+            border: bisque solid 3px;
+            /*background-color: rgba(208, 209, 212, 0.8);*/
+
+            .cardRow, .resultRow {
+                display: grid;
+                grid-template-columns: 40% 15% auto;
+                grid-template-areas: "name manaCost deckQte printConfig";
+                .name {
+                    grid-area: name;
+                }
+                .manaCost {
+                    grid-area: manaCost;
+                }
+                .deckQte {
+                    grid-area: deckQte;
+                    input {
+                        width: 30px;
+                    }
+                }
+                .printConfig {
+                    grid-area: printConfig;
+                    input {
+                        width: 30px;
+                    }
+                }
+                .type {
+                    display: none;
+                }
+                .setName {
+                    display: none;
+                }
+                .image {
+                    border: 2px black;
+                    position: relative;
+                    img {
+                        max-height: 300px;
+                    }
+                }
+            }
+
+        }
+
     }
 
     #search {
