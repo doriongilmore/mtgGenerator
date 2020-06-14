@@ -39,6 +39,8 @@ export const mtg = {
           const callback = response => response.json().then((res) => {
             commit('setCards', res.data);
             resolve(res.data);
+          }).catch((e) => {
+            reject(e);
           });
           state.pool.addToPool(promise, callback);
         };

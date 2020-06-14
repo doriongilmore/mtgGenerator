@@ -23,28 +23,26 @@
     import Button from '../uiElements/Button.vue';
     import moment from 'moment';
 
-    const momentNow = moment();
-    const emptyDeck = {
-        id: momentNow._d.getTime(),
-        name: 'Default Name',
-        colors: '{}',
-        cardCount: 0,
-        dateCreation: momentNow._d,
-        dateEdition: momentNow._d,
-    };
-
     export default {
         name: "DecksList",
         components: { Button },
         data() {
             return {
-                decks: [emptyDeck],
+                decks: [],
                 moment
             };
         },
-        created() {
+        computed: {
+        },
+        async created() {
+            try {
+                this.decks = await this.$store.dispatch('decks/getDecks');
+            } catch (e) {
+                console.error('error when loading from storage', e);
+            }
         },
         methods: {
+
         }
     }
 </script>
@@ -53,10 +51,10 @@
     #decksList {
 
         .deckRow{
-        display: grid;
-        grid-template-rows: 30px;
-        grid-template-columns: 20% 16% 16% 16% 16% auto;
-        grid-template-areas: "name colors cardCount dateCreation dateEdition buttons";
+            display: grid;
+            grid-template-rows: 30px;
+            grid-template-columns: 20% 16% 16% 16% 16% auto;
+            grid-template-areas: "name colors cardCount dateCreation dateEdition buttons";
             .name {
                 grid-area: name;
             }

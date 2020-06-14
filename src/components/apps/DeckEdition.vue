@@ -151,12 +151,27 @@
                 cardToDisplay: null,
                 results: [],
                 tmpList: [],
-                deck: this.deckToEdit || DeckFactory.getDeckToCreate(),
+                tmpDeck: null,
                 printConfig: CONST.printConfig,
             };
         },
+        computed: {
+            deck() {
+                return this.deckToEdit || this.tmpDeck || {};
+            }
+        },
         beforeDestroy() {
-            window.localStorage.setItem(CONST.storageKeys.tmpDeck, this.deck);
+            DeckFactory.updateDeckCardCount(this.deck);
+            DeckFactory.updateDeckColors(this.deck);
+            const json = JSON.stringify(this.deck);
+            window.localStorage.setItem(CONST.storageKeys.tmpDeck, json);
+        },
+        async created() {
+            try {
+                this.tmpDeck = await this.$store.dispatch('decks/getTmpDeck');
+            } catch (e) {
+                console.error('error when loading from storage', e);
+            }
         },
         methods: {
             notImplemented() {
@@ -178,6 +193,7 @@
                 .catch((error) => {
                     this.isSearching = false;
                     console.error(`error during search "${search}"`, error);
+                    this.results = [];
                 });
             },
             /**
@@ -227,9 +243,7 @@
                 return images.large || images.normal;
             },
             getCardCount(list, getString = false) {
-                const count = list.reduce((sum, card) => {
-                    return +card.deckQte + sum;
-                }, 0);
+                const count = list.reduce(DeckFactory.countCardByList, 0);
                 if (!getString) { return count }
                 const lib = `carte${count>1?'s':''}`;
                 return `${count} ${lib}`;

@@ -24,7 +24,6 @@ export default {
   data() {
     return {
       showModal: false,
-      showModalMenu: false
     };
   },
   computed: {
@@ -37,10 +36,6 @@ export default {
       this.showModal = newValue;
     }
   },
-  methods: {
-  },
-  mounted() {
-  }
 };
 </script>
 <style lang="less">
