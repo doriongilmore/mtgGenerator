@@ -15,10 +15,14 @@
         </div>
         <!-- close button -->
         <!--modals-->
-<!--        <ResetPassword-->
-<!--          v-if="currentModal === 'resetPassword'"-->
-<!--          @closeModal="closeAnim"-->
-<!--        ></ResetPassword>-->
+        <Import
+          v-if="currentModal === 'import'"
+          @closeModal="closeAnim"
+        ></Import>
+        <Export
+          v-if="currentModal === 'export'"
+          @closeModal="closeAnim"
+        ></Export>
       </div>
       <div ref="loading" class="loading" v-show="isLoading && !isAnimating">
         <span>LOADING</span>
@@ -30,15 +34,17 @@
 <script>
 import { TweenLite, TimelineLite } from "gsap";
 import { mapState } from "vuex";
-import { CONST } from "src/utils/CONST";
-// import ResetPassword from "src/components/modals/ResetPassword.vue";
+import CONST from "src/utils/CONST";
+import Import from "src/components/modals/Import.vue";
+import Export from "src/components/modals/Export.vue";
 
 const actualModalParams = {};
 
 export default {
   name: "Modals",
   components: {
-    // ResetPassword,
+    Import,
+    Export,
   },
   data() {
     return {
@@ -52,6 +58,7 @@ export default {
       modalName: state => state.modals.modalName,
       resolve: state => state.modals.resolve,
       reject: state => state.modals.reject,
+      modalData: state => state.modals.modalData,
       size: state => state.modals.size,
       canClose: state => state.modals.canClose,
       blurBg: state => state.modals.blurBg,
@@ -256,7 +263,7 @@ export default {
     width: 0;
     height: 0;
     opacity: 0;
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(100, 100, 100, 0.5);
 
     .loading {
       position: absolute;

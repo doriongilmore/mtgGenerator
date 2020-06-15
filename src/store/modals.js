@@ -42,17 +42,29 @@ export const modals = {
     }
   },
   actions: {
-    openLogin(context) {
-      // console.group('openLogin');
-      // return new Promise((resolve, reject) => {
-      //   context.commit("open", {
-      //     modalName: "login",
-      //     canClose: false,
-      //     resolve,
-      //     reject
-      //   });
-      // }).then(console.groupEnd)
-      //     .catch(console.groupEnd);
+    openImport(context, modalData) {
+      console.group('openImport');
+      return new Promise((resolve, reject) => {
+        context.commit("open", {
+          modalName: "import",
+          canClose: true,
+          modalData,
+          resolve,
+          reject
+        });
+      }).then(console.groupEnd).catch(console.groupEnd);
+    },
+    openExport(context, modalData) {
+      console.group('openExport');
+      return new Promise((resolve, reject) => {
+        context.commit("open", {
+          modalName: "export",
+          canClose: true,
+          modalData,
+          resolve,
+          reject
+        });
+      }).then(console.groupEnd).catch(console.groupEnd);
     },
   }
 };

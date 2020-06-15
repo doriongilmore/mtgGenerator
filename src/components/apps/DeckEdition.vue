@@ -5,10 +5,11 @@
             <div id="deckHeader">
                 <div class="deckName"><input type="text" v-model="deck.name" /></div>
                 <div class="buttons">
-                    <Button :icon="'import'" :handle-click="notImplemented"></Button>
+                    <Button :icon="'export'" :handle-click="onExport.bind(this, deck)"></Button>
+                    <Button :icon="'import'" :handle-click="onImport"></Button>
                     <Button :icon="'print'" :handle-click="notImplemented"></Button>
                     <Button :icon="'save'" :handle-click="saveDeck"></Button>
-                    <Button :icon="'delete'" :handle-click="deleteDeck"></Button>
+                    <Button :icon="'delete'" :handle-click="deleteDeck.bind(this, deck)"></Button>
                 </div>
             </div>
             <div class="deckList" v-for="deckList in deck.lists">
@@ -18,7 +19,7 @@
                         {{ getCardCount(deckList.list, true) }}
                     </div>
                     <div class="buttons">
-                        <Button :icon="'export'" :handle-click="notImplemented"></Button>
+                        <Button :icon="'export'" :handle-click="onExport.bind(this, deckList)"></Button>
                     </div>
 
                 </div>
@@ -136,7 +137,7 @@
 
 <script>
     import draggable from 'vuedraggable'
-    import { CONST } from 'src/utils/CONST';
+    import CONST from 'src/utils/CONST';
     import DeckFactory from 'src/utils/DeckFactory';
     import Button from '../uiElements/Button.vue';
     import Mana from '../uiElements/Mana.vue';
@@ -197,14 +198,21 @@
                 this.updateDone = false;
             },
             onChange() { this.updateDone = true },
+            onImport() {
+                this.$store.dispatch('modals/openImport');
+            },
+            onExport(listOrDeck) {
+                this.$store.dispatch('modals/openExport', listOrDeck);
+            },
             notImplemented() {
                 console.warn('not implemented');
             },
-            async deleteDeck(deck) {
+            deleteDeck(deck) {
                 this.$store.commit('decks/deleteDeck', deck);
+                this.$router.push({ name: 'home' });
             },
             handleSearch(event) {
-                event.preventDefault();
+                event && event.preventDefault();
                 this.isSearching = true;
                 const cardName = this.searchText;
                 const args = {

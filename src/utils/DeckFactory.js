@@ -1,11 +1,13 @@
-function simplifyCard({ id, deckQte, printConfig }) {
-    return { id, deckQte, printConfig };
+function simplifyCard({ id, name, set, deckQte, printConfig }) {
+    return { id, name, set, deckQte, printConfig };
+}
+function simplifyList(list) {
+    return list.list.map(simplifyCard);
 }
 function stringifyList(list) {
-    const simplifiedList = list.list.map(simplifyCard);
     return JSON.stringify({
         name: list.name,
-        list: simplifiedList
+        list: simplifyList(list)
     })
 }
 
@@ -72,6 +74,9 @@ class DeckFactory {
         const sameLists = sameListCount && deckA.lists.map(stringifyList).join('') === deckB.lists.map(stringifyList).join('');
 
         return sameName && sameCardCount && sameColors && sameLists
+    }
+    static simplifyList(list) {
+        return simplifyList(list);
     }
 }
 

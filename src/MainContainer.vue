@@ -96,7 +96,7 @@ a {
     border: 1px white solid;
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(200, 200, 200, 0.8);
   }
 }
 </style>

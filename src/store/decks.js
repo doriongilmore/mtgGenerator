@@ -1,4 +1,4 @@
-import { CONST } from 'src/utils/CONST';
+import CONST from 'src/utils/CONST';
 import DeckFactory from "src/utils/DeckFactory";
 
 export const decks = {
