@@ -5,10 +5,10 @@
             <div id="deckHeader">
                 <div class="deckName"><input type="text" v-model="deck.name" /></div>
                 <div class="buttons">
-                    <Button :icon="'import'"></Button>
-                    <Button :icon="'print'"></Button>
-                    <Button :icon="'save'"></Button>
-                    <Button :icon="'delete'"></Button>
+                    <Button :icon="'import'" :handle-click="notImplemented"></Button>
+                    <Button :icon="'print'" :handle-click="notImplemented"></Button>
+                    <Button :icon="'save'" :handle-click="saveDeck"></Button>
+                    <Button :icon="'delete'" :handle-click="notImplemented"></Button>
                 </div>
             </div>
             <div class="deckList" v-for="deckList in deck.lists">
@@ -32,7 +32,7 @@
                         <div class="name"
                              v-on:click="cardToDisplay=cardToDisplay===card.id?null:card.id"
                         >{{ card.name }}</div>
-                        <div class="manaCost">{{ card.mana_cost }}</div>
+                        <Mana class="manaCost" :mana-cost="card.mana_cost"></Mana>
                         <div class="deckQte">
                             <input type="number" min="0" max="99" v-model="card.deckQte" />
                         </div>
@@ -114,7 +114,7 @@
                             v-on:click="cardToDisplay=cardToDisplay===result.id?null:result.id"
                     >
                         <div class="name">{{ result.name }}</div>
-                        <div class="manaCost">{{ result.mana_cost }}</div>
+                        <Mana class="manaCost" :mana-cost="result.mana_cost"></Mana>
                         <div class="type">{{ result.type_line }}</div>
                         <div class="setName">{{ result.set_name }}</div>
                         <div class="image" v-if="cardToDisplay===result.id">
@@ -139,11 +139,12 @@
     import { CONST } from 'src/utils/CONST';
     import DeckFactory from 'src/utils/DeckFactory';
     import Button from '../uiElements/Button.vue';
+    import Mana from '../uiElements/Mana.vue';
 
     export default {
         name: "DeckEdition",
         props: ['deckToEdit'],
-        components: { draggable, Button },
+        components: { draggable, Button, Mana },
         data() {
             return {
                 searchText: 'Black Lotus',
@@ -163,6 +164,7 @@
         beforeDestroy() {
             DeckFactory.updateDeckCardCount(this.deck);
             DeckFactory.updateDeckColors(this.deck);
+            this.deck.dateEdition = new Date();
             const json = JSON.stringify(this.deck);
             window.localStorage.setItem(CONST.storageKeys.tmpDeck, json);
         },
@@ -174,6 +176,15 @@
             }
         },
         methods: {
+            saveDeck() {
+                DeckFactory.updateDeckCardCount(this.deck);
+                DeckFactory.updateDeckColors(this.deck);
+                this.deck.dateEdition = new Date();
+                this.$store.commit('decks/setDecks', [this.deck]);
+                const newDeck = DeckFactory.getDeckToCreate();
+                this.$store.commit('decks/setTmpDeck', newDeck);
+                this.tmpDeck = newDeck;
+            },
             notImplemented() {
                 console.warn('not implemented');
             },

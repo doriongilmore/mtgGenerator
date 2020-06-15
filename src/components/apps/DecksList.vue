@@ -6,14 +6,14 @@
                 class="deckRow"
         >
             <div class="name">{{deck.name}}</div>
-            <div class="colors">{{deck.colors}}</div>
+            <Mana class="colors" :mana-cost="deck.colors"></Mana>
             <div class="cardCount">{{deck.cardCount}}</div>
             <div class="dateCreation">{{moment(deck.dateCreation).format('YY-MM-DD hh:mm')}}</div>
             <div class="dateEdition">{{moment(deck.dateEdition).format('YY-MM-DD hh:mm')}}</div>
             <div class="buttons">
                 <Button :icon="'print'"></Button>
-                <Button :icon="'update'"></Button>
-                <Button :icon="'delete'"></Button>
+                <Button :icon="'display'"></Button>
+                <Button :icon="'delete'" :handle-click="deleteDeck.bind(this, deck)"></Button>
             </div>
         </div>
     </div>
@@ -21,11 +21,12 @@
 
 <script>
     import Button from '../uiElements/Button.vue';
+    import Mana from '../uiElements/Mana.vue';
     import moment from 'moment';
 
     export default {
         name: "DecksList",
-        components: { Button },
+        components: { Button, Mana },
         data() {
             return {
                 decks: [],
@@ -42,7 +43,10 @@
             }
         },
         methods: {
-
+            deleteDeck(deck) {
+                console.info('deck to be deleted', deck);
+                this.decks = this.$store.commit('decks/deleteDecks', deck);
+            }
         }
     }
 </script>

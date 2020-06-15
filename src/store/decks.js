@@ -8,13 +8,20 @@ export const decks = {
         tmpDeck: {},
     },
     mutations: {
+        deleteDecks(state, deck) {
+            const newDecksByIds = {...state.decksByIds};
+            delete newDecksByIds[deck.id];
+            state.decksByIds = newDecksByIds;
+            window.localStorage.setItem(CONST.storageKeys.deckList, JSON.stringify(newDecksByIds));
+            return newDecksByIds;
+        },
         setDecks(state, decks) {
             const newDecksByIds = {...state.decksByIds};
             for (let i = 0, l = decks.length; i < l; i++) {
-                const card = decks[i];
-                if (!newDecksByIds[card.id]) {
-                    newDecksByIds[card.id] = card;
-                }
+                const deck = decks[i];
+                // if (!newDecksByIds[deck.id]) {
+                newDecksByIds[deck.id] = deck;
+                // }
             }
             state.decksByIds = newDecksByIds;
             window.localStorage.setItem(CONST.storageKeys.deckList, JSON.stringify(newDecksByIds));
@@ -22,6 +29,7 @@ export const decks = {
         setTmpDeck(state, deck) {
             state.tmpDeck = deck;
             window.localStorage.setItem(CONST.storageKeys.tmpDeck, JSON.stringify(deck));
+            console.info('setTmpDeck', JSON.stringify(deck));
         },
     },
     actions: {
