@@ -171,7 +171,7 @@
             const json = JSON.stringify(this.deck);
             window.localStorage.setItem(CONST.storageKeys.tmpDeck, json);
         },
-        async created() {
+        async mounted() {
             try {
                 this.tmpDeck = await this.$store.dispatch('decks/getTmpDeck');
                 this._deck = this.deckToEdit || this.tmpDeck;
@@ -203,7 +203,8 @@
             async deleteDeck(deck) {
                 this.$store.commit('decks/deleteDeck', deck);
             },
-            handleSearch() {
+            handleSearch(event) {
+                event.preventDefault();
                 this.isSearching = true;
                 const cardName = this.searchText;
                 const args = {

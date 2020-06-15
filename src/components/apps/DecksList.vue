@@ -12,7 +12,7 @@
             <div class="dateEdition">{{moment(deck.dateEdition).format('YY-MM-DD hh:mm')}}</div>
             <div class="buttons">
                 <Button :icon="'print'" :handle-click="notImplemented"></Button>
-                <Button :icon="'display'" :handle-click="notImplemented"></Button>
+                <Button :icon="'display'" :handle-click="editDeck.bind(this, deck)"></Button>
                 <Button :icon="'delete'" :handle-click="deleteDeck.bind(this, deck)"></Button>
             </div>
         </div>
@@ -45,6 +45,9 @@
         methods: {
             notImplemented() {
                 console.warn('not implemented');
+            },
+            editDeck(deck) {
+                this.$router.push({ name: 'edition', params: { deckToEdit: deck } })
             },
             async deleteDeck(deck) {
                 console.info('deck to be deleted', deck);
