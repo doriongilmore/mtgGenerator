@@ -8,17 +8,17 @@
                     <Button :icon="'import'" :handle-click="notImplemented"></Button>
                     <Button :icon="'print'" :handle-click="notImplemented"></Button>
                     <Button :icon="'save'" :handle-click="saveDeck"></Button>
-                    <Button :icon="'delete'" :handle-click="notImplemented"></Button>
+                    <Button :icon="'delete'" :handle-click="deleteDeck"></Button>
                 </div>
             </div>
             <div class="deckList" v-for="deckList in deck.lists">
                 <div class="listHeader">
-                    <div class="listName"><input type="text" v-model="deckList.name" /></div>
+                    <div class="listName"><input type="text" v-model="deckList.name" @change="onChange" /></div>
                     <div class="cardCount">
                         {{ getCardCount(deckList.list, true) }}
                     </div>
                     <div class="buttons">
-                        <Button :icon="'export'"></Button>
+                        <Button :icon="'export'" :handle-click="notImplemented"></Button>
                     </div>
 
                 </div>
@@ -34,10 +34,10 @@
                         >{{ card.name }}</div>
                         <Mana class="manaCost" :mana-cost="card.mana_cost"></Mana>
                         <div class="deckQte">
-                            <input type="number" min="0" max="99" v-model="card.deckQte" />
+                            <input type="number" min="0" max="99" v-model="card.deckQte" @change="onChange"/>
                         </div>
                         <div class="printConfig">
-                            <select v-model="card.printConfig">
+                            <select v-model="card.printConfig" @change="onChange">
                                 <option v-for="conf in printConfig.list" :key="conf.key" :value="conf.key">
                                     {{ conf.text }}
                                 </option>
@@ -153,15 +153,18 @@
                 results: [],
                 tmpList: [],
                 tmpDeck: null,
+                _deck: null,
+                updateDone: false,
                 printConfig: CONST.printConfig,
             };
         },
         computed: {
             deck() {
-                return this.deckToEdit || this.tmpDeck || {};
+                return this._deck || this.deckToEdit || this.tmpDeck || {};
             }
         },
         beforeDestroy() {
+            if (!this.updateDone) { return }
             DeckFactory.updateDeckCardCount(this.deck);
             DeckFactory.updateDeckColors(this.deck);
             this.deck.dateEdition = new Date();
@@ -171,22 +174,34 @@
         async created() {
             try {
                 this.tmpDeck = await this.$store.dispatch('decks/getTmpDeck');
+                this._deck = this.deckToEdit || this.tmpDeck;
             } catch (e) {
                 console.error('error when loading from storage', e);
             }
         },
         methods: {
             saveDeck() {
+                const newDeck = DeckFactory.getDeckToCreate();
+                if (DeckFactory.areSameDeck(this.deck, newDeck)) {
+                    console.warn('dont save this deck ...', { deck: this.deck, newDeck });
+                    this.$store.commit('decks/setTmpDeck', newDeck); // update creation time
+                    return false;
+                }
                 DeckFactory.updateDeckCardCount(this.deck);
                 DeckFactory.updateDeckColors(this.deck);
                 this.deck.dateEdition = new Date();
                 this.$store.commit('decks/setDecks', [this.deck]);
-                const newDeck = DeckFactory.getDeckToCreate();
+                this._deck = this.deck;
                 this.$store.commit('decks/setTmpDeck', newDeck);
                 this.tmpDeck = newDeck;
+                this.updateDone = false;
             },
+            onChange() { this.updateDone = true },
             notImplemented() {
                 console.warn('not implemented');
+            },
+            async deleteDeck(deck) {
+                this.$store.commit('decks/deleteDeck', deck);
             },
             handleSearch() {
                 this.isSearching = true;

@@ -11,8 +11,8 @@
             <div class="dateCreation">{{moment(deck.dateCreation).format('YY-MM-DD hh:mm')}}</div>
             <div class="dateEdition">{{moment(deck.dateEdition).format('YY-MM-DD hh:mm')}}</div>
             <div class="buttons">
-                <Button :icon="'print'"></Button>
-                <Button :icon="'display'"></Button>
+                <Button :icon="'print'" :handle-click="notImplemented"></Button>
+                <Button :icon="'display'" :handle-click="notImplemented"></Button>
                 <Button :icon="'delete'" :handle-click="deleteDeck.bind(this, deck)"></Button>
             </div>
         </div>
@@ -43,9 +43,13 @@
             }
         },
         methods: {
-            deleteDeck(deck) {
+            notImplemented() {
+                console.warn('not implemented');
+            },
+            async deleteDeck(deck) {
                 console.info('deck to be deleted', deck);
-                this.decks = this.$store.commit('decks/deleteDecks', deck);
+                this.$store.commit('decks/deleteDeck', deck);
+                this.decks = await this.$store.dispatch('decks/getDecks');
             }
         }
     }

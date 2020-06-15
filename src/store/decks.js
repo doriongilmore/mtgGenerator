@@ -8,12 +8,12 @@ export const decks = {
         tmpDeck: {},
     },
     mutations: {
-        deleteDecks(state, deck) {
+        deleteDeck(state, deck) {
             const newDecksByIds = {...state.decksByIds};
+            if (!newDecksByIds[deck.id]) { return }
             delete newDecksByIds[deck.id];
             state.decksByIds = newDecksByIds;
             window.localStorage.setItem(CONST.storageKeys.deckList, JSON.stringify(newDecksByIds));
-            return newDecksByIds;
         },
         setDecks(state, decks) {
             const newDecksByIds = {...state.decksByIds};
@@ -29,7 +29,6 @@ export const decks = {
         setTmpDeck(state, deck) {
             state.tmpDeck = deck;
             window.localStorage.setItem(CONST.storageKeys.tmpDeck, JSON.stringify(deck));
-            console.info('setTmpDeck', JSON.stringify(deck));
         },
     },
     actions: {
@@ -38,14 +37,17 @@ export const decks = {
                 const deckList = JSON.parse(window.localStorage.getItem(CONST.storageKeys.deckList)) || [];
                 const cards = DeckFactory.getCards(deckList);
                 commit('mtg/setCards', cards, { root: true });
-                commit('setDecks', deckList);
+                commit('setDecks', Object.values(deckList));
                 return deckList;
             }
             return Object.values(state.decksByIds);
         },
         getTmpDeck({ dispatch, commit, state }) {
-            const tmpDeck = JSON.parse(window.localStorage.getItem(CONST.storageKeys.tmpDeck))
-                || DeckFactory.getDeckToCreate();
+            const storageTmpDeck = JSON.parse(window.localStorage.getItem(CONST.storageKeys.tmpDeck));
+            const newTmpDeck = DeckFactory.getDeckToCreate();
+            const tmpDeck = DeckFactory.areSameDeck(storageTmpDeck, newTmpDeck)
+                ? newTmpDeck
+                :storageTmpDeck;
             const cards = DeckFactory.getCards([tmpDeck]);
             commit('mtg/setCards', cards, { root: true });
             commit('setTmpDeck', tmpDeck);

@@ -1,3 +1,14 @@
+function simplifyCard({ id, deckQte, printConfig }) {
+    return { id, deckQte, printConfig };
+}
+function stringifyList(list) {
+    const simplifiedList = list.list.map(simplifyCard);
+    return JSON.stringify({
+        name: list.name,
+        list: simplifiedList
+    })
+}
+
 class DeckFactory {
     static getCards(decks) {
         const allCards = [];
@@ -44,14 +55,23 @@ class DeckFactory {
         return {
             id: now.getTime(),
             name: 'Default Deck Name',
-            colors: '{}',
-            cardCount: 0,
+            colors: '',
+            cardCount: '0 (+0)',
             lists: [
                 { name: 'Main List', list: [] }
             ],
             dateCreation: now,
             dateEdition: now,
         };
+    }
+    static areSameDeck(deckA, deckB) {
+        const sameName = deckA.name === deckB.name;
+        const sameCardCount = deckA.cardCount === deckB.cardCount;
+        const sameColors = deckA.colors === deckB.colors;
+        const sameListCount = deckA.lists.length === deckB.lists.length;
+        const sameLists = sameListCount && deckA.lists.map(stringifyList).join('') === deckB.lists.map(stringifyList).join('');
+
+        return sameName && sameCardCount && sameColors && sameLists
     }
 }
 
