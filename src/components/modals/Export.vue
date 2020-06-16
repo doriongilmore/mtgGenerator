@@ -2,12 +2,20 @@
     <div class="export">
         <form>
             <div class="formRow" v-for="f in exportFormats" :key="f.key">
-                <label :for="f.key">{{ f.value }}
-                    <input type="radio" :id="f.key" :value="f" v-model="format"/>
+                <label :for="f.key">
+                    <input type="radio" :id="f.key" :value="f" v-model="format"/> {{ f.value }}
+                </label>
+            </div>
+            <div class="formRow" v-if="format.key !== dorionKey">
+                <label for="withSets">
+                    <input type="radio" id="withSets" value="withSets" v-model="setFormat"/> Avec Sets
+                </label>
+                <label for="withoutSets">
+                    <input type="radio" id="withoutSets" value="withoutSets" v-model="setFormat"/> Sans Sets
                 </label>
             </div>
 
-            <label for="exportArea">Copie-Colle
+            <label for="exportArea">
                 <textarea id="exportArea" class="formRow" :value="getExport"></textarea>
             </label>
         </form>
@@ -26,8 +34,10 @@
         components: { draggable, Button },
         data() {
             return {
+                dorionKey: CONST.exportFormats.DORION.key,
                 format: CONST.exportFormats.DORION,
                 exportFormats: CONST.exportFormats.list,
+                setFormat: 'withSets'
             };
         },
         computed: {
@@ -42,7 +52,7 @@
                 }
                 const isMagic = this.format.key === CONST.exportFormats.MAGIC_CORP.key;
                 const newLine='\r\n';
-                const formatSetCard = this.format.set.getCardEdition;
+                const formatSetCard = this.setFormat === 'withSets' ? this.format.set.getCardEdition : ()=>'';
                 const formatCard = (sb, card) => {
                     const prop = {};
                     for (let i = 0, l = this.format.order.length; i < l; i++) {

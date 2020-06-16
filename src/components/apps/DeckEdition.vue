@@ -199,9 +199,21 @@
             },
             onChange() { this.updateDone = true },
             onImport() {
-                this.$store.dispatch('modals/openImport');
+                this.$store.dispatch('modals/openImport').then((listOrDeck) => {
+                    // todo param replace/append to do = or push
+                    if (listOrDeck.lists) {
+                        this._deck.lists = listOrDeck.lists;
+                        this._deck.name = listOrDeck.name;
+                    } else {
+                        this._deck.lists = listOrDeck;
+                    }
+                });
             },
             onExport(listOrDeck) {
+                if (listOrDeck.lists) {
+                    DeckFactory.updateDeckCardCount(listOrDeck);
+                    DeckFactory.updateDeckColors(listOrDeck);
+                }
                 this.$store.dispatch('modals/openExport', listOrDeck);
             },
             notImplemented() {

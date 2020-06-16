@@ -42,22 +42,26 @@ export const modals = {
     }
   },
   actions: {
-    openImport(context, modalData) {
+    openImport({ commit }, modalData) {
       console.group('openImport');
       return new Promise((resolve, reject) => {
-        context.commit("open", {
+        commit("open", {
           modalName: "import",
           canClose: true,
           modalData,
           resolve,
           reject
         });
-      }).then(console.groupEnd).catch(console.groupEnd);
+      }).then((res) => {
+        console.groupEnd();
+        commit("close");
+        return res;
+      }).catch(console.groupEnd);
     },
-    openExport(context, modalData) {
+    openExport({ commit }, modalData) {
       console.group('openExport');
       return new Promise((resolve, reject) => {
-        context.commit("open", {
+        commit("open", {
           modalName: "export",
           canClose: true,
           modalData,

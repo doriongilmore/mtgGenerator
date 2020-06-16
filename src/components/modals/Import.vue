@@ -1,21 +1,98 @@
 <template>
     <div class="import">
-        <form>
-            <label>
-                <textarea ></textarea>
-            </label>
-        </form>
+        <label>
+            <textarea v-model="importText"></textarea>
+        </label>
+        <button @click="doImport">Import</button>
     </div>
 </template>
 
 <script>
+    import DeckFactory from "src/utils/DeckFactory";
+    import { mapState } from "vuex";
+
+    const regexpQte = /\d+/g;
+    const regexpSet = /\(.+\)|\[.+]|{.+}/g;
+    const regexpCleanSet = /[()\[\]{}]/g;
+
     export default {
         name: "Import",
+        components: {},
+        data() {
+            return {
+                importText: '',
+            };
+        },
+        computed: {
+            ...mapState({
+                closeImport: state => state.modals.resolve,
+            }),
+        },
+        methods: {
+            doImport() {
+                let listOrDeck;
+                try {
+                    listOrDeck = JSON.parse(this.importText);
+                } catch (e) {
+                    const lists = [];
+                    let actualList = { name: 'Main', list: [] };
+                    const sideboardList = { name: 'Sideboard', list: [] };
+                    const list = this.importText.split('\n').map(e => e.trim()).filter(e => !!e);
+                    for (let i = 0, l = list.length; i < l; i++) {
+                        const row = list[i];
+                        if (row.startsWith('//')) { // list name -> new list
+                            if (actualList.list.length) {
+                                lists.push(actualList);
+                            }
+                            actualList = {
+                                name: row.replace('//', '').trim(),
+                                list: []
+                            };
+                        } else if (row.startsWith('SB:')) { // MC Sideboard
+                            const cardRow = row.replace('SB:', '').trim();
+                            sideboardList.list.push(this.formatCardRow(cardRow));
+                        } else { // classic card row
+                            actualList.list.push(this.formatCardRow(row));
+                        }
+                    }
+                    if (actualList.list.length) { lists.push(actualList) }
+                    if (sideboardList.list.length) { lists.push(sideboardList) }
+                    listOrDeck = DeckFactory.getDeckToCreate();
+                    listOrDeck.lists = lists;
+                }
+                this.closeImport(listOrDeck);
+            },
+            formatCardRow(row) {
+                const [setPart = ''] = row.match(regexpSet);
+                const set = setPart.replace(regexpCleanSet, '');
+                let cardName = row.replace(setPart, '');
+                const [deckQte = '1'] = row.match(regexpQte);
+                cardName = cardName.replace(deckQte, '').trim();
+                // todo should get complete card here
+                return {
+                    cardName,
+                    deckQte: +deckQte,
+                    set,
+                };
+            }
+        }
     };
 </script>
 
 <style lang="less" scoped>
     .import {
         height: 100%;
+        /*.formRow {*/
+        /*    height: 30px;*/
+        /*    margin-bottom: 5px;*/
+        /*}*/
+        textarea {
+            width: 95%;
+            min-width: 200px;
+            max-width: 260px;
+            min-height: 100px;
+            max-height: 260px;
+            overflow-y: auto;
+        }
     }
 </style>

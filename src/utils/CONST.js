@@ -1,8 +1,8 @@
 const DONT_PRINT = { key: -1, text: 'Ignorer' };
-const BORDER_NONE = { key: 0, text: 'Pas de bordure' };
-const BORDER_1 = { key: 1, text: 'Bord 0.1mm' };
-const BORDER_2 = { key: 2, text: 'Bord 0.2mm' };
-const BORDER_3 = { key: 3, text: 'Bord 0.3mm' };
+const BORDER_0 = { key: 0, text: 'Bord 0 mm' };
+const BORDER_1 = { key: 1, text: 'Bord 1 mm' };
+const BORDER_2 = { key: 2, text: 'Bord 2 mm' };
+const BORDER_3 = { key: 3, text: 'Bord 3 mm' };
 
 const PARENTHESIS = { key: 'PARENTHESIS', value: 'PARENTHESIS', label: '(Set)', getCardEdition: c => `(${c.set})` };
 // const BRACKET = { key: 'BRACKET', value: 'BRACKET', label: '{Set}', getCardEdition: c => `{${c.set}}` };
@@ -57,13 +57,13 @@ const CONST = {
   },
   printConfig: {
     DONT_PRINT,
-    BORDER_NONE,
+    BORDER_0,
     BORDER_1,
     BORDER_2,
     BORDER_3,
     list: [
       DONT_PRINT,
-      BORDER_NONE,
+      BORDER_0,
       BORDER_1,
       BORDER_2,
       BORDER_3
