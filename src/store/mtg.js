@@ -1,4 +1,3 @@
-import APIMtg from 'src/http/mtg';
 const scryfall = require('scryfall-sdk');
 const Pool = require('src/utils/Pool');
 
@@ -27,22 +26,35 @@ export const mtg = {
   },
   actions: {
     async search({ dispatch, commit, state }, args) {
+      // todo check what can be added to query
+      //  see https://scryfall.com/docs/syntax
+      let query = 'cards/search?lang=any&unique=prints';
+      const addToQuery = (key, value) => {
+        query += `&${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+      }
+      if (args.name) {
+        const value = args.exact ? `!"${args.name}"` : args.name;
+        addToQuery('q', value);
+      }
+      if (args.set) { addToQuery('set', args.name) }
       return new Promise((resolve, reject) => {
-        if (!args.name) {
-          reject('not implemented');
-        }
-        // const promise = scryfall.Cards.autoCompleteName.bind(scryfall.Cards, args.name);
-        const promise = scryfall.Cards.byName.bind(scryfall.Cards, args.name);
+        if (!args.name) { reject('not implemented') }
+        const promise = scryfall.Cards.query.bind(scryfall.Cards, query);
         const callback = (result) => {
-          commit('setCards', [result]);
-          const promise = fetch.bind(null, result.prints_search_uri);
-          const callback = response => response.json().then((res) => {
-            commit('setCards', res.data);
-            resolve(res.data);
-          }).catch((e) => {
-            reject(e);
-          });
-          state.pool.addToPool(promise, callback);
+          const cards = result.data.map(c => {
+            return {
+              id: c.id,
+              name: c.name,
+              mana_cost: c.mana_cost,
+              color_identity: c.color_identity,
+              image_uris: c.image_uris,
+              set: c.set,
+              set_name: c.set_name,
+              type_line: c.type_line
+            }
+          })
+          commit('setCards', cards);
+          resolve(cards);
         };
         state.pool.addToPool(promise, callback);
       });

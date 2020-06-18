@@ -10,6 +10,7 @@
 <script>
     import DeckFactory from "src/utils/DeckFactory";
     import { mapState } from "vuex";
+    import CONST from "src/utils/CONST";
 
     const regexpQte = /\d+/g;
     const regexpSet = /\(.+\)|\[.+]|{.+}/g;
@@ -29,11 +30,12 @@
             }),
         },
         methods: {
-            doImport() {
+            async doImport() {
                 let listOrDeck;
                 try {
                     listOrDeck = JSON.parse(this.importText);
                 } catch (e) {
+                    // todo create a spinner
                     const lists = [];
                     let actualList = { name: 'Main', list: [] };
                     const sideboardList = { name: 'Sideboard', list: [] };
@@ -50,9 +52,9 @@
                             };
                         } else if (row.startsWith('SB:')) { // MC Sideboard
                             const cardRow = row.replace('SB:', '').trim();
-                            sideboardList.list.push(this.formatCardRow(cardRow));
+                            sideboardList.list.push(await this.formatCardRow(cardRow));
                         } else { // classic card row
-                            actualList.list.push(this.formatCardRow(row));
+                            actualList.list.push(await this.formatCardRow(row));
                         }
                     }
                     if (actualList.list.length) { lists.push(actualList) }
@@ -62,18 +64,29 @@
                 }
                 this.closeImport(listOrDeck);
             },
-            formatCardRow(row) {
-                const [setPart = ''] = row.match(regexpSet);
+            async formatCardRow(row) {
+                const [setPart = ''] = row.match(regexpSet) || [];
                 const set = setPart.replace(regexpCleanSet, '');
                 let cardName = row.replace(setPart, '');
-                const [deckQte = '1'] = row.match(regexpQte);
+                const [deckQte = '1'] = row.match(regexpQte) || [];
                 cardName = cardName.replace(deckQte, '').trim();
-                // todo should get complete card here
-                return {
-                    cardName,
-                    deckQte: +deckQte,
-                    set,
-                };
+                const realCard = (await this.searchCard(cardName, set));
+                const printConfig = realCard.type_line.includes('Basic Land')
+                    ? CONST.printConfig.DONT_PRINT.key
+                    : CONST.printConfig.BORDER_3.key;
+                realCard.deckQte = +deckQte;
+                realCard.printConfig = printConfig;
+                return realCard;
+            },
+            searchCard(cardName, set) {
+                const args = { name: cardName, exact: true };
+                if (set) { args.set = set }
+                return new Promise((resolve) => {
+                    this.$store.dispatch('mtg/search', args).then((results) => {
+                        resolve(results.length?results[0]:{})
+                        // todo reject if no result ?
+                    });
+                })
             }
         }
     };

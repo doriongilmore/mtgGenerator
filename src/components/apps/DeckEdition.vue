@@ -106,6 +106,7 @@
                         :group="{ name: 'deck', pull: 'clone', put: false }"
                         :clone="addCardToDeck"
                         :move="onMove"
+                        id="resultsBody"
                 >
 
                     <div
@@ -244,20 +245,17 @@
             handleSearch(event) {
                 event && event.preventDefault();
                 this.isSearching = true;
-                const cardName = this.searchText;
-                const args = {
-                    name: cardName
-                };
-                console.info(`launch search "${cardName}"`);
+                const args = { name: this.searchText };
+                console.info('launch search', args);
                 this.$store.dispatch('mtg/search', args)
                 .then((results) => {
                     this.isSearching = false;
-                    console.info(`results for search "${cardName}"`, results);
+                    console.info('results for search', { args, results });
                     this.results = results;
                 })
                 .catch((error) => {
                     this.isSearching = false;
-                    console.error(`error during search "${search}"`, error);
+                    console.error('error during search', { args, error });
                     this.results = [];
                 });
             },
@@ -290,25 +288,11 @@
                 const printConfig = card.type_line.includes('Basic Land')
                     ? this.printConfig.DONT_PRINT.key
                     : this.printConfig.BORDER_3.key;
-                const {
-                    id,
-                    name,
-                    mana_cost,
-                    color_identity,
-                    image_uris,
-                    type_line
-                } = card;
                 // Basic Land
-                return {
-                    id,
-                    name,
-                    mana_cost,
-                    color_identity,
-                    image_uris,
-                    type_line,
+                return Object.assign({
                     deckQte: 4,
                     printConfig
-                };
+                }, card);
             },
             createNewList() {
                 this.deck.lists.push({
@@ -348,6 +332,9 @@
 
     #deckLists {
         grid-area: deckLists;
+        height: 457px;
+        overflow-x: hidden;
+        overflow-y: auto;
 
         input {
             background-color: transparent;
@@ -438,6 +425,11 @@
             .submit {
                 grid-area: submit;
             }
+        }
+        #resultsBody {
+            height: 400px;
+            overflow-x: hidden;
+            overflow-y: auto;
         }
         #results .header, #results .resultRow {
             grid-area: search;
