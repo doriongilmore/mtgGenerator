@@ -218,23 +218,24 @@
                 this.$store.dispatch('modals/openExport', listOrDeck);
             },
             async onPrint() {
-                console.group('print deck');
-                const doc = new jsPDF();
-                const cards = DeckFactory.getCards(this.deck);
-                for (let i = 0, l = cards.length; i < l; i++) {
-                    console.info(cards[i]);
-                    if (i % 9 === 0) {
-                        console.info('new page');
-                        doc.addPage({
-                            margins: { top: 20, bottom: 20, left: 20, right: 20 }
-                        })
+                // todo add a spinner
+                const doc = new jsPDF({ unit: 'mm', format: 'a4' }); // 210 x 297
+                const cards = DeckFactory.getCards([this.deck]);
+                for (let i = 0, printedCardCount = 0, l = cards.length; i < l; i++) {
+                    const card = cards[i];
+                    if (card.printConfig !== CONST.printConfig.DONT_PRINT.key) {
+                        const { w, h } = CONST.printConfig[card.printConfig];
+                        for (let j = 0; j < card.deckQte; j++) {
+                            const posKey = printedCardCount % 9;
+                            const { x, y } = CONST.printConfig.PDF_POS[posKey];
+                            if (printedCardCount && posKey === 0) { doc.addPage() }
+                            const image = await this.getImage(card);
+                            doc.addImage(image, "JPEG", x, y, w, h);
+                            printedCardCount++;
+                        }
                     }
-                    doc.text('Toto', 100, 100);
-                    doc.addImage(this.getImage(cards[i]));
-                    // doc.addImage(await this.getBase64Image(uri), 'PNG', x, y, width, height);
                 }
                 doc.save(`${this.deck.name}.pdf`);
-                console.groupEnd();
             },
             deleteDeck(deck) {
                 this.$store.commit('decks/deleteDeck', deck);
@@ -313,11 +314,13 @@
                 return `${count} ${lib}`;
             },
             getImage(card) {
-                const uri = this.getBestImage(card.image_uris)
-                const img = new Image();
-                img.src = uri;
-                img.className = CONST.printConfig[card.printConfig].className;
-                return img;
+                const uri = this.getBestImage(card.image_uris);
+                return new Promise((resolve) => {
+                    const img = new Image();
+                    img.onload = () => resolve(img);
+                    img.src = uri;
+                })
+
             }
         }
     }

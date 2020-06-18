@@ -1,8 +1,8 @@
-const DONT_PRINT = { key: 'DONT_PRINT', text: 'Ignorer', className: 'dontprint' };
-const BORDER_0 = { key: 'BORDER_0', text: 'Bord 0 mm',   className: 'border0' };
-const BORDER_1 = { key: 'BORDER_1', text: 'Bord 1 mm', className: 'border1' };
-const BORDER_2 = { key: 'BORDER_2', text: 'Bord 2 mm', className: 'border2' };
-const BORDER_3 = { key: 'BORDER_3', text: 'Bord 3 mm', className: 'border3' };
+const DONT_PRINT = { key: 'DONT_PRINT', text: 'Ignorer' };
+const BORDER_0 = { key: 'BORDER_0', text: 'Bord 0 mm', w: 57, h: 82 };
+const BORDER_1 = { key: 'BORDER_1', text: 'Bord 1 mm', w: 59, h: 84 };
+const BORDER_2 = { key: 'BORDER_2', text: 'Bord 2 mm', w: 61, h: 86 };
+const BORDER_3 = { key: 'BORDER_3', text: 'Bord 3 mm', w: 63, h: 88 };
 
 const PARENTHESIS = { key: 'PARENTHESIS', value: 'PARENTHESIS', label: '(Set)', getCardEdition: c => `(${c.set})` };
 // const BRACKET = { key: 'BRACKET', value: 'BRACKET', label: '{Set}', getCardEdition: c => `{${c.set}}` };
@@ -61,6 +61,17 @@ const CONST = {
     BORDER_1,
     BORDER_2,
     BORDER_3,
+    PDF_POS: { // card size max 63*88 => shift x+67  y+92
+      0: { x: 7, y: 10 },
+      1: { x: 74, y: 10 },
+      2: { x: 141, y: 10 },
+      3: { x: 7, y: 102 },
+      4: { x: 74, y: 102 },
+      5: { x: 141, y: 102 },
+      6: { x: 7, y: 194 },
+      7: { x: 74, y: 194 },
+      8: { x: 141, y: 194 },
+    },
     list: [
       DONT_PRINT,
       BORDER_0,
