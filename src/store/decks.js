@@ -1,5 +1,8 @@
+import mockList from 'src/utils/mockList';
 import CONST from 'src/utils/CONST';
 import DeckFactory from "src/utils/DeckFactory";
+
+
 
 export const decks = {
     namespaced: true,
@@ -34,7 +37,7 @@ export const decks = {
     actions: {
         getDecks({ commit, state }) {
             if (!Object.keys(state.decksByIds).length) {
-                const deckList = JSON.parse(window.localStorage.getItem(CONST.storageKeys.deckList)) || [];
+                const deckList = JSON.parse(window.localStorage.getItem(CONST.storageKeys.deckList) || mockList);
                 const cards = DeckFactory.getCards(deckList);
                 commit('mtg/setCards', cards, { root: true });
                 commit('setDecks', Object.values(deckList));

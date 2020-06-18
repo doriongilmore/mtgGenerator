@@ -71,7 +71,7 @@
             <div id="form">
                 <form v-on:submit="handleSearch">
                     <div class="searchHeader">
-                        <label for="searchText">Nom de carte</label>
+                        <label for="searchText">Nom</label>
                         <input id="searchText" type="text" v-model="searchText"/>
                         <Button :icon="'search'" :handle-click="handleSearch" class="submit"></Button>
 <!--                        <div @click="handleSearch" class="fileSearchButton">-->
@@ -95,10 +95,10 @@
             </div>
             <div id="results">
                 <div class="header">
-                    <div class="name">Name</div>
+                    <div class="name">Nom</div>
                     <div class="manaCost">Coût</div>
-                    <div class="type">type</div>
-                    <div class="setName">Edition</div>
+                    <div class="type">Type</div>
+                    <div class="setName">Set</div>
                 </div>
                 <draggable
                         class="dragArea list-group"
