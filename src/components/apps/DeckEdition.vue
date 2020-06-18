@@ -7,7 +7,7 @@
                 <div class="buttons">
                     <Button :icon="'export'" :handle-click="onExport.bind(this, deck)"></Button>
                     <Button :icon="'import'" :handle-click="onImport"></Button>
-                    <Button :icon="'print'" :handle-click="notImplemented"></Button>
+                    <Button :icon="'print'" :handle-click="onPrint"></Button>
                     <Button :icon="'save'" :handle-click="saveDeck"></Button>
                     <Button :icon="'delete'" :handle-click="deleteDeck.bind(this, deck)"></Button>
                 </div>
@@ -141,6 +141,7 @@
     import DeckFactory from 'src/utils/DeckFactory';
     import Button from '../uiElements/Button.vue';
     import Mana from '../uiElements/Mana.vue';
+    import jsPDF from 'jspdf';
 
     export default {
         name: "DeckEdition",
@@ -202,10 +203,10 @@
                 this.$store.dispatch('modals/openImport').then((listOrDeck) => {
                     // todo param replace/append to do = or push
                     if (listOrDeck.lists) {
-                        this._deck.lists = listOrDeck.lists;
-                        this._deck.name = listOrDeck.name;
+                        this.deck.lists = listOrDeck.lists;
+                        this.deck.name = listOrDeck.name;
                     } else {
-                        this._deck.lists = listOrDeck;
+                        this.deck.lists = listOrDeck;
                     }
                 });
             },
@@ -216,8 +217,24 @@
                 }
                 this.$store.dispatch('modals/openExport', listOrDeck);
             },
-            notImplemented() {
-                console.warn('not implemented');
+            async onPrint() {
+                console.group('print deck');
+                const doc = new jsPDF();
+                const cards = DeckFactory.getCards(this.deck);
+                for (let i = 0, l = cards.length; i < l; i++) {
+                    console.info(cards[i]);
+                    if (i % 9 === 0) {
+                        console.info('new page');
+                        doc.addPage({
+                            margins: { top: 20, bottom: 20, left: 20, right: 20 }
+                        })
+                    }
+                    doc.text('Toto', 100, 100);
+                    doc.addImage(this.getImage(cards[i]));
+                    // doc.addImage(await this.getBase64Image(uri), 'PNG', x, y, width, height);
+                }
+                doc.save(`${this.deck.name}.pdf`);
+                console.groupEnd();
             },
             deleteDeck(deck) {
                 this.$store.commit('decks/deleteDeck', deck);
@@ -294,6 +311,13 @@
                 if (!getString) { return count }
                 const lib = `carte${count>1?'s':''}`;
                 return `${count} ${lib}`;
+            },
+            getImage(card) {
+                const uri = this.getBestImage(card.image_uris)
+                const img = new Image();
+                img.src = uri;
+                img.className = CONST.printConfig[card.printConfig].className;
+                return img;
             }
         }
     }
@@ -427,4 +451,9 @@
     }
 
 }
+.dontprint { display: none }
+.border0 { height: 8.2cm }
+.border1 { height: 8.4cm }
+.border2 { height: 8.6cm }
+.border3 { height: 8.8cm }
 </style>

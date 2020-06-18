@@ -1,8 +1,8 @@
-const DONT_PRINT = { key: -1, text: 'Ignorer' };
-const BORDER_0 = { key: 0, text: 'Bord 0 mm' };
-const BORDER_1 = { key: 1, text: 'Bord 1 mm' };
-const BORDER_2 = { key: 2, text: 'Bord 2 mm' };
-const BORDER_3 = { key: 3, text: 'Bord 3 mm' };
+const DONT_PRINT = { key: 'DONT_PRINT', text: 'Ignorer', className: 'dontprint' };
+const BORDER_0 = { key: 'BORDER_0', text: 'Bord 0 mm',   className: 'border0' };
+const BORDER_1 = { key: 'BORDER_1', text: 'Bord 1 mm', className: 'border1' };
+const BORDER_2 = { key: 'BORDER_2', text: 'Bord 2 mm', className: 'border2' };
+const BORDER_3 = { key: 'BORDER_3', text: 'Bord 3 mm', className: 'border3' };
 
 const PARENTHESIS = { key: 'PARENTHESIS', value: 'PARENTHESIS', label: '(Set)', getCardEdition: c => `(${c.set})` };
 // const BRACKET = { key: 'BRACKET', value: 'BRACKET', label: '{Set}', getCardEdition: c => `{${c.set}}` };

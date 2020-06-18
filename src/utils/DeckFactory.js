@@ -67,6 +67,7 @@ class DeckFactory {
         };
     }
     static areSameDeck(deckA, deckB) {
+        if (!deckA || !deckB) { return false }
         const sameName = deckA.name === deckB.name;
         const sameCardCount = deckA.cardCount === deckB.cardCount;
         const sameColors = deckA.colors === deckB.colors;

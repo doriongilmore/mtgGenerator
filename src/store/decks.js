@@ -45,7 +45,7 @@ export const decks = {
         getTmpDeck({ dispatch, commit, state }) {
             const storageTmpDeck = JSON.parse(window.localStorage.getItem(CONST.storageKeys.tmpDeck));
             const newTmpDeck = DeckFactory.getDeckToCreate();
-            const tmpDeck = DeckFactory.areSameDeck(storageTmpDeck, newTmpDeck)
+            const tmpDeck = !storageTmpDeck || DeckFactory.areSameDeck(storageTmpDeck, newTmpDeck)
                 ? newTmpDeck
                 :storageTmpDeck;
             const cards = DeckFactory.getCards([tmpDeck]);
