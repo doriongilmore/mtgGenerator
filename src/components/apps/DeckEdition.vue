@@ -284,18 +284,31 @@
              * add deck properties to a card from search result
              * doesn't change cards from other lists
              * @param {Card} card
-             * @return {Card}
+             * @return {Object}
              */
             addCardToDeck(card) {
                 const printConfig = card.type_line.includes('Basic Land')
                     ? this.printConfig.DONT_PRINT.key
                     : this.printConfig.BORDER_3.key;
-
+                const {
+                    id,
+                    name,
+                    mana_cost,
+                    color_identity,
+                    image_uris,
+                    type_line
+                } = card;
                 // Basic Land
-                return Object.assign({
+                return {
+                    id,
+                    name,
+                    mana_cost,
+                    color_identity,
+                    image_uris,
+                    type_line,
                     deckQte: 4,
                     printConfig
-                }, card);
+                };
             },
             createNewList() {
                 this.deck.lists.push({
