@@ -92,6 +92,17 @@ const CONST = {
     defaultOptions: {
       yBeginAtZero: { scales: { yAxes: [{ ticks: { beginAtZero: true } }] } },
     },
+    functionalities: [
+      { search: 'draw', key: 'draw' },
+      { search: 'token', key: 'token' },
+      { search: 'search', key: 'fetch' },
+      { search: 'add {', key: 'mana' },
+      { search: 'mana', key: 'mana' },
+      { search: 'at the beginning of', key: 'control' },
+      { search: 'extra turn', key: 'control' },
+      { search: 'return target', key: 'control' },
+      { search: 'destroy target', key: 'control' },
+    ],
     byColor: {
       I: {
         backgroundColor: 'rgba(100, 100, 100, 0.5)',

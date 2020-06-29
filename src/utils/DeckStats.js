@@ -12,7 +12,7 @@ function getColorOptions(label, colorOptions) {
     }
 }
 
-function getBarData(data, label, colorOptions = {}) {
+function getChartData(data, label, colorOptions = {}) {
     const byColorDataset = {
         label: label,
         data: [],
@@ -55,9 +55,11 @@ function getColorKey(color_identity) {
  * @param {Deck} deck
 */
 function getStats(deck) {
+    const functionalityList = CONST.stats.functionalities;
     const byColor = {};
     const byCmc = {};
     const byType = {};
+    const byFunctionality = {};
     console.group('getStats');
     for (let i = 0, l = deck.lists.length; i < l; i++) {
         const cards = deck.lists[i].list;
@@ -72,19 +74,29 @@ function getStats(deck) {
             byColor[colorKey] += +card.deckQte;
             byType[typeKey] += +card.deckQte;
             byCmc[card.cmc] += +card.deckQte;
+            const oracle = card.oracle_text.toLowerCase();
+            for (let i = 0, l = functionalityList.length; i < l; i++) {
+                if (oracle.includes(functionalityList[i].search)) {
+                    const functionalityKey = functionalityList[i].key;
+                    if (!byFunctionality[functionalityKey]) { byFunctionality[functionalityKey] = 0 }
+                    byFunctionality[functionalityKey] += +card.deckQte;
+                }
+            }
         }
     }
     console.groupEnd();
     return {
-        byColor: getBarData(byColor, 'Color Repartition', CONST.stats.byColor),
-        byType: getBarData(byType, 'Type Repartition'),
-        byCmc: getBarData(byCmc, 'Converted Mana Cost'),
+        byColor: getChartData(byColor, 'Color Repartition', CONST.stats.byColor),
+        byType: getChartData(byType, 'Type Repartition'),
+        byFunctionality: getChartData(byFunctionality, 'Functionality Repartition'),
+        byCmc: getChartData(byCmc, 'Converted Mana Cost'),
     };
 }
 function getEmptyStats() {
     return {
         byColor: {},
         byType: {},
+        byFunctionality: {},
         byCmc: {},
     }
 }

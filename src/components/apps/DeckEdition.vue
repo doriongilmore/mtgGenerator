@@ -130,6 +130,7 @@
             <PieChart id="byType" :chart-data="stats.byType"></PieChart>
             <PieChart id="byColor" :chart-data="stats.byColor"></PieChart>
             <BarChart id="byCmc" :chart-data="stats.byCmc" :options="yBeginAtZero"></BarChart>
+            <PieChart id="byFunctionality" :chart-data="stats.byFunctionality"></PieChart>
         </div>
 
 
@@ -468,10 +469,13 @@
 }
 
 #deckStats {
+    position: absolute;
+    bottom: 0px;
+    height: 400px;
     width: 100%;
     display: grid;
-    grid-template-columns: 33% 33% 33%;
-    grid-template-areas: "cmc color type";
+    grid-template-columns: 25% 25% 25% 25%;
+    grid-template-areas: "cmc color type function";
 
     #byColor {
         grid-area: color;
@@ -481,6 +485,9 @@
     }
     #byType{
         grid-area: type;
+    }
+    #byFunctionality{
+        grid-area: function;
     }
 }
 </style>
