@@ -70,5 +70,18 @@ export const modals = {
         });
       }).then(console.groupEnd).catch(console.groupEnd);
     },
+    openCard({ commit }, modalData) {
+      console.group('openCard');
+      return new Promise((resolve, reject) => {
+        commit("open", {
+          modalName: "card",
+          canClose: true,
+          size: 'large',
+          modalData,
+          resolve,
+          reject
+        });
+      }).then(console.groupEnd).catch(console.groupEnd);
+    },
   }
 };

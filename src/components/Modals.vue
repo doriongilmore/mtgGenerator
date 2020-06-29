@@ -23,6 +23,10 @@
           v-if="currentModal === 'export'"
           @closeModal="closeAnim"
         ></Export>
+        <Card
+                v-if="currentModal === 'card'"
+                @closeModal="closeAnim"
+        ></Card>
       </div>
       <div ref="loading" class="loading" v-show="isLoading && !isAnimating">
         <span>LOADING</span>
@@ -37,6 +41,7 @@ import { mapState } from "vuex";
 import CONST from "src/utils/CONST";
 import Import from "src/components/modals/Import.vue";
 import Export from "src/components/modals/Export.vue";
+import Card from "src/components/modals/Card.vue";
 
 const actualModalParams = {};
 
@@ -45,6 +50,7 @@ export default {
   components: {
     Import,
     Export,
+    Card,
   },
   data() {
     return {

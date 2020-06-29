@@ -30,9 +30,7 @@
                         :move="onMove"
                 >
                     <div class="cardRow" v-for="card in deckList.list" :key="card.id">
-                        <div class="name"
-                             v-on:click="cardToDisplay=cardToDisplay===card.id?null:card.id"
-                        >{{ card.name }}</div>
+                        <div class="name" v-on:click="openCard(card)">{{ card.name }}</div>
                         <Mana class="manaCost" :mana-cost="card.mana_cost"></Mana>
                         <div class="deckQte">
                             <input type="number" min="0" max="99" v-model="card.deckQte" @change="onChange"/>
@@ -43,9 +41,6 @@
                                     {{ conf.text }}
                                 </option>
                             </select>
-                        </div>
-                        <div class="image" v-if="cardToDisplay===card.id">
-                            <img :src="card.image_uri" alt="Rien à afficher :/"/>
                         </div>
                     </div>
                 </draggable>
@@ -113,7 +108,7 @@
                             v-for="result in results"
                             :key="result.id"
                             class="resultRow"
-                            v-on:click="cardToDisplay=cardToDisplay===result.id?null:result.id"
+                            v-on:click="openCard(result)"
                     >
                         <div class="name">{{ result.name }}</div>
                         <Mana class="manaCost" :mana-cost="result.mana_cost"></Mana>
@@ -183,6 +178,9 @@
             }
         },
         methods: {
+            openCard(card) {
+                this.$store.dispatch('modals/openCard', card);
+            },
             saveDeck() {
                 const newDeck = DeckFactory.getDeckToCreate();
                 if (DeckFactory.areSameDeck(this.deck, newDeck)) {

@@ -46,6 +46,13 @@ export const mtg = {
     },
   },
   actions: {
+    async fetch({ dispatch, commit, state }, uri) {
+      return new Promise((resolve) => {
+        const promise = fetch.bind(window, uri);
+        const callBack = response => response.json().then(json => resolve(json.data));
+        state.pool.addToPool(promise, callBack);
+      })
+    },
     async search({ dispatch, commit, state }, args) {
       // todo check what can be added to query
       //  see https://scryfall.com/docs/syntax
@@ -80,7 +87,6 @@ export const mtg = {
               type_line: c.type_line
             }
           })
-          console.info('toto', cards);
           commit('setCards', cards);
           resolve(cards);
         };

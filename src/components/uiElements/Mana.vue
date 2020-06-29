@@ -1,7 +1,7 @@
 <template>
-  <div class="mana">
+  <div class="manaCost" :title="manaList.join('')">
 <!--    {{ manaCost }}-->
-    <div v-for="mana in manaList">
+    <div v-for="mana in manaList" class="mana">
       <Black v-if="mana === 'B'" />
       <Blue v-else-if="mana === 'U'" />
       <Energy v-else-if="mana === 'E'" />
@@ -18,9 +18,9 @@
 <script>
 import Black from "src/assets/mana/Black.vue";      // B
 import Blue from "src/assets/mana/Blue.vue";        // U
-import Energy from "src/assets/mana/Energy.vue";    //
+import Energy from "src/assets/mana/Energy.vue";    // E
 import Green from "src/assets/mana/Green.vue";      // G
-import Incolor from "src/assets/mana/Incolor.vue";  //
+import Incolor from "src/assets/mana/Incolor.vue";  // I
 import Red from "src/assets/mana/Red.vue";          // R
 import Snow from "src/assets/mana/Snow.vue";        // S
 import White from "src/assets/mana/White.vue";      // W
@@ -32,7 +32,7 @@ export default {
   props: ["manaCost"],
   computed: {
     manaList() {
-      return this.manaCost.match(regexp);
+      return this.manaCost.match(regexp) || [];
     }
   },
   components: {
@@ -49,13 +49,13 @@ export default {
 </script>
 
 <style lang="less">
-  .mana {
-    div {
+  .manaCost {
+    .mana {
       float: left;
-    }
-    img {
-      max-width: 20px;
-      max-height: 20px;
+      img {
+        max-width: 20px;
+        max-height: 20px;
+      }
     }
   }
 </style>
