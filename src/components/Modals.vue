@@ -287,6 +287,7 @@ export default {
     .modal {
       opacity: 0;
       height: 100%;
+      overflow: hidden;
 
       .close {
         cursor: pointer;

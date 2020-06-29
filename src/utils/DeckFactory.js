@@ -1,3 +1,6 @@
+import jsPDF from "jspdf";
+import CONST from "src/utils/CONST";
+
 function simplifyCard({ id, name, set, deckQte, printConfig }) {
     return { id, name, set, deckQte, printConfig };
 }
@@ -9,6 +12,15 @@ function stringifyList(list) {
         name: list.name,
         list: simplifyList(list)
     })
+}
+
+function createImage(image_uri) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.src = image_uri;
+    })
+
 }
 
 class DeckFactory {
@@ -112,6 +124,29 @@ class DeckFactory {
      */
     static simplifyList(list) {
         return simplifyList(list);
+    }
+    /**
+     * @param {Deck} deck
+     * @returns {Promise<void>}
+     */
+    static async print(deck) {
+        const doc = new jsPDF({ unit: 'mm', format: 'a4' }); // 210 x 297
+        const cards = DeckFactory.getCards([deck]);
+        for (let i = 0, printedCardCount = 0, l = cards.length; i < l; i++) {
+            const card = cards[i];
+            if (card.printConfig !== CONST.printConfig.DONT_PRINT.key) {
+                const { w, h } = CONST.printConfig[card.printConfig];
+                for (let j = 0; j < card.deckQte; j++) {
+                    const posKey = printedCardCount % 9;
+                    const { x, y } = CONST.printConfig.PDF_POS[posKey];
+                    if (printedCardCount && posKey === 0) { doc.addPage() }
+                    const image = await createImage(card.image_uri);
+                    doc.addImage(image, "JPEG", x, y, w, h);
+                    printedCardCount++;
+                }
+            }
+        }
+        doc.save(`${deck.name}.pdf`);
     }
 }
 

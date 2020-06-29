@@ -73,6 +73,7 @@
 
 <style lang="less" scoped>
     .cardModal {
+        height: 100%;
         display: grid;
         grid-template-columns: 40% 60%;
         grid-template-areas: "image info";

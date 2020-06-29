@@ -11,7 +11,7 @@
             <div class="dateCreation">{{moment(deck.dateCreation).format('YY-MM-DD hh:mm')}}</div>
             <div class="dateEdition">{{moment(deck.dateEdition).format('YY-MM-DD hh:mm')}}</div>
             <div class="buttons">
-                <Button :icon="'print'" :handle-click="notImplemented"></Button>
+                <Button :icon="'print'" :handle-click="onPrint.bind(this, deck)"></Button>
                 <Button :icon="'display'" :handle-click="editDeck.bind(this, deck)"></Button>
                 <Button :icon="'delete'" :handle-click="deleteDeck.bind(this, deck)"></Button>
             </div>
@@ -23,6 +23,7 @@
     import Button from '../uiElements/Button.vue';
     import Mana from '../uiElements/Mana.vue';
     import moment from 'moment';
+    import DeckFactory from "src/utils/DeckFactory";
 
     export default {
         name: "DecksList",
@@ -43,8 +44,10 @@
             }
         },
         methods: {
-            notImplemented() {
-                console.warn('not implemented');
+            async onPrint(deck) {
+                // todo add a spinner
+                await DeckFactory.print(deck);
+                // todo remove the spinner
             },
             editDeck(deck) {
                 this.$router.push({ name: 'edition', params: { deckToEdit: deck } })

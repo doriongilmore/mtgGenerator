@@ -56,15 +56,15 @@ export const mtg = {
     async search({ dispatch, commit, state }, args) {
       // todo check what can be added to query
       //  see https://scryfall.com/docs/syntax
-      let query = 'cards/search?lang=any&unique=prints';
+      let query = 'cards/search?unique=prints&q=lang:any';
       const addToQuery = (key, value) => {
-        query += `&${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+        query += `+${encodeURIComponent(key)}:${encodeURIComponent(value)}`
       }
       if (args.name) {
         const value = args.exact ? `!"${args.name}"` : args.name;
-        addToQuery('q', value);
+        addToQuery('name', value);
       }
-      if (args.set) { addToQuery('set', args.name) }
+      if (args.set) { addToQuery('set', args.set) }
       return new Promise((resolve, reject) => {
         if (!args.name) { reject('not implemented') }
         const promise = scryfall.Cards.query.bind(scryfall.Cards, query);

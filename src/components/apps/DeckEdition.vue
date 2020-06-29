@@ -226,24 +226,8 @@
              */
             async onPrint() {
                 // todo add a spinner
-                const doc = new jsPDF({ unit: 'mm', format: 'a4' }); // 210 x 297
-                const cards = DeckFactory.getCards([this.deck]);
-                for (let i = 0, printedCardCount = 0, l = cards.length; i < l; i++) {
-                    const card = cards[i];
-                    if (card.printConfig !== CONST.printConfig.DONT_PRINT.key) {
-                        const { w, h } = CONST.printConfig[card.printConfig];
-                        for (let j = 0; j < card.deckQte; j++) {
-                            const posKey = printedCardCount % 9;
-                            const { x, y } = CONST.printConfig.PDF_POS[posKey];
-                            if (printedCardCount && posKey === 0) { doc.addPage() }
-                            const image = await this.getImage(card);
-                            doc.addImage(image, "JPEG", x, y, w, h);
-                            printedCardCount++;
-                        }
-                    }
-                }
+                await DeckFactory.print(this.deck);
                 // todo remove the spinner
-                doc.save(`${this.deck.name}.pdf`);
             },
             /**
              * Fires when user click on delete button
@@ -328,14 +312,6 @@
                 const lib = `carte${count>1?'s':''}`;
                 return `${count} ${lib}`;
             },
-            getImage(card) {
-                return new Promise((resolve) => {
-                    const img = new Image();
-                    img.onload = () => resolve(img);
-                    img.src = card.image_uri;
-                })
-
-            }
         }
     }
 </script>
