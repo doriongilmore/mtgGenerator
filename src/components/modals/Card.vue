@@ -112,7 +112,7 @@
             #oracle {
                 margin-right:15px;
                 border-style:outset;
-                border-color:rgba(255,255,255,0.5);
+                border-color:rgba(255, 255, 255, 0.5);
                 border-width:5px;
             }
             #legalities {

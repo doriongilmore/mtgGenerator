@@ -1,4 +1,5 @@
 <template>
+    <div >
     <div id="deckEdition">
 <!--    TOP LEFT    -->
         <div id="deckLists">
@@ -121,11 +122,16 @@
                 </draggable>
             </div>
         </div>
-
+    </div>
 
 <!--    BOTTOM    -->
 
-        <div id="deckStats"></div>
+        <div id="deckStats">
+            <PieChart id="byType" :chart-data="stats.byType"></PieChart>
+            <PieChart id="byColor" :chart-data="stats.byColor"></PieChart>
+            <BarChart id="byCmc" :chart-data="stats.byCmc" :options="yBeginAtZero"></BarChart>
+        </div>
+
 
 
     </div>
@@ -135,14 +141,16 @@
     import draggable from 'vuedraggable'
     import CONST from 'src/utils/CONST';
     import DeckFactory from 'src/utils/DeckFactory';
+    import { getStats, getEmptyStats } from 'src/utils/DeckStats';
     import Button from '../uiElements/Button.vue';
     import Mana from '../uiElements/Mana.vue';
-    import jsPDF from 'jspdf';
+    import BarChart from '../chartjs/BarChart.vue';
+    import PieChart from '../chartjs/PieChart.vue';
 
     export default {
         name: "DeckEdition",
         props: ['deckToEdit'],
-        components: { draggable, Button, Mana },
+        components: { draggable, Button, Mana, BarChart, PieChart },
         data() {
             return {
                 searchText: 'Black Lotus',
@@ -154,6 +162,8 @@
                 _deck: null,
                 updateDone: false,
                 printConfig: CONST.printConfig,
+                stats: getEmptyStats(),
+                yBeginAtZero: CONST.stats.defaultOptions.yBeginAtZero,
             };
         },
         computed: {
@@ -173,6 +183,7 @@
             try {
                 this.tmpDeck = await this.$store.dispatch('decks/getTmpDeck');
                 this._deck = this.deckToEdit || this.tmpDeck;
+                this.stats = getStats(this.deck);
             } catch (e) {
                 console.error('error when loading from storage', e);
             }
@@ -197,7 +208,10 @@
                 this.tmpDeck = newDeck;
                 this.updateDone = false;
             },
-            onChange() { this.updateDone = true },
+            onChange() {
+                this.updateDone = true;
+                this.stats = getStats(this.deck);
+            },
             onImport() {
                 this.$store.dispatch('modals/openImport').then((listOrDeck) => {
                     // todo param replace/append to do = or push
@@ -207,6 +221,7 @@
                     } else {
                         this.deck.lists = listOrDeck;
                     }
+                    this.onChange();
                 });
             },
             /**
@@ -450,11 +465,22 @@
             }
         }
     }
-
 }
-.dontprint { display: none }
-.border0 { height: 8.2cm }
-.border1 { height: 8.4cm }
-.border2 { height: 8.6cm }
-.border3 { height: 8.8cm }
+
+#deckStats {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 33% 33% 33%;
+    grid-template-areas: "cmc color type";
+
+    #byColor {
+        grid-area: color;
+    }
+    #byCmc{
+        grid-area: cmc;
+    }
+    #byType{
+        grid-area: type;
+    }
+}
 </style>
