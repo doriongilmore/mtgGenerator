@@ -5,6 +5,7 @@ import DeckFactory from "src/utils/DeckFactory";
 /**
  * @typedef DeckList
  * @property {string} name
+ * @property {Boolean} ignoreStat
  * @property {Array<Card>} list
  */
 /**

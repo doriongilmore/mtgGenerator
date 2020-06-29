@@ -1,130 +1,116 @@
 <template>
     <div >
-    <div id="deckEdition">
-<!--    TOP LEFT    -->
-        <div id="deckLists">
-            <div id="deckHeader">
-                <div class="deckName"><input type="text" v-model="deck.name" /></div>
-                <div class="buttons">
-                    <Button :icon="'export'" :handle-click="onExport.bind(this, deck)"></Button>
-                    <Button :icon="'import'" :handle-click="onImport"></Button>
-                    <Button :icon="'print'" :handle-click="onPrint"></Button>
-                    <Button :icon="'save'" :handle-click="saveDeck"></Button>
-                    <Button :icon="'delete'" :handle-click="deleteDeck.bind(this, deck)"></Button>
-                </div>
-            </div>
-            <div class="deckList" v-for="deckList in deck.lists">
-                <div class="listHeader">
-                    <div class="listName"><input type="text" v-model="deckList.name" @change="onChange" /></div>
-                    <div class="cardCount">
-                        {{ getCardCount(deckList.list, true) }}
-                    </div>
+        <div id="deckEdition">
+    <!--    TOP LEFT    -->
+            <div id="deckLists">
+                <div id="deckHeader">
+                    <div class="deckName"><input type="text" v-model="deck.name" /></div>
                     <div class="buttons">
-                        <Button :icon="'export'" :handle-click="onExport.bind(this, deckList)"></Button>
+                        <Button :icon="'export'" :handle-click="onExport.bind(this, deck)"></Button>
+                        <Button :icon="'import'" :handle-click="onImport"></Button>
+                        <Button :icon="'print'" :handle-click="onPrint"></Button>
+                        <Button :icon="'save'" :handle-click="saveDeck"></Button>
+                        <Button :icon="'delete'" :handle-click="deleteDeck.bind(this, deck)"></Button>
                     </div>
-
                 </div>
-                <draggable
-                        class="dragArea list-group"
-                        :list="deckList.list"
-                        group="deck"
-                        :move="onMove"
-                >
-                    <div class="cardRow" v-for="card in deckList.list" :key="card.id">
-                        <div class="name" v-on:click="openCard(card)">{{ card.name }}</div>
-                        <Mana class="manaCost" :mana-cost="card.mana_cost"></Mana>
-                        <div class="deckQte">
-                            <input type="number" min="0" max="99" v-model="card.deckQte" @change="onChange"/>
+                <div class="deckList" v-for="deckList in deck.lists">
+                    <div class="listHeader">
+                        <div class="listName">
+                            <input type="text" v-model="deckList.name" @change="onChange" />
                         </div>
-                        <div class="printConfig">
-                            <select v-model="card.printConfig" @change="onChange">
-                                <option v-for="conf in printConfig.list" :key="conf.key" :value="conf.key">
-                                    {{ conf.text }}
-                                </option>
-                            </select>
+                        <div class="listStatIgnore" title="Ignorer dans les stats">
+                            <input type="checkbox" v-model="deckList.ignoreStat" @change="onChange" />
                         </div>
+                        <div class="cardCount">{{ getCardCount(deckList.list, true) }}</div>
+                        <div class="buttons">
+                            <Button :icon="'export'" :handle-click="onExport.bind(this, deckList)"></Button>
+                        </div>
+
                     </div>
-                </draggable>
-            </div>
-            <div class="deckList">
-                <h4>Nouvelle liste</h4>
-                <draggable
-                        class="dragArea list-group"
-                        :list="tmpList"
-                        group="deck"
-                        @change="createNewList"
-                >
-                    <div class="cardRow" v-for="element in tmpList" :key="element.id">
-<!--                        {{ element.name }} {{ element.deckQte }}-->
-                    </div>
-                </draggable>
-            </div>
-        </div>
-
-<!--    TOP RIGHT    -->
-
-        <div id="search">
-            <div id="form">
-                <form v-on:submit="handleSearch">
-                    <div class="searchHeader">
-                        <label for="searchText">Nom</label>
-                        <input id="searchText" type="text" v-model="searchText"/>
-                        <Button :icon="'search'" :handle-click="handleSearch" class="submit"></Button>
-<!--                        <div @click="handleSearch" class="fileSearchButton">-->
-<!--                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 490 490" >-->
-<!--                                <path-->
-<!--                                        fill="none"-->
-<!--                                        stroke="#000"-->
-<!--                                        stroke-width="36"-->
-<!--                                        stroke-linecap="round"-->
-<!--                                        d="m280,278a153,153 0 1,0-2,2l170,170m-91-117 110,110-26,26-110-110"-->
-<!--                                />-->
-<!--                            </svg>-->
-<!--                        </div>-->
-                    </div>
-<!--                    <details>-->
-<!--                        <summary>Plus de filtres</summary>-->
-<!--                    </details>-->
-
-                    <input type="submit" style="display: none"/>
-                </form>
-            </div>
-            <div id="results">
-                <div class="header">
-                    <div class="name">Nom</div>
-                    <div class="manaCost">Coût</div>
-                    <div class="type">Type</div>
-                    <div class="setName">Set</div>
-                </div>
-                <draggable
-                        class="dragArea list-group"
-                        :list="results"
-                        :group="{ name: 'deck', pull: 'clone', put: false }"
-                        :clone="addCardToDeck"
-                        :move="onMove"
-                        id="resultsBody"
-                >
-
-                    <div
-                            v-for="result in results"
-                            :key="result.id"
-                            class="resultRow"
-                            v-on:click="openCard(result)"
+                    <draggable
+                            class="dragArea list-group"
+                            :list="deckList.list"
+                            group="deck"
+                            :move="onMove"
                     >
-                        <div class="name">{{ result.name }}</div>
-                        <Mana class="manaCost" :mana-cost="result.mana_cost"></Mana>
-                        <div class="type">{{ result.type_line }}</div>
-                        <div class="setName">{{ result.set_name }}</div>
-                        <div class="image" v-if="cardToDisplay===result.id">
-                            <img :src="result.image_uri" alt="Rien à afficher :/"/>
+                        <div class="cardRow" v-for="card in deckList.list" :key="card.id">
+                            <div class="name" v-on:click="openCard(card)">{{ card.name }}</div>
+                            <Mana class="manaCost" :mana-cost="card.mana_cost"></Mana>
+                            <div class="deckQte">
+                                <input type="number" min="0" max="99" v-model="card.deckQte" @change="onChange"/>
+                            </div>
+                            <div class="printConfig">
+                                <select v-model="card.printConfig" @change="onChange">
+                                    <option v-for="conf in printConfig.list" :key="conf.key" :value="conf.key">
+                                        {{ conf.text }}
+                                    </option>
+                                </select>
+                            </div>
                         </div>
+                    </draggable>
+                </div>
+                <div class="deckList">
+                    <h4>Nouvelle liste</h4>
+                    <draggable
+                            class="dragArea list-group"
+                            :list="tmpList"
+                            group="deck"
+                            @change="createNewList"
+                    >
+                        <div class="cardRow" v-for="element in tmpList" :key="element.id"></div>
+                    </draggable>
+                </div>
+            </div>
+
+    <!--    TOP RIGHT    -->
+
+            <div id="search">
+                <div id="form">
+                    <form v-on:submit="handleSearch">
+                        <div class="searchHeader">
+                            <label for="searchText">Nom</label>
+                            <input id="searchText" type="text" v-model="searchText"/>
+                            <Button :icon="'search'" :handle-click="handleSearch" class="submit"></Button>
+                        </div>
+                        <input type="submit" style="display: none"/>
+                    </form>
+                </div>
+                <div id="results">
+                    <div class="header">
+                        <div class="name">Nom</div>
+                        <div class="manaCost">Coût</div>
+                        <div class="type">Type</div>
+                        <div class="setName">Set</div>
                     </div>
-                </draggable>
+                    <draggable
+                            class="dragArea list-group"
+                            :list="results"
+                            :group="{ name: 'deck', pull: 'clone', put: false }"
+                            :clone="addCardToDeck"
+                            :move="onMove"
+                            id="resultsBody"
+                    >
+
+                        <div
+                                v-for="result in results"
+                                :key="result.id"
+                                class="resultRow"
+                                v-on:click="openCard(result)"
+                        >
+                            <div class="name">{{ result.name }}</div>
+                            <Mana class="manaCost" :mana-cost="result.mana_cost"></Mana>
+                            <div class="type">{{ result.type_line }}</div>
+                            <div class="setName">{{ result.set_name }}</div>
+                            <div class="image" v-if="cardToDisplay===result.id">
+                                <img :src="result.image_uri" alt="Rien à afficher :/"/>
+                            </div>
+                        </div>
+                    </draggable>
+                </div>
             </div>
         </div>
-    </div>
 
-<!--    BOTTOM    -->
+    <!--    BOTTOM    -->
 
         <div id="deckStats">
             <PieChart id="byType" :chart-data="stats.byType"></PieChart>
@@ -318,6 +304,7 @@
             createNewList() {
                 this.deck.lists.push({
                     name: 'Choisissez un nom',
+                    ignoreStat: false,
                     list: [...this.tmpList]
                 });
                 this.tmpList = [];
@@ -366,13 +353,16 @@
 
             .listHeader {
                 display: grid;
-                grid-template-columns: 60% 20% 10%;
-                grid-template-areas: "name cardCount buttons";
+                grid-template-columns: 60% 10% 20% 10%;
+                grid-template-areas: "name statIgnore cardCount buttons";
                 .listName {
                     grid-area: name;
                 }
                 .cardCount {
                     grid-area: cardCount;
+                }
+                .listStatIgnore {
+                    grid-area: statIgnore;
                 }
                 .buttons {
                     grid-area: buttons;

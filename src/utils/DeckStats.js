@@ -62,7 +62,9 @@ function getStats(deck) {
     const byFunctionality = {};
     console.group('getStats');
     for (let i = 0, l = deck.lists.length; i < l; i++) {
-        const cards = deck.lists[i].list;
+        const list = deck.lists[i];
+        if (list.ignoreStat) { continue }
+        const cards = list.list;
         for (let i = 0, l = cards.length; i < l; i++) {
             const card = cards[i];
             console.info(card);

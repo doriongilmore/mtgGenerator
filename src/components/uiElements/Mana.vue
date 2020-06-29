@@ -1,6 +1,5 @@
 <template>
   <div class="manaCost" :title="manaList.join('')">
-<!--    {{ manaCost }}-->
     <div v-for="mana in manaList" class="mana">
       <Black v-if="mana === 'B'" />
       <Blue v-else-if="mana === 'U'" />
