@@ -74,9 +74,13 @@ function getStats(deck) {
             byColor[colorKey] += +card.deckQte;
             byType[typeKey] += +card.deckQte;
             byCmc[card.cmc] += +card.deckQte;
-            const oracle = card.oracle_text.toLowerCase();
+            const oracle = (card.oracle_text || '').toLowerCase();
             for (let i = 0, l = functionalityList.length; i < l; i++) {
-                if (oracle.includes(functionalityList[i].search)) {
+                const search = functionalityList[i].search;
+                const match = typeof search === "string"
+                    ? oracle.includes(search)
+                    : oracle.match(search);
+                if (match) {
                     const functionalityKey = functionalityList[i].key;
                     if (!byFunctionality[functionalityKey]) { byFunctionality[functionalityKey] = 0 }
                     byFunctionality[functionalityKey] += +card.deckQte;

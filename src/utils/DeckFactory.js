@@ -1,8 +1,30 @@
 import jsPDF from "jspdf";
 import CONST from "src/utils/CONST";
 
-function simplifyCard({ id, name, set, deckQte, printConfig }) {
-    return { id, name, set, deckQte, printConfig };
+function simplifyCard(c) {
+    const oracle_text = c.card_faces
+        ? c.card_faces.map(face => face.oracle_text).join(' // ')
+        : c.oracle_text;
+    return {
+        // cards from search
+        id: c.id,
+        name: c.name,
+        cmc: c.cmc,
+        legalities: c.legalities,
+        oracle_id: c.oracle_id,
+        oracle_text,
+        rarity: c.rarity,
+        rulings_uri: c.rulings_uri,
+        mana_cost: c.mana_cost,
+        color_identity: c.color_identity,
+        image_uri: c.image_uris.large || c.image_uris.normal,
+        set: c.set,
+        set_name: c.set_name,
+        type_line: c.type_line,
+        // for deck cards
+        deckQte: c.deckQte,
+        printConfig: c.printConfig,
+    }
 }
 function simplifyList(list) {
     return list.list.map(simplifyCard);
@@ -124,6 +146,13 @@ class DeckFactory {
      */
     static simplifyList(list) {
         return simplifyList(list);
+    }
+    /**
+     * @param {Card} card
+     * @returns {Card}
+     */
+    static simplifyCard(card) {
+        return simplifyCard(card);
     }
     /**
      * @param {Deck} deck
