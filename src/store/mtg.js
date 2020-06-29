@@ -4,6 +4,27 @@ const Pool = require('src/utils/Pool');
 // https://scryfall.com/docs/api/ Rate Limits and Good Citizenship
 const MIN_DELAY = 100;
 
+/**
+ *
+ * @typedef Card
+ * @property {string} id
+ * @property {string} name
+ * @property {string} cmc
+ * @property {string} oracle_id
+ * @property {string} oracle_text
+ * @property {string} rarity
+ * @property {string} rulings_uri
+ * @property {string} mana_cost
+ * @property {string} image_uri
+ * @property {string} set
+ * @property {string} set_name
+ * @property {string} type_line
+ * @property {Array} color_identity
+ * @property {Array} legalities
+ *
+ * @property {Number} deckQte - doesnt exist during search
+ * @property {string} printConfig - doesnt exist during search
+ */
 export const mtg = {
   namespaced: true,
   state: {
@@ -45,14 +66,21 @@ export const mtg = {
             return {
               id: c.id,
               name: c.name,
+              cmc: c.cmc,
+              legalities: c.legalities,
+              oracle_id: c.oracle_id,
+              oracle_text: c.oracle_text,
+              rarity: c.rarity,
+              rulings_uri: c.rulings_uri,
               mana_cost: c.mana_cost,
               color_identity: c.color_identity,
-              image_uris: c.image_uris,
+              image_uri: c.image_uris.large || c.image_uris.normal,
               set: c.set,
               set_name: c.set_name,
               type_line: c.type_line
             }
           })
+          console.info('toto', cards);
           commit('setCards', cards);
           resolve(cards);
         };

@@ -2,7 +2,21 @@ import mockList from 'src/utils/mockList';
 import CONST from 'src/utils/CONST';
 import DeckFactory from "src/utils/DeckFactory";
 
-
+/**
+ * @typedef DeckList
+ * @property {string} name
+ * @property {Array<Card>} list
+ */
+/**
+ * @typedef Deck
+ * @property {Number} id
+ * @property {string} name
+ * @property {string} colors
+ * @property {string} cardCount
+ * @property {Date} dateCreation
+ * @property {Date} dateEdition
+ * @property {Array<DeckList>} lists
+ */
 
 export const decks = {
     namespaced: true,

@@ -45,7 +45,7 @@
                             </select>
                         </div>
                         <div class="image" v-if="cardToDisplay===card.id">
-                            <img :src="getBestImage(card.image_uris)" alt="Rien à afficher :/"/>
+                            <img :src="card.image_uri" alt="Rien à afficher :/"/>
                         </div>
                     </div>
                 </draggable>
@@ -120,7 +120,7 @@
                         <div class="type">{{ result.type_line }}</div>
                         <div class="setName">{{ result.set_name }}</div>
                         <div class="image" v-if="cardToDisplay===result.id">
-                            <img :src="getBestImage(result.image_uris)" alt="Rien à afficher :/"/>
+                            <img :src="result.image_uri" alt="Rien à afficher :/"/>
                         </div>
                     </div>
                 </draggable>
@@ -211,13 +211,21 @@
                     }
                 });
             },
+            /**
+             * Fires when user click on export button
+             * @param {Deck|List} listOrDeck
+             */
             onExport(listOrDeck) {
                 if (listOrDeck.lists) {
+                    // update deck state for json export
                     DeckFactory.updateDeckCardCount(listOrDeck);
                     DeckFactory.updateDeckColors(listOrDeck);
                 }
                 this.$store.dispatch('modals/openExport', listOrDeck);
             },
+            /**
+             * Fires when user click on print button
+             */
             async onPrint() {
                 // todo add a spinner
                 const doc = new jsPDF({ unit: 'mm', format: 'a4' }); // 210 x 297
@@ -236,24 +244,35 @@
                         }
                     }
                 }
+                // todo remove the spinner
                 doc.save(`${this.deck.name}.pdf`);
             },
+            /**
+             * Fires when user click on delete button
+             */
             deleteDeck(deck) {
+                // todo add a confirmation box
                 this.$store.commit('decks/deleteDeck', deck);
                 this.$router.push({ name: 'home' });
             },
+            /**
+             * Fires when user click on Enter key or search button
+             */
             handleSearch(event) {
                 event && event.preventDefault();
+                // todo add a spinner
                 this.isSearching = true;
                 const args = { name: this.searchText };
                 console.info('launch search', args);
                 this.$store.dispatch('mtg/search', args)
                 .then((results) => {
+                    // todo remove the spinner
                     this.isSearching = false;
                     console.info('results for search', { args, results });
                     this.results = results;
                 })
                 .catch((error) => {
+                    // todo remove the spinner
                     this.isSearching = false;
                     console.error('error during search', { args, error });
                     this.results = [];
@@ -294,15 +313,16 @@
                     printConfig
                 }, card);
             },
+            /**
+             * Fires automatically when a dragdrop succeeds in new list area
+             * creates a new list with default name and reset tmp list
+             */
             createNewList() {
                 this.deck.lists.push({
                     name: 'Choisissez un nom',
                     list: [...this.tmpList]
                 });
                 this.tmpList = [];
-            },
-            getBestImage(images) {
-                return images.large || images.normal;
             },
             getCardCount(list, getString = false) {
                 const count = list.reduce(DeckFactory.countCardByList, 0);
@@ -311,11 +331,10 @@
                 return `${count} ${lib}`;
             },
             getImage(card) {
-                const uri = this.getBestImage(card.image_uris);
                 return new Promise((resolve) => {
                     const img = new Image();
                     img.onload = () => resolve(img);
-                    img.src = uri;
+                    img.src = card.image_uri;
                 })
 
             }

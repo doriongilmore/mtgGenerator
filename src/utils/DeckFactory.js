@@ -12,6 +12,11 @@ function stringifyList(list) {
 }
 
 class DeckFactory {
+    /**
+     *
+     * @param {[Deck]} decks
+     * @returns {[Card]}
+     */
     static getCards(decks) {
         const allCards = [];
         for (let i = 0, l = decks.length; i < l; i++) {
@@ -28,19 +33,36 @@ class DeckFactory {
         }
         return allCards;
     }
-
+    /**
+     * reduce method to be executed on a DeckList.list
+     * @param {Number} count - the acc param
+     * @param {Card} card - the el param
+     * @returns {Number}
+     */
     static countCardByList(count, card) {
         return +card.deckQte + count;
     }
+    /**
+     * reduce method to be executed on a Deck.lists
+     * @param {Number} totalCount - the acc param
+     * @param {DeckList} list - the el param
+     * @returns {Number}
+     */
     static countCardByLists(totalCount, list) {
         return totalCount + list.list.reduce(DeckFactory.countCardByList, 0);
     }
+    /**
+     * @param {Deck} deck
+     */
     static updateDeckCardCount(deck) {
         const [mainList, ...otherLists] = deck.lists;
         const mainCardCount = mainList.list.reduce(DeckFactory.countCardByList, 0);
         const otherCardCount = (otherLists || []).reduce(DeckFactory.countCardByLists, 0);
         deck.cardCount = `${mainCardCount} (+${otherCardCount})`;
     }
+    /**
+     * @param {Deck} deck
+     */
     static updateDeckColors(deck) {
         const cards = DeckFactory.getCards([deck]);
         const colors = cards.reduce((col, card) => {
@@ -52,6 +74,9 @@ class DeckFactory {
         }, []);
         deck.colors = colors.join('');
     }
+    /**
+     * @returns {Deck}
+     */
     static getDeckToCreate() {
         const now = new Date();
         return {
@@ -66,6 +91,11 @@ class DeckFactory {
             dateEdition: now,
         };
     }
+    /**
+     * @param {Deck} deckA
+     * @param {Deck} deckB
+     * @returns {boolean}
+     */
     static areSameDeck(deckA, deckB) {
         if (!deckA || !deckB) { return false }
         const sameName = deckA.name === deckB.name;
@@ -74,8 +104,12 @@ class DeckFactory {
         const sameListCount = deckA.lists.length === deckB.lists.length;
         const sameLists = sameListCount && deckA.lists.map(stringifyList).join('') === deckB.lists.map(stringifyList).join('');
 
-        return sameName && sameCardCount && sameColors && sameLists
+        return sameName && sameCardCount && sameColors && sameLists;
     }
+    /**
+     * @param {DeckList} list
+     * @returns {Array<Card>}
+     */
     static simplifyList(list) {
         return simplifyList(list);
     }
