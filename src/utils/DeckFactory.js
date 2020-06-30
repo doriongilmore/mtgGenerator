@@ -169,7 +169,7 @@ class DeckFactory {
             if (card.printConfig !== CONST.printConfig.DONT_PRINT.key) {
                 const { w, h } = CONST.printConfig[card.printConfig];
                 for (let j = 0; j < card.deckQte; j++) {
-                    for (let k = 0, l = card.image_uris; k < l; k++) {
+                    for (let k = 0, l = card.image_uris.length; k < l; k++) {
                         const posKey = printedCardCount % 9;
                         const { x, y } = CONST.printConfig.PDF_POS[posKey];
                         if (printedCardCount && posKey === 0) { doc.addPage() }
