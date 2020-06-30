@@ -5,6 +5,9 @@ function simplifyCard(c) {
     const oracle_text = c.card_faces
         ? c.card_faces.map(face => face.oracle_text).join(' // ')
         : c.oracle_text;
+    const image_uris = c.image_uris
+        ? [(c.image_uris.large || c.image_uris.normal)]
+        : c.card_faces.map(face => face.image_uris.large || face.image_uris.normal);
     return {
         // cards from search
         id: c.id,
@@ -17,7 +20,7 @@ function simplifyCard(c) {
         rulings_uri: c.rulings_uri,
         mana_cost: c.mana_cost,
         color_identity: c.color_identity,
-        image_uri: c.image_uris.large || c.image_uris.normal,
+        image_uris,
         set: c.set,
         set_name: c.set_name,
         type_line: c.type_line,
@@ -166,12 +169,14 @@ class DeckFactory {
             if (card.printConfig !== CONST.printConfig.DONT_PRINT.key) {
                 const { w, h } = CONST.printConfig[card.printConfig];
                 for (let j = 0; j < card.deckQte; j++) {
-                    const posKey = printedCardCount % 9;
-                    const { x, y } = CONST.printConfig.PDF_POS[posKey];
-                    if (printedCardCount && posKey === 0) { doc.addPage() }
-                    const image = await createImage(card.image_uri);
-                    doc.addImage(image, "JPEG", x, y, w, h);
-                    printedCardCount++;
+                    for (let k = 0, l = card.image_uris; k < l; k++) {
+                        const posKey = printedCardCount % 9;
+                        const { x, y } = CONST.printConfig.PDF_POS[posKey];
+                        if (printedCardCount && posKey === 0) { doc.addPage() }
+                        const image = await createImage(card.image_uris[k]);
+                        doc.addImage(image, "JPEG", x, y, w, h);
+                        printedCardCount++;
+                    }
                 }
             }
         }

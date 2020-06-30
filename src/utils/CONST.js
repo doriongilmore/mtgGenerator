@@ -15,6 +15,29 @@ const ORDER_NAME = { key: 'name', value: 'Nom de carte' };
 const FORMAT_JSON = { key: 'json', value: 'JSON' };
 const FORMAT_TEXT = { key: 'text', value: 'Texte' };
 
+
+/*
+ * page size 210 x 297
+ * card size max 63 x 88
+ * 63*3 = 189 / margin available 210 - 189 = 21
+ * 88*3 = 264 / margin available 297 - 264 = 33
+ * 4 spaces : bord space card space card space card space bord
+ * padding-x = 20/4 = 5
+ * padding-y = 32/4 = 8
+ * X1 = 5 / X2 = 5+63+5=73 / X3 = 5+63+5+63+5=141
+ * Y1 = 8 / Y2 = 8+88+8=104 / Y3 = 8+88+8+88+8=200
+ */
+const CARD_Y = 88;
+const CARD_X = 63;
+const PADDING_X = 5;
+const PADDING_Y = 8;
+const X1 = PADDING_X;
+const X2 = 2 * PADDING_X + CARD_X;
+const X3 = 3 * PADDING_X + 2 * CARD_X;
+const Y1 = PADDING_Y;
+const Y2 = 2 * PADDING_Y + CARD_Y;
+const Y3 = 3 * PADDING_Y + 2 * CARD_Y;
+
 const DORION = { key: 'DORION', value: 'doriongilmore', format: FORMAT_JSON };
 const UNTAP = {
   key: 'UNTAP',
@@ -61,16 +84,10 @@ const CONST = {
     BORDER_1,
     BORDER_2,
     BORDER_3,
-    PDF_POS: { // card size max 63*88 => shift x+67  y+92
-      0: { x: 7, y: 10 },
-      1: { x: 74, y: 10 },
-      2: { x: 141, y: 10 },
-      3: { x: 7, y: 102 },
-      4: { x: 74, y: 102 },
-      5: { x: 141, y: 102 },
-      6: { x: 7, y: 194 },
-      7: { x: 74, y: 194 },
-      8: { x: 141, y: 194 },
+    PDF_POS: {
+      0: { x: X1, y: Y1 }, 1: { x: X2, y: Y1 }, 2: { x: X3, y: Y1 },
+      3: { x: X1, y: Y2 }, 4: { x: X2, y: Y2 }, 5: { x: X3, y: Y2 },
+      6: { x: X1, y: Y3 }, 7: { x: X2, y: Y3 }, 8: { x: X3, y: Y3 },
     },
     list: [
       DONT_PRINT,
@@ -87,6 +104,45 @@ const CONST = {
     MAGIC_CORP,
     UNTAP,
     list: [DORION, MAGIC_CORP, UNTAP]
+  },
+  search: {
+    inclusion: [
+      { key: ':', value: 'Exact' },
+      { key: '>=', value: 'Au moins' },
+      { key: '<=', value: 'Au plus' },
+    ],
+    colorList: [
+      { key: 'b', value: '{B}' },
+      { key: 'u', value: '{U}' },
+      { key: 'g', value: '{G}' },
+      { key: 'r', value: '{R}' },
+      { key: 'w', value: '{W}' },
+    ],
+    rarityList: [
+      { key: 'common', value: 'commun' },
+      { key: 'uncommon', value: 'peu commun' },
+      { key: 'rare', value: 'rare' },
+      { key: 'mythic', value: 'mythique' },
+    ],
+    typeList: [
+      { key: 'Token', value: 'Token' },
+      { key: 'Legendary', value: 'Legendary' },
+
+      { key: 'Artifact', value: 'Artifact' },
+      { key: 'Creature', value: 'Creature' },
+      { key: 'Enchantment', value: 'Enchantment' },
+      { key: 'Land', value: 'Land' },
+      { key: 'Planeswalker', value: 'Planeswalker' },
+      { key: 'Instant', value: 'Instant' },
+      { key: 'Ritual', value: 'Ritual' },
+
+      { key: 'artifact-types', uri: 'https://api.scryfall.com/catalog/artifact-types' },
+      { key: 'creature-types', uri: 'https://api.scryfall.com/catalog/creature-types' },
+      { key: 'enchantment-types', uri: 'https://api.scryfall.com/catalog/enchantment-types' },
+      { key: 'land-types', uri: 'https://api.scryfall.com/catalog/land-types' },
+      { key: 'planeswalker-types', uri: 'https://api.scryfall.com/catalog/planeswalker-types' },
+      { key: 'spell-types', uri: 'https://api.scryfall.com/catalog/spell-types' },
+    ],
   },
   stats: {
     defaultOptions: {

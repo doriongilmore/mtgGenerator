@@ -53,7 +53,6 @@
                 this.$router.push({ name: 'edition', params: { deckToEdit: deck } })
             },
             async deleteDeck(deck) {
-                console.info('deck to be deleted', deck);
                 this.$store.commit('decks/deleteDeck', deck);
                 this.decks = await this.$store.dispatch('decks/getDecks');
             }

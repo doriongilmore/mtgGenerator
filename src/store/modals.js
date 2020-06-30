@@ -83,5 +83,21 @@ export const modals = {
         });
       }).then(console.groupEnd).catch(console.groupEnd);
     },
+    openSearch({ commit }, modalData) {
+      console.group('openSearch');
+      return new Promise((resolve, reject) => {
+        commit("open", {
+          modalName: "search",
+          canClose: true,
+          size: 'medium',
+          modalData,
+          resolve,
+          reject
+        });
+      }).then(() => {
+        console.groupEnd();
+        commit("close");
+      }).catch(console.groupEnd);
+    },
   }
 };

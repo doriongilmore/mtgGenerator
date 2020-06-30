@@ -31,7 +31,7 @@ export default {
   props: ["manaCost"],
   computed: {
     manaList() {
-      return this.manaCost.match(regexp) || [];
+      return (this.manaCost || '').match(regexp) || [];
     }
   },
   components: {

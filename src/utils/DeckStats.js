@@ -34,11 +34,8 @@ function getChartData(data, label, colorOptions = {}) {
     return byColor;
 }
 function getTypeKey(type_line) {
-    console.group('getTypeKey');
     const [type, subType] = type_line.split(' — ')
     const statType = type.toLowerCase().replace('legendary', '').trim();
-    console.info({type_line, type, subType, statType})
-    console.groupEnd();
     return statType;
 }
 function getColorKey(color_identity) {
@@ -60,14 +57,12 @@ function getStats(deck) {
     const byCmc = {};
     const byType = {};
     const byFunctionality = {};
-    console.group('getStats');
     for (let i = 0, l = deck.lists.length; i < l; i++) {
         const list = deck.lists[i];
         if (list.ignoreStat) { continue }
         const cards = list.list;
         for (let i = 0, l = cards.length; i < l; i++) {
             const card = cards[i];
-            console.info(card);
             const colorKey = getColorKey(card.color_identity);
             const typeKey = getTypeKey(card.type_line);
             if (!byColor[colorKey]) { byColor[colorKey] = 0 }
@@ -90,7 +85,6 @@ function getStats(deck) {
             }
         }
     }
-    console.groupEnd();
     return {
         byColor: getChartData(byColor, 'Color Repartition', CONST.stats.byColor),
         byType: getChartData(byType, 'Type Repartition'),

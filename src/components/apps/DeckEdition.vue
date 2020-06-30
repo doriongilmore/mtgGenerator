@@ -1,6 +1,6 @@
 <template>
-    <div >
-        <div id="deckEdition">
+    <div ref="container">
+        <div id="deckEdition" ref="deckEdition">
     <!--    TOP LEFT    -->
             <div id="deckLists">
                 <div id="deckHeader">
@@ -68,9 +68,16 @@
                 <div id="form">
                     <form v-on:submit="handleSearch">
                         <div class="searchHeader">
-                            <label for="searchText">Nom</label>
-                            <input id="searchText" type="text" v-model="searchText"/>
-                            <Button :icon="'search'" :handle-click="handleSearch" class="submit"></Button>
+                            <input
+                                    id="searchText"
+                                    type="text"
+                                    v-model="searchParams.name"
+                                    placeholder="Black Lotus"
+                            />
+                            <div class="buttons">
+                                <Button icon="search" :handle-click="handleSearch" class="submit"></Button>
+                                <Button icon="display" :handle-click="openSearch"></Button>
+                            </div>
                         </div>
                         <input type="submit" style="display: none"/>
                     </form>
@@ -101,9 +108,6 @@
                             <Mana class="manaCost" :mana-cost="result.mana_cost"></Mana>
                             <div class="type">{{ result.type_line }}</div>
                             <div class="setName">{{ result.set_name }}</div>
-                            <div class="image" v-if="cardToDisplay===result.id">
-                                <img :src="result.image_uri" alt="Rien à afficher :/"/>
-                            </div>
                         </div>
                     </draggable>
                 </div>
@@ -112,7 +116,7 @@
 
     <!--    BOTTOM    -->
 
-        <div id="deckStats">
+        <div id="deckStats" ref="stats">
             <PieChart id="byType" :chart-data="stats.byType"></PieChart>
             <PieChart id="byColor" :chart-data="stats.byColor"></PieChart>
             <BarChart id="byCmc" :chart-data="stats.byCmc" :options="yBeginAtZero"></BarChart>
@@ -133,6 +137,7 @@
     import Mana from '../uiElements/Mana.vue';
     import BarChart from '../chartjs/BarChart.vue';
     import PieChart from '../chartjs/PieChart.vue';
+    import { mapState } from "vuex";
 
     export default {
         name: "DeckEdition",
@@ -140,7 +145,6 @@
         components: { draggable, Button, Mana, BarChart, PieChart },
         data() {
             return {
-                searchText: 'Black Lotus',
                 isSearching: false,
                 cardToDisplay: null,
                 results: [],
@@ -154,6 +158,9 @@
             };
         },
         computed: {
+            ...mapState({
+                searchParams: state => state.search,
+            }),
             deck() {
                 return this._deck || this.deckToEdit || this.tmpDeck || {};
             }
@@ -167,6 +174,10 @@
             window.localStorage.setItem(CONST.storageKeys.tmpDeck, json);
         },
         async mounted() {
+            const height = this.$refs.container.parentElement.clientHeight
+                - this.$refs.stats.clientHeight;
+            this.$refs.deckEdition.style['grid-template-rows'] = `${height}px`;
+
             try {
                 this.tmpDeck = await this.$store.dispatch('decks/getTmpDeck');
                 this._deck = this.deckToEdit || this.tmpDeck;
@@ -176,6 +187,10 @@
             }
         },
         methods: {
+            openSearch() {
+                this.$store.dispatch('modals/openSearch', this.searchParams)
+                    .then(this.handleSearch);
+            },
             openCard(card) {
                 this.$store.dispatch('modals/openCard', card);
             },
@@ -198,6 +213,9 @@
             onChange() {
                 this.updateDone = true;
                 this.stats = getStats(this.deck);
+                const height = this.$refs.container.parentElement.clientHeight
+                    - this.$refs.stats.clientHeight;
+                this.$refs.deckEdition.style['grid-template-rows'] = `${height}px`;
             },
             onImport() {
                 this.$store.dispatch('modals/openImport').then((listOrDeck) => {
@@ -246,19 +264,16 @@
                 event && event.preventDefault();
                 // todo add a spinner
                 this.isSearching = true;
-                const args = { name: this.searchText };
-                console.info('launch search', args);
-                this.$store.dispatch('mtg/search', args)
+                this.$store.dispatch('mtg/search', this.searchParams)
                 .then((results) => {
                     // todo remove the spinner
                     this.isSearching = false;
-                    console.info('results for search', { args, results });
                     this.results = results;
                 })
                 .catch((error) => {
                     // todo remove the spinner
                     this.isSearching = false;
-                    console.error('error during search', { args, error });
+                    console.error('error during search', { args: this.searchParams, error });
                     this.results = [];
                 });
             },
@@ -324,11 +339,9 @@
     display: grid;
     grid-template-columns: 40% 60%;
     grid-template-areas: "deckLists search";
-
-
     #deckLists {
         grid-area: deckLists;
-        height: 457px;
+        height: auto;
         overflow-x: hidden;
         overflow-y: auto;
 
@@ -409,75 +422,62 @@
         }
 
     }
-
     #search {
+        height: auto;
+        overflow-x: hidden;
+        overflow-y: auto;
         .searchHeader {
             display: grid;
-            grid-template-columns: auto 80% auto;
-            grid-template-areas: "label input submit";
-            label {
-                grid-area: label;
-            }
+            grid-template-columns: 80% auto;
+            grid-template-areas: "input buttons";
             input {
                 grid-area: input;
             }
-            .submit {
-                grid-area: submit;
+            .buttons {
+                grid-area: buttons;
             }
         }
-        #resultsBody {
-            height: 400px;
-            overflow-x: hidden;
-            overflow-y: auto;
-        }
-        #results .header, #results .resultRow {
-            grid-area: search;
-            display: grid;
-            grid-template-columns: 40% 10% 20% 20%;
-            grid-template-areas: "name manaCost type setName";
-            .name {
-                grid-area: name;
-            }
-            .manaCost {
-                grid-area: manaCost;
-            }
-            .type {
-                grid-area: type;
-            }
-            .setName {
-                grid-area: setName;
-            }
-            .image {
-                border: 2px black;
-                position: relative;
-                img {
-                    max-height: 300px;
+        #results {
+            .header, .resultRow {
+                grid-area: search;
+                display: grid;
+                grid-template-columns: 40% 10% 20% 20%;
+                grid-template-areas: "name manaCost type setName";
+                .name {
+                    grid-area: name;
+                }
+                .manaCost {
+                    grid-area: manaCost;
+                }
+                .type {
+                    grid-area: type;
+                }
+                .setName {
+                    grid-area: setName;
+                }
+                .image {
+                    border: 2px black;
+                    position: relative;
+                    img {
+                        max-height: 300px;
+                    }
                 }
             }
         }
     }
 }
-
 #deckStats {
     position: absolute;
     bottom: 0px;
-    height: 400px;
+    height: auto;
     width: 100%;
     display: grid;
     grid-template-columns: 25% 25% 25% 25%;
     grid-template-areas: "cmc color type function";
 
-    #byColor {
-        grid-area: color;
-    }
-    #byCmc{
-        grid-area: cmc;
-    }
-    #byType{
-        grid-area: type;
-    }
-    #byFunctionality{
-        grid-area: function;
-    }
+    #byColor { grid-area: color }
+    #byCmc { grid-area: cmc }
+    #byType { grid-area: type }
+    #byFunctionality { grid-area: function }
 }
 </style>

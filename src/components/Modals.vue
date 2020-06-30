@@ -27,6 +27,10 @@
                 v-if="currentModal === 'card'"
                 @closeModal="closeAnim"
         ></Card>
+        <AdvancedSearch
+                v-if="currentModal === 'search'"
+                @closeModal="closeAnim"
+        ></AdvancedSearch>
       </div>
       <div ref="loading" class="loading" v-show="isLoading && !isAnimating">
         <span>LOADING</span>
@@ -42,6 +46,7 @@ import CONST from "src/utils/CONST";
 import Import from "src/components/modals/Import.vue";
 import Export from "src/components/modals/Export.vue";
 import Card from "src/components/modals/Card.vue";
+import AdvancedSearch from "src/components/modals/AdvancedSearch.vue";
 
 const actualModalParams = {};
 
@@ -51,6 +56,7 @@ export default {
     Import,
     Export,
     Card,
+    AdvancedSearch,
   },
   data() {
     return {
