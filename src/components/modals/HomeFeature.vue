@@ -21,7 +21,4 @@
 </script>
 
 <style lang="less" scoped>
-    #featureModal {
-        background-color: rgba(160, 160, 160, 1);
-    }
 </style>

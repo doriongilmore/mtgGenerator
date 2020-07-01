@@ -287,7 +287,7 @@ export default {
     width: 0;
     height: 0;
     opacity: 0;
-    background-color: rgba(100, 100, 100, 0.5);
+    background-color: rgba(150, 150, 150, 0.8);
 
     .loading {
       position: absolute;
