@@ -73,7 +73,7 @@
                     const sb = i !== 0 && isMagic;
                     const list = this.deckOrList.lists[i];
                     const firstLine = isMagic ? '' : `// ${list.name}${newLine}`;
-                    text += `${firstLine}${formatList(list, sb)}${newLine}${!isMagic ? newLine : ''}`;
+                    text += `${firstLine}${formatList(list, sb)}${newLine}`;
                 }
                 return text;
             }
