@@ -4,6 +4,7 @@
             <textarea v-model="importText"></textarea>
         </label>
         <button @click="doImport">Import</button>
+        <PulseLoader id="spinner" ref="spinner" :loading="isLoading"></PulseLoader>
     </div>
 </template>
 
@@ -11,6 +12,7 @@
     import DeckFactory from "src/utils/DeckFactory";
     import { mapState } from "vuex";
     import CONST from "src/utils/CONST";
+    import PulseLoader from 'vue-spinner/src/PulseLoader.vue';
 
     const regexpQte = /\d+/g;
     const regexpSet = /\(.+\)|\[.+]|{.+}/g;
@@ -18,10 +20,11 @@
 
     export default {
         name: "Import",
-        components: {},
+        components: { PulseLoader },
         data() {
             return {
                 importText: '',
+                isLoading: false,
             };
         },
         computed: {
@@ -35,7 +38,7 @@
                 try {
                     listOrDeck = JSON.parse(this.importText);
                 } catch (e) {
-                    // todo create a spinner
+                    this.isLoading = true;
                     const lists = [];
                     let actualList = { name: 'Main', list: [] };
                     const sideboardList = { name: 'Sideboard', list: [] };
@@ -62,6 +65,7 @@
                     listOrDeck = DeckFactory.getDeckToCreate();
                     listOrDeck.lists = lists;
                 }
+                this.isLoading = false;
                 this.closeImport(listOrDeck);
             },
             async formatCardRow(row) {

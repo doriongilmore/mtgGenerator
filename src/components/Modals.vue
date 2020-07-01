@@ -35,6 +35,10 @@
                 v-if="currentModal === 'feature'"
                 @closeModal="closeAnim"
         ></HomeFeature>
+        <Confirmation
+                v-if="currentModal === 'confirm'"
+                @closeModal="closeAnim"
+        ></Confirmation>
       </div>
       <div ref="loading" class="loading" v-show="isLoading && !isAnimating">
         <span>LOADING</span>
@@ -52,6 +56,7 @@ import Export from "src/components/modals/Export.vue";
 import Card from "src/components/modals/Card.vue";
 import AdvancedSearch from "src/components/modals/AdvancedSearch.vue";
 import HomeFeature from "src/components/modals/HomeFeature.vue";
+import Confirmation from "src/components/modals/Confirmation.vue";
 
 const actualModalParams = {};
 
@@ -63,6 +68,7 @@ export default {
     Card,
     AdvancedSearch,
     HomeFeature,
+    Confirmation,
   },
   data() {
     return {

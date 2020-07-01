@@ -1,5 +1,6 @@
 <template>
     <div id="decksList">
+        <GridLoader ref="spinner" id="spinner" :loading="isLoading" size="40px"></GridLoader>
         <div
                 v-for="deck in decks"
                 :key="deck.id"
@@ -24,12 +25,14 @@
     import Mana from '../uiElements/Mana.vue';
     import moment from 'moment';
     import DeckFactory from "src/utils/DeckFactory";
+    import GridLoader from 'vue-spinner/src/GridLoader.vue';
 
     export default {
         name: "DecksList",
-        components: { Button, Mana },
+        components: { Button, Mana, GridLoader },
         data() {
             return {
+                isLoading: false,
                 decks: [],
                 moment
             };
@@ -45,22 +48,32 @@
         },
         methods: {
             async onPrint(deck) {
-                // todo add a spinner
+                this.isLoading = true;
                 await DeckFactory.print(deck);
-                // todo remove the spinner
+                this.isLoading = false;
             },
             editDeck(deck) {
                 this.$router.push({ name: 'edition', params: { deckToEdit: deck } })
             },
             async deleteDeck(deck) {
-                this.$store.commit('decks/deleteDeck', deck);
-                this.decks = await this.$store.dispatch('decks/getDecks');
+                try {
+                    await this.$store.dispatch('modals/openConfirmation');
+                    this.$store.commit('decks/deleteDeck', deck);
+                    this.decks = await this.$store.dispatch('decks/getDecks');
+                } catch (e) {
+                    console.info('delete canceled')
+                }
             }
         }
     }
 </script>
 
 <style lang="less" scoped>
+    #spinner{
+        position: absolute;
+        top: 30%;
+        left: 40%;
+    }
     #decksList {
 
         .deckRow{

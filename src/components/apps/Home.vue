@@ -2,7 +2,7 @@
     <div id="home">
         <h3>MtG - Deck Builder - Doc</h3>
         <div class="tab">
-            This app brings together several tools to easily generate Magic: the Gathering decks.
+            This app brings together several tools to easily create Magic: the Gathering decks.
             <br/>
             Your lists are only saved in your browser's local storage<br>You should save them on other websites or on a file for long term use.
         </div>

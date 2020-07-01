@@ -1,5 +1,6 @@
 <template>
     <div ref="container">
+        <GridLoader ref="spinner" id="spinner" :loading="isLoading" size="40px"></GridLoader>
         <div id="deckEdition" ref="deckEdition">
     <!--    TOP LEFT    -->
             <div id="deckLists">
@@ -122,9 +123,6 @@
             <BarChart id="byCmc" :chart-data="stats.byCmc" :options="yBeginAtZero"></BarChart>
             <PieChart id="byFunctionality" :chart-data="stats.byFunctionality"></PieChart>
         </div>
-
-
-
     </div>
 </template>
 
@@ -138,14 +136,15 @@
     import BarChart from '../chartjs/BarChart.vue';
     import PieChart from '../chartjs/PieChart.vue';
     import { mapState } from "vuex";
+    import GridLoader from 'vue-spinner/src/GridLoader.vue';
 
     export default {
         name: "DeckEdition",
         props: ['deckToEdit'],
-        components: { draggable, Button, Mana, BarChart, PieChart },
+        components: { draggable, Button, Mana, BarChart, PieChart, GridLoader },
         data() {
             return {
-                isSearching: false,
+                isLoading: false,
                 cardToDisplay: null,
                 results: [],
                 tmpList: [],
@@ -187,6 +186,12 @@
             }
         },
         methods: {
+            displaySpinner() {
+                this.isLoading = true;
+            },
+            hideSpinner() {
+                this.isLoading = false;
+            },
             openSearch() {
                 this.$store.dispatch('modals/openSearch', this.searchParams)
                     .then(this.handleSearch);
@@ -245,34 +250,32 @@
              * Fires when user click on print button
              */
             async onPrint() {
-                // todo add a spinner
+                this.displaySpinner();
                 await DeckFactory.print(this.deck);
-                // todo remove the spinner
+                this.hideSpinner();
             },
             /**
              * Fires when user click on delete button
              */
             deleteDeck(deck) {
-                // todo add a confirmation box
-                this.$store.commit('decks/deleteDeck', deck);
-                this.$router.push({ name: 'home' });
+                this.$store.dispatch('modals/openConfirmation').then(() => {
+                    this.$store.commit('decks/deleteDeck', deck);
+                    this.$router.push({ name: 'deckList' });
+                }).catch(() => console.info('delete canceled'));
             },
             /**
              * Fires when user click on Enter key or search button
              */
             handleSearch(event) {
                 event && event.preventDefault();
-                // todo add a spinner
-                this.isSearching = true;
+                this.displaySpinner();
                 this.$store.dispatch('mtg/search', this.searchParams)
                 .then((results) => {
-                    // todo remove the spinner
-                    this.isSearching = false;
+                    this.hideSpinner();
                     this.results = results;
                 })
                 .catch((error) => {
-                    // todo remove the spinner
-                    this.isSearching = false;
+                    this.hideSpinner();
                     console.error('error during search', { args: this.searchParams, error });
                     this.results = [];
                 });
@@ -335,6 +338,11 @@
 </script>
 
 <style lang="less" scoped>
+#spinner{
+    position: absolute;
+    top: 30%;
+    left: 40%;
+}
 #deckEdition {
     display: grid;
     grid-template-columns: 40% 60%;

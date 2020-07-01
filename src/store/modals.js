@@ -92,9 +92,30 @@ export const modals = {
           size: 'medium',
           modalData,
           resolve,
-          reject
+          reject,
         });
       }).then(console.groupEnd).catch(console.groupEnd);
+    },
+    openConfirmation({ commit }, modalData) {
+      console.group('openConfirmation');
+      return new Promise((resolve, reject) => {
+        commit("open", {
+          modalName: "confirm",
+          canClose: true,
+          size: 'small',
+          modalData,
+          resolve,
+          reject
+        });
+      }).then(() => {
+        console.groupEnd();
+        commit("close");
+        return Promise.resolve();
+      }).catch(() => {
+        console.groupEnd();
+        commit("close");
+        return Promise.reject();
+      });
     },
     openSearch({ commit }, modalData) {
       console.group('openSearch');
