@@ -232,7 +232,7 @@
             },
             /**
              * Fires when user click on export button
-             * @param {Deck|List} listOrDeck
+             * @param {Deck|DeckList} listOrDeck
              */
             onExport(listOrDeck) {
                 if (listOrDeck.lists) {
@@ -301,14 +301,14 @@
              * @return {Object}
              */
             addCardToDeck(card) {
-                const printConfig = card.type_line.includes('Basic Land')
-                    ? this.printConfig.DONT_PRINT.key
-                    : this.printConfig.BORDER_3.key;
-                // Basic Land
-                return Object.assign({
-                    deckQte: 4,
-                    printConfig
-                }, card);
+                if (!card.deckQte) { card.deckQte = 4 }
+                if (!card.printConfig) {
+                    const printConfig = card.type_line.includes('Basic Land')
+                        ? this.printConfig.DONT_PRINT.key
+                        : this.printConfig.BORDER_3.key;
+                    card.printConfig = printConfig
+                }
+                return card;
             },
             /**
              * Fires automatically when a dragdrop succeeds in new list area
