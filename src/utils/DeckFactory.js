@@ -48,6 +48,30 @@ function createImage(image_uri) {
 
 }
 
+function cleanDeck(deck) {
+    for (let j = 0; j < deck.lists.length; j++) {
+        deck.lists[j].list = deck.lists[j].list.filter(c => +c.deckQte);
+    }
+    deck.lists = deck.lists.filter(l => l.list.length);
+}
+function updateDeckCardCount(deck) {
+    const [mainList, ...otherLists] = deck.lists;
+    const mainCardCount = mainList.list.reduce(DeckFactory.countCardByList, 0);
+    const otherCardCount = (otherLists || []).reduce(DeckFactory.countCardByLists, 0);
+    deck.cardCount = `${mainCardCount} (+${otherCardCount})`;
+}
+function updateDeckColors(deck) {
+    const cards = DeckFactory.getCards([deck]);
+    const colors = cards.reduce((col, card) => {
+        for (let i = 0, l = card.color_identity.length; i < l; i++) {
+            const color = `{${card.color_identity[i]}}`;
+            if (!col.includes(color)) { col.push(color) }
+        }
+        return col;
+    }, []);
+    deck.colors = colors.join('');
+}
+
 class DeckFactory {
     /**
      *
@@ -58,10 +82,10 @@ class DeckFactory {
         const allCards = [];
         for (let i = 0, l = decks.length; i < l; i++) {
             const deck = decks[i];
-            for (let i = 0, l = deck.lists.length; i < l; i++) {
-                const cards = deck.lists[i].list;
-                for (let i = 0, l = cards.length; i < l; i++) {
-                    const card = cards[i];
+            for (let j = 0, m = deck.lists.length; j < m; j++) {
+                const cards = deck.lists[j].list;
+                for (let k = 0, n = cards.length; k < n; k++) {
+                    const card = cards[k];
                     if (!allCards.find(c => c.id === card.id)) {
                         allCards.push(card);
                     }
@@ -91,25 +115,12 @@ class DeckFactory {
     /**
      * @param {Deck} deck
      */
-    static updateDeckCardCount(deck) {
-        const [mainList, ...otherLists] = deck.lists;
-        const mainCardCount = mainList.list.reduce(DeckFactory.countCardByList, 0);
-        const otherCardCount = (otherLists || []).reduce(DeckFactory.countCardByLists, 0);
-        deck.cardCount = `${mainCardCount} (+${otherCardCount})`;
-    }
-    /**
-     * @param {Deck} deck
-     */
-    static updateDeckColors(deck) {
-        const cards = DeckFactory.getCards([deck]);
-        const colors = cards.reduce((col, card) => {
-            for (let i = 0, l = card.color_identity.length; i < l; i++) {
-                const color = `{${card.color_identity[i]}}`;
-                if (!col.includes(color)) { col.push(color) }
-            }
-            return col;
-        }, []);
-        deck.colors = colors.join('');
+    static update(deck) {
+        cleanDeck(deck);
+        updateDeckCardCount(deck);
+        updateDeckColors(deck);
+        deck.dateEdition = new Date();
+        return deck;
     }
     /**
      * @returns {Deck}

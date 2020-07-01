@@ -166,9 +166,7 @@
         },
         beforeDestroy() {
             if (!this.updateDone) { return }
-            DeckFactory.updateDeckCardCount(this.deck);
-            DeckFactory.updateDeckColors(this.deck);
-            this.deck.dateEdition = new Date();
+            DeckFactory.update(this.deck);
             const json = JSON.stringify(this.deck);
             window.localStorage.setItem(CONST.storageKeys.tmpDeck, json);
         },
@@ -206,9 +204,7 @@
                     this.$store.commit('decks/setTmpDeck', newDeck); // update creation time
                     return false;
                 }
-                DeckFactory.updateDeckCardCount(this.deck);
-                DeckFactory.updateDeckColors(this.deck);
-                this.deck.dateEdition = new Date();
+                DeckFactory.update(this.deck);
                 this.$store.commit('decks/setDecks', [this.deck]);
                 this._deck = this.deck;
                 this.$store.commit('decks/setTmpDeck', newDeck);
@@ -241,8 +237,7 @@
             onExport(listOrDeck) {
                 if (listOrDeck.lists) {
                     // update deck state for json export
-                    DeckFactory.updateDeckCardCount(listOrDeck);
-                    DeckFactory.updateDeckColors(listOrDeck);
+                    DeckFactory.update(listOrDeck);
                 }
                 this.$store.dispatch('modals/openExport', listOrDeck);
             },
