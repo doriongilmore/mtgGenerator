@@ -12,9 +12,9 @@
 
         <h3>Bugs :</h3>
         <div class="tab">
-            Known bugs and future features are described <a href="https://github.com/doriongilmore/mtgGenerator/issues">here</a>, feel free to comment.<br>
-            You can create new ones <a href="https://github.com/doriongilmore/mtgGenerator/issues/new">here</a>, please describe the issue found or the feature you have in mind.<br><br>
-            <a href="https://github.com/doriongilmore/mtgGenerator">You can find more info here</a>
+            Known bugs and future features are described <a href="https://github.com/doriongilmore/mtgGenerator/issues" target="_blank">here</a>, feel free to comment.<br>
+            You can create new ones <a href="https://github.com/doriongilmore/mtgGenerator/issues/new" target="_blank">here</a>, please describe the issue found or the feature you have in mind.<br><br>
+            <a href="https://github.com/doriongilmore/mtgGenerator" target="_blank">You can find more info here</a>
         </div>
     </div>
 </template>

@@ -26,7 +26,7 @@ to export<br/>Several formats are supported:<br><br>
 - magiccorporation.com is a french website to search Magic cards and create decks,<br>format "<b>1 [vma] Black Lotus</b>"<br>
 - untap.in is an english website to play many card games with personalized decks,<br>format "<b>1 Black Lotus (vma)</b>"<br>
 - The format "<b>1 Black Lotus</b>" is also supported.<br/>
-If you need other ones please <a href="https://github.com/doriongilmore/mtgGenerator/issues/new">fill an issue</a>
+If you need other ones please <a href="https://github.com/doriongilmore/mtgGenerator/issues/new" target="_blank">fill an issue</a>
 `,
 };
 
@@ -49,7 +49,7 @@ const KEY_FEATURE_STATS = {
 <img height="50px" src="http://doriongilmore.fr/mtgBuilder/assets/ignoreStats.png"/><br><br>
 Four graphs are available, the first three are kinda basic (converted mana cost, color, type).<br>
 The functionality one is based on the oracle text of a card, I've made choices and it can probably be improved,
-<a href="https://github.com/doriongilmore/mtgGenerator/issues/10"> see more here</a>
+<a href="https://github.com/doriongilmore/mtgGenerator/issues/10" target="_blank"> see more here</a>
 `,
 };
 const KEY_FEATURE_DECKS = {

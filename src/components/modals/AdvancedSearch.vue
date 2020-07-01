@@ -66,6 +66,7 @@
             </div>
         </div>
         <div class="buttons" ref="buttons">
+            <Button text="Info" icon="info" :handle-click="openInfo"></Button>
             <Button text="Clean" icon="delete" :handle-click="clearSearch"></Button>
             <Button text="Search" icon="search" :handle-click="close"></Button>
         </div>
@@ -101,6 +102,10 @@
             this.$refs.content.style.height = `${height}px`;
         },
         methods: {
+            openInfo() {
+                this.$store.dispatch('modals/openFeature', CONST.home.features.KEY_FEATURE_SEARCH)
+                    .then(() => this.$store.dispatch('modals/openSearch'));
+            },
             clearSearch() {
                 this.$store.commit('search/clearSearch');
                 this.tmpText = '';
@@ -161,8 +166,8 @@
             position: absolute;
             bottom: 0;
             display: grid;
-            grid-template-columns: 50% 50%;
-            grid-template-areas: "clear submit";
+            grid-template-columns: 33% 33% 33%;
+            grid-template-areas: "info clear submit";
 
         }
     }
