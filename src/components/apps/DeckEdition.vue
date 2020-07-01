@@ -365,8 +365,7 @@
         }
         .deckList {
             width: 80%;
-            border: bisque solid 3px;
-            /*background-color: rgba(208, 209, 212, 0.8);*/
+            border: rgba(100, 100, 100, 0.3) solid 2px;
 
             .listHeader {
                 display: grid;

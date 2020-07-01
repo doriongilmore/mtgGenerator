@@ -9,8 +9,8 @@
             <div class="name">{{deck.name}}</div>
             <Mana class="colors" :mana-cost="deck.colors"></Mana>
             <div class="cardCount">{{deck.cardCount}}</div>
-            <div class="dateCreation">{{moment(deck.dateCreation).format('YY-MM-DD hh:mm')}}</div>
-            <div class="dateEdition">{{moment(deck.dateEdition).format('YY-MM-DD hh:mm')}}</div>
+            <div class="dateCreation">{{moment(deck.dateCreation).format('YY-MM-DD HH:mm')}}</div>
+            <div class="dateEdition">{{moment(deck.dateEdition).format('YY-MM-DD HH:mm')}}</div>
             <div class="buttons">
                 <Button :icon="'print'" :handle-click="onPrint.bind(this, deck)"></Button>
                 <Button :icon="'display'" :handle-click="editDeck.bind(this, deck)"></Button>
