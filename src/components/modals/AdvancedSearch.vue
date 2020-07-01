@@ -3,27 +3,27 @@
         <div class="rows" ref="content">
 
             <div class="row">
-                <label class="label" for="searchName">Nom</label>
+                <label class="label" for="searchName">Name</label>
                 <input class="input" id="searchName" type="text" v-model="searchParams.name"/>
             </div>
             <div class="row" v-for="(text, index) in searchParams.texts" :v-key="text">
-                <label class="label" :for="text">Texte</label>
+                <label class="label" :for="text">Text</label>
                 <input class="input" :id="text" type="text" v-model="searchParams.texts[index]"/>
                 <Button class="other" icon="delete" :handle-click="removeText.bind(this, index)"></Button>
             </div>
             <div class="row">
-                <label class="label" for="newText">Texte</label>
+                <label class="label" for="newText">Text</label>
                 <input
                         class="input"
                         id="newText"
                         type="text"
                         v-model="tmpText"
-                        placeholder="utilisez '~' pour remplacer le nom"
+                        placeholder="Use '~' instead of the card name"
                 />
                 <Button class="other" icon="add" :handle-click="addText"></Button>
             </div>
             <div class="row">
-                <label class="label">Couleurs</label>
+                <label class="label">Colors</label>
                 <div class="input mana_row">
                     <div v-for="color in lists.colorList" :class="color.key">
                         <label :for="color.key">
@@ -42,7 +42,7 @@
                 </select>
             </div>
             <div class="row">
-                <label class="label">Rareté</label>
+                <label class="label">Rarity</label>
                 <select v-model="searchParams.rarity" class="input">
                     <option value="">Tous</option>
                     <option v-for="rarParam in lists.rarityList" :value="rarParam.key">{{rarParam.value}}</option>
@@ -66,8 +66,8 @@
             </div>
         </div>
         <div class="buttons" ref="buttons">
-            <Button text="Nettoyer" icon="delete" :handle-click="clearSearch"></Button>
-            <Button text="Rechercher" icon="search" :handle-click="close"></Button>
+            <Button text="Clean" icon="delete" :handle-click="clearSearch"></Button>
+            <Button text="Search" icon="search" :handle-click="close"></Button>
         </div>
     </div>
 </template>

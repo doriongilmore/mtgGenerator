@@ -10,6 +10,7 @@
     <Download v-else-if="icon === 'download'" />
     <Export v-else-if="icon === 'export'" />
     <Import v-else-if="icon === 'import'" />
+    <Info v-else-if="icon === 'info'" />
     <Next v-else-if="icon === 'next'" />
     <Playlist v-else-if="icon === 'playlist'" />
     <Plus v-else-if="icon === 'add'" />
@@ -27,6 +28,7 @@ import Display from "src/assets/icons/Display.vue";
 import Download from "src/assets/icons/Download.vue";
 import Export from "src/assets/icons/Export.vue";
 import Import from "src/assets/icons/Import.vue";
+import Info from "src/assets/icons/Info.vue";
 import Next from "src/assets/icons/Next.vue";
 import Playlist from "src/assets/icons/Playlist.vue";
 import Plus from "src/assets/icons/Plus.vue";
@@ -44,6 +46,7 @@ export default {
     Download,
     Export,
     Import,
+    Info,
     Next,
     Playlist,
     Plus,
@@ -66,14 +69,14 @@ export default {
   padding: 2px;
 
   height: 28px;
-  display: flex;
+  /*display: flex;*/
 
   &.bordered {
     border: 1px black solid;
     border-radius: 5px;
   }
   &.hasText {
-    width: 100%;
+    /*width: 100%;*/
   }
   &:not(.hasText) {
     width: 28px;

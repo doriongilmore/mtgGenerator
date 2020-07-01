@@ -8,10 +8,10 @@
             </div>
             <div class="formRow" v-if="format.key !== dorionKey">
                 <label for="withSets">
-                    <input type="radio" id="withSets" value="withSets" v-model="setFormat"/> Avec Sets
+                    <input type="radio" id="withSets" value="withSets" v-model="setFormat"/> With Sets
                 </label>
                 <label for="withoutSets">
-                    <input type="radio" id="withoutSets" value="withoutSets" v-model="setFormat"/> Sans Sets
+                    <input type="radio" id="withoutSets" value="withoutSets" v-model="setFormat"/> Without Sets
                 </label>
             </div>
 

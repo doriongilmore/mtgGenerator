@@ -1,31 +1,48 @@
 <template>
     <div id="home">
-        <h3>
-            <a href="https://github.com/doriongilmore/mtgGenerator" target="_blank">
-                Github
-            </a>
-        </h3>
+        <h3>MtG - Deck Builder - Doc</h3>
+        <div class="tab">
+            This app brings together several tools to easily generate Magic: the Gathering decks.
+            <br/>
+            Your lists are only saved in your browser's local storage<br>You should save them on other websites or on a file for long term use.
+        </div>
+
+        <h3>Some features :</h3>
+        <HomeFeature :features="homeFeatures"></HomeFeature>
+
+        <h3>Bugs :</h3>
+        <div class="tab">
+            Known bugs and future features are described <a href="https://github.com/doriongilmore/mtgGenerator/issues">here</a>, feel free to comment.<br>
+            You can create new ones <a href="https://github.com/doriongilmore/mtgGenerator/issues/new">here</a>, please describe the issue found or the feature you have in mind.<br><br>
+            <a href="https://github.com/doriongilmore/mtgGenerator">You can find more info here</a>
+        </div>
     </div>
 </template>
 
 <script>
+    import HomeFeature from "src/components/apps/HomeFeature.vue";
+    import CONST from "src/utils/CONST";
+
     export default {
         name: "Home",
         data() {
             return {
+                homeFeatures: CONST.home.features.list
             };
         },
-        created() {
+        created() {},
+        components: {
+            HomeFeature,
         },
-        methods: {
-        }
+        methods: {}
     }
 </script>
 
 <style lang="less" scoped>
     #home {
-        details {
-            margin-top: 10px;
+        div.tab {
+            position: relative;
+            left:20px;
         }
     }
 </style>

@@ -50,7 +50,7 @@
                     </draggable>
                 </div>
                 <div class="deckList">
-                    <h4>Nouvelle liste</h4>
+                    <h4>New list</h4>
                     <draggable
                             class="dragArea list-group"
                             :list="tmpList"
@@ -84,8 +84,8 @@
                 </div>
                 <div id="results">
                     <div class="header">
-                        <div class="name">Nom</div>
-                        <div class="manaCost">Coût</div>
+                        <div class="name">Name</div>
+                        <div class="manaCost">Cost</div>
                         <div class="type">Type</div>
                         <div class="setName">Set</div>
                     </div>
@@ -318,7 +318,7 @@
              */
             createNewList() {
                 this.deck.lists.push({
-                    name: 'Choisissez un nom',
+                    name: 'Choose a name',
                     ignoreStat: false,
                     list: [...this.tmpList]
                 });
@@ -327,7 +327,7 @@
             getCardCount(list, getString = false) {
                 const count = list.reduce(DeckFactory.countCardByList, 0);
                 if (!getString) { return count }
-                const lib = `carte${count>1?'s':''}`;
+                const lib = `card${count>1?'s':''}`;
                 return `${count} ${lib}`;
             },
         }

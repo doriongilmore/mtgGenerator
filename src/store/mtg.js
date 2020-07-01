@@ -81,11 +81,13 @@ export const mtg = {
       const options = { unique: "prints", page: 1 };
       const query = getQuery(args);
       const results = [];
-      // return Cards.search(query, options).cancelAfterPage().waitForAll()
       return new Promise((resolve, reject) => {
         if (query === basicQuery) { resolve([]) }
         Cards.search(query, options).on("data", (c) => {
           results.push(DeckFactory.simplifyCard(c));
+          if (results.length > 100) {
+            resolve(results);
+          }
         }).on("end", () => {
           resolve(results);
         });

@@ -1,14 +1,14 @@
 <template>
   <div class="mainContainer">
     <div class="menu">
-      <a class="item" href="https://github.com/doriongilmore/mtgGenerator" target="_blank">
-        Github
-      </a>
       <router-link to="/" class="item">
+        Home
+      </router-link>
+      <router-link to="/decks" class="item">
         Decks
       </router-link>
       <router-link to="/deck" class="item">
-        Créer un deck
+        Create a deck
       </router-link>
     </div>
     <div class="content" ref="content">
