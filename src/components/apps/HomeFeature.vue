@@ -3,6 +3,7 @@
         <div class="tab" v-for="mainFeature in features">
 <!--            <input type="checkbox" disabled checked/>-->
             <Button
+                    class="info"
                     :text="mainFeature.label"
                     :icon="'info'"
                     v-if="mainFeature.modal"
@@ -37,6 +38,9 @@
         div.tab {
             position: relative;
             left:20px;
+            .info {
+                width: max-content;
+            }
         }
     }
 </style>

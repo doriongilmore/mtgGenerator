@@ -154,6 +154,7 @@
             }
         }
         .buttons {
+            text-align: center;
             margin-right: 5%;
             margin-left: 5%;
             width: 90%;
