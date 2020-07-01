@@ -2,6 +2,10 @@ import jsPDF from "jspdf";
 import CONST from "src/utils/CONST";
 
 const defaultLists = [{ name: 'Main List', list: [] }];
+function getDefaultList() {
+    return [{ name: 'Main List', list: [] }];
+}
+
 
 function simplifyCard(c) {
     const oracle_text = c.card_faces
@@ -55,7 +59,7 @@ function cleanDeck(deck) {
         deck.lists[j].list = deck.lists[j].list.filter(c => +c.deckQte);
     }
     deck.lists = deck.lists.filter(l => l.list.length);
-    if (!deck.lists.length) { deck.lists = defaultLists }
+    if (!deck.lists.length) { deck.lists = getDefaultList() }
 }
 function updateDeckCardCount(deck) {
     const [mainList, ...otherLists] = deck.lists;
@@ -135,7 +139,7 @@ class DeckFactory {
             name: 'Default Deck Name',
             colors: '',
             cardCount: '0 (+0)',
-            lists: defaultLists,
+            lists: getDefaultList(),
             dateCreation: now,
             dateEdition: now,
         };

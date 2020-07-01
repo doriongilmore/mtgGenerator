@@ -167,9 +167,7 @@
         },
         beforeDestroy() {
             if (!this.updateDone) { return }
-            DeckFactory.update(this.deck);
-            const json = JSON.stringify(this.deck);
-            window.localStorage.setItem(CONST.storageKeys.tmpDeck, json);
+            this.saveDeck();
         },
         async mounted() {
             const height = this.$refs.container.parentElement.clientHeight
@@ -180,6 +178,10 @@
                 this.tmpDeck = await this.$store.dispatch('decks/getTmpDeck');
                 this._deck = this.deckToEdit || this.tmpDeck;
                 this.stats = getStats(this.deck);
+                window.onbeforeunload = () => {
+                    if (!this.updateDone) { return }
+                    this.saveDeck();
+                };
             } catch (e) {
                 console.error('error when loading from storage', e);
             }
@@ -199,13 +201,13 @@
                 this.$store.dispatch('modals/openCard', card);
             },
             saveDeck() {
+                DeckFactory.update(this.deck);
                 const newDeck = DeckFactory.getDeckToCreate();
                 if (DeckFactory.areSameDeck(this.deck, newDeck)) {
                     console.warn('dont save this deck ...', { deck: this.deck, newDeck });
                     this.$store.commit('decks/setTmpDeck', newDeck); // update creation time
                     return false;
                 }
-                DeckFactory.update(this.deck);
                 this.$store.commit('decks/setDecks', [this.deck]);
                 this._deck = this.deck;
                 this.$store.commit('decks/setTmpDeck', newDeck);
