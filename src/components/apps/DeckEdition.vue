@@ -33,6 +33,7 @@
                             :list="deckList.list"
                             group="deck"
                             :move="onMove"
+                            @change="onChange"
                     >
                         <div class="cardRow" v-for="card in deckList.list" :key="card.id">
                             <div class="name" v-on:click="openCard(card)">{{ card.name }}</div>
