@@ -13,7 +13,11 @@
         <h3>Bugs :</h3>
         <div class="tab">
             Known bugs and future features are described <a href="https://github.com/doriongilmore/mtgGenerator/issues" target="_blank">here</a>, feel free to comment.<br>
-            You can create new ones <a href="https://github.com/doriongilmore/mtgGenerator/issues/new" target="_blank">here</a>, please describe the issue found or the feature you have in mind.<br><br>
+            You can create
+            <a href="https://github.com/doriongilmore/mtgGenerator/issues/new?assignees=&labels=&template=bug_report.md&title=" target="_blank"> new issues here </a>
+            and
+            <a href="https://github.com/doriongilmore/mtgGenerator/issues/new?assignees=&labels=&template=feature_request.md&title=" target="_blank"> new features here</a>
+            , please describe following the template.<br><br>
             <a href="https://github.com/doriongilmore/mtgGenerator" target="_blank">You can find more info here</a>
         </div>
     </div>
