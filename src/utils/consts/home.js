@@ -27,7 +27,7 @@ to export<br/>Several formats are supported:<br><br>
 - untap.in is an english website to play many card games with personalized decks,<br>format "<b>1 Black Lotus (vma)</b>"<br>
 - The format "<b>1 Black Lotus</b>" is also supported.<br/>
 If you need other ones please
-<a href="https://github.com/doriongilmore/mtgGenerator/issues/new?assignees=&labels=&template=format_report.md&title=" target="_blank"> fill an issue</a>
+<a href="https://github.com/doriongilmore/mtgGenerator/issues/new?assignees=&labels=&template=format_request.md&title=" target="_blank"> fill an issue</a>
 `,
 };
 
