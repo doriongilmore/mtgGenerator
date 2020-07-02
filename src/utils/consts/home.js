@@ -66,7 +66,7 @@ const KEY_FEATURE_SEARCH = {
 to add texts or types (If you don't it will be ignored)<br><br>
 Text will search anything in oracle text.<br>Add one line for 'lifelink' then one for 'draw' for example<br><br>
 Type will search anything in type line.<br>Add one line for Legend then one for Creature then one for Elf<br><br>
-Colors and rarity have an inclusion list:<br>At least rare will search in all rare and mythic cards<br>
+Colors, cost and rarity have an inclusion list:<br>At least rare will search in all rare and mythic cards<br>
 At most white and blue will search in all colorless, white, blue and white and blue cards<br><br>
 Be aware advanced search is always active:<br>If you want to search only for card name in basic input,
 think about cleaning your previous search parameters if any with<br>
