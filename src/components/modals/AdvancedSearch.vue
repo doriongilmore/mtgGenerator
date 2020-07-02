@@ -42,6 +42,13 @@
                 </select>
             </div>
             <div class="row">
+                <label class="label">Converted Mana Cost</label>
+                <input class="input" type="number" min="0" v-model="searchParams.cmc"/>
+                <select v-model="searchParams.cmcInclusion" class="other">
+                    <option v-for="incParam in lists.inclusion" :value="incParam.key">{{incParam.value}}</option>
+                </select>
+            </div>
+            <div class="row">
                 <label class="label">Rarity</label>
                 <select v-model="searchParams.rarity" class="input">
                     <option value="">Tous</option>

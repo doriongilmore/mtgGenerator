@@ -147,7 +147,6 @@
             return {
                 isLoading: false,
                 cardToDisplay: null,
-                results: [],
                 tmpList: [],
                 tmpDeck: null,
                 _deck: null,
@@ -160,6 +159,7 @@
         computed: {
             ...mapState({
                 searchParams: state => state.search,
+                results: state => state.search.results,
             }),
             deck() {
                 return this._deck || this.deckToEdit || this.tmpDeck || {};
@@ -270,12 +270,12 @@
                 this.$store.dispatch('mtg/search', this.searchParams)
                 .then((results) => {
                     this.hideSpinner();
-                    this.results = results;
+                    this.$store.commit('search/setResults', results);
                 })
                 .catch((error) => {
                     this.hideSpinner();
                     console.error('error during search', { args: this.searchParams, error });
-                    this.results = [];
+                    this.$store.commit('search/setResults', []);
                 });
             },
             /**

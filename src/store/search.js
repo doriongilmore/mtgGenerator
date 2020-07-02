@@ -10,10 +10,13 @@ export const search = {
     texts: [...BLANK_ARRAY],
     colorInclusion: EXACT_KEY,
     colors: [...BLANK_ARRAY],
+    cmcInclusion: EXACT_KEY,
+    cmc: BLANK_STRING,
     rarityInclusion: EXACT_KEY,
     rarity: BLANK_STRING,
     typeInclusion: EXACT_KEY,
     types: [...BLANK_ARRAY],
+    results: [...BLANK_ARRAY],
   },
   mutations: {
     clearSearch(state) {
@@ -21,10 +24,13 @@ export const search = {
         state.texts = [...BLANK_ARRAY];
         state.colorInclusion = EXACT_KEY;
         state.colors = [...BLANK_ARRAY];
+        state.cmcInclusion = EXACT_KEY;
+        state.cmc = BLANK_STRING;
         state.rarityInclusion = EXACT_KEY;
         state.rarity = BLANK_STRING;
         state.typeInclusion = EXACT_KEY;
         state.types = [...BLANK_ARRAY];
+        state.results = [...BLANK_ARRAY];
     },
     removeText(state, index) {
       const newTexts = [...state.texts];
@@ -46,6 +52,8 @@ export const search = {
       if (!type || state.types.includes(type)) { return }
       state.types = [...state.types, type];
     },
-
+    setResults(state, results) {
+      state.results = [...results];
+    },
   },
 };

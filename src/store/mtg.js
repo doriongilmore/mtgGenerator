@@ -16,6 +16,8 @@ function getQuery(args) {
   const colors = (args.colors || []).join('');
   if (colors) { addToQuery('c', colors, args.colorInclusion) }
 
+  if (args.cmc) { addToQuery('cmc', args.cmc, args.cmcInclusion) }
+
   if (args.set) { addToQuery('set', args.set) }
 
   if (args.rarity) { addToQuery('r', args.rarity, args.rarityInclusion) }
