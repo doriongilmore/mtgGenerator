@@ -24,11 +24,7 @@
                         :title="el.legal"
                 >{{el.format}}</div>
             </div>
-            <div id="rulings" class="row">
-                <div v-for="rule in rules" :v-key="rule.oracle_id">
-                    [{{rule.published_at}}] {{rule.comment}}
-                </div>
-            </div>
+            <div id="rulings" ref="rulings" class="row"></div>
         </div>
     </div>
 </template>
@@ -44,11 +40,6 @@
     export default {
         name: "Card",
         components: { Mana },
-        data() {
-            return {
-                rules: [],
-            };
-        },
         computed: {
             ...mapState({
                 /** @returns {Card} */
@@ -59,25 +50,32 @@
                     .map(el => ({ format: el[0], legal: el[1] }));
             },
             oracle() {
-                const processed = this.card.oracle_text.replace(CONST.mana.generalRegexp, (manaCost) => {
-                    const instance = new ManaClass({ propsData: { manaCost } });
-                    instance.$mount();
-                    return instance.$el.innerHTML;
-                });
-
-                return processed;
+                return this.processSymbols(this.card.oracle_text);
             },
         },
         async mounted() {
             try {
                 this.$refs.oracle.innerHTML = this.oracle;
                 const res = await this.$store.dispatch('mtg/fetch', this.card.rulings_uri);
-                this.rules = res;
+                for (let i = 0; i < res.length; i++) {
+                    const div = document.createElement('div');
+                    div.innerHTML = `[${res[i].published_at}] ${this.processSymbols(res[i].comment)}`;
+                    this.$refs.rulings.appendChild(div);
+                }
             } catch(e) {
                 console.error('error fetching rules', e)
                 return [];
             }
-        }
+        },
+        methods: {
+            processSymbols(text) {
+                return text.replace(CONST.mana.generalRegexp, (manaCost) => {
+                    const instance = new ManaClass({ propsData: { manaCost } });
+                    instance.$mount();
+                    return instance.$el.innerHTML;
+                })
+            },
+        },
     };
 </script>
 
