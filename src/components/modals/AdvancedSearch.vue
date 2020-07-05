@@ -25,7 +25,7 @@
             <div class="row">
                 <label class="label">Colors</label>
                 <div class="input mana_row">
-                    <div v-for="color in lists.colorList" :class="color.key">
+                    <div v-for="color in lists.colorList" :class="`mana_input ${color.key}`">
                         <label :for="color.key">
                             <Mana :mana-cost="color.value"></Mana>
                         </label>
@@ -162,6 +162,15 @@
                     .g { grid-area: g; }
                     .r { grid-area: r; }
                     .w { grid-area: w; }
+
+                    .mana_input {
+                        display: grid;
+                        grid-template-columns: 15px auto;
+                        grid-template-areas: "label input";
+                        label { grid-area: label; }
+                        input { grid-area: input; }
+                    }
+
                 }
             }
         }
