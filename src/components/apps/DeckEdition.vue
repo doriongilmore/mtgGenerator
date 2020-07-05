@@ -184,9 +184,13 @@
         },
         methods: {
             resize() {
-                const height = this.$refs.container.parentElement.clientHeight
-                    - this.$refs.stats.clientHeight;
-                this.$refs.deckEdition.style['grid-template-rows'] = `${height}px`;
+                const MIN_EDITION = 200;
+                const parentHeight = this.$refs.container.parentElement.clientHeight;
+                const statsHeight = Math.max(MIN_EDITION, Math.min(this.$refs.stats.clientHeight, parentHeight - MIN_EDITION));
+                const editionHeight = parentHeight - statsHeight;
+                this.$refs.deckEdition.style['grid-template-rows'] = `${editionHeight}px`;
+                this.$refs.stats.style.height = 'auto';
+                this.$refs.stats.style.bottom = 0;
             },
             displaySpinner() {
                 this.isLoading = true;
@@ -478,8 +482,7 @@
 }
 #deckStats {
     position: absolute;
-    bottom: 0px;
-    height: auto;
+    bottom: 0;
     width: 100%;
     display: grid;
     grid-template-columns: 25% 25% 25% 25%;
