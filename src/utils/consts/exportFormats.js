@@ -9,17 +9,24 @@ const ORDER_NAME = { key: 'name', value: 'Card Name' };
 const FORMAT_JSON = { key: 'json', value: 'JSON' };
 const FORMAT_TEXT = { key: 'text', value: 'Text' };
 
-const DORION = { key: 'DORION', value: 'doriongilmore', format: FORMAT_JSON };
+const DORION = {
+    key: 'DORION',
+    value: 'doriongilmore.fr',
+    short: 'dorion',
+    format: FORMAT_JSON,
+};
 const UNTAP = {
     key: 'UNTAP',
-    value: 'untap',
+    value: 'untap.in',
+    short: 'untap',
     format: FORMAT_TEXT,
     order: [ORDER_QTE, ORDER_NAME, ORDER_SET],
     set: PARENTHESIS
 }
 const MAGIC_CORP = {
     key: 'MAGIC_CORP',
-    value: 'magiccorporation',
+    value: 'magiccorporation.com',
+    short: 'magiccorp',
     format: FORMAT_TEXT,
     order: [ORDER_QTE, ORDER_SET, ORDER_NAME],
     set: HOOK

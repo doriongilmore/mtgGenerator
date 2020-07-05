@@ -1,23 +1,28 @@
 <template>
     <div class="export">
         <form>
-            <div class="formRow" v-for="f in exportFormats" :key="f.key">
-                <label :for="f.key">
-                    <input type="radio" :id="f.key" :value="f" v-model="format"/> {{ f.value }}
-                </label>
+            <div id="type" class="formRow">
+                <div v-for="f in exportFormats" :key="f.key">
+                    <label :for="f.key" :class="f.short" :title="f.value">
+                        <input type="radio" :id="f.key" :value="f" v-model="format"/> {{ f.short }}
+                    </label>
+                </div>
             </div>
-            <div class="formRow" v-if="format.key !== dorionKey">
-                <label for="withSets">
+            <div id="setType" class="formRow" v-if="format.key !== dorionKey">
+                <label for="withSets" class="left">
                     <input type="radio" id="withSets" value="withSets" v-model="setFormat"/> With Sets
                 </label>
-                <label for="withoutSets">
+                <label for="withoutSets" class="right">
                     <input type="radio" id="withoutSets" value="withoutSets" v-model="setFormat"/> Without Sets
                 </label>
             </div>
-
-            <label for="exportArea">
-                <textarea id="exportArea" class="formRow" :value="getExport"></textarea>
-            </label>
+            <div class="res">
+                <label for="exportArea">Copy-Paste<br>
+                    <textarea id="exportArea" class="formRow" :value="getExport"></textarea>
+                </label>
+                <Button :handle-click="saveFile" text="Or export to a file" bordered="true"></Button>
+                <a style="display: none;" ref="exportLink"></a>
+            </div>
         </form>
     </div>
 </template>
@@ -29,6 +34,19 @@
     import CONST from "src/utils/CONST";
     import DeckFactory from "src/utils/DeckFactory";
 
+    let textFile = null;
+    function makeTextFile(text) {
+        const data = new Blob([text], {type: 'text/plain'});
+
+        // If we are replacing a previously generated file we need to
+        // manually revoke the object URL to avoid memory leaks.
+        if (textFile !== null) {
+            window.URL.revokeObjectURL(textFile);
+        }
+        textFile = window.URL.createObjectURL(data);
+        return textFile;
+    }
+
     export default {
         name: "Export",
         components: { draggable, Button },
@@ -37,7 +55,7 @@
                 dorionKey: CONST.exportFormats.DORION.key,
                 format: CONST.exportFormats.DORION,
                 exportFormats: CONST.exportFormats.list,
-                setFormat: 'withSets'
+                setFormat: 'withSets',
             };
         },
         computed: {
@@ -76,25 +94,61 @@
                     text += `${firstLine}${formatList(list, sb)}${newLine}`;
                 }
                 return text;
-            }
-        }
+            },
+        },
+        methods: {
+            saveFile() {
+                const format = this.format.key === CONST.exportFormats.DORION.key ? 'json' : 'txt';
+                this.$refs.exportLink.download = `${this.deckOrList.name}[${this.format.value}].${format}`;
+                this.$refs.exportLink.href = makeTextFile(this.getExport);
+                this.$refs.exportLink.click();
+            },
+        },
     };
 </script>
 
 <style lang="less" scoped>
     .export {
+        overflow-x: hidden;
+        overflow-y: auto;
         height: 100%;
+
+        #type {
+            display: grid;
+            grid-template-areas: "left middle right";
+            .dorion {
+                grid-area: left;
+            }
+            .magiccorp {
+                grid-area: right;
+            }
+            .untap {
+                grid-area: middle;
+            }
+        }
+        #setType {
+            display: grid;
+            grid-template-areas: "left right";
+            .left {
+                grid-area: left;
+            }
+            .right {
+                grid-area: right;
+            }
+        }
         .formRow {
             height: 30px;
             margin-bottom: 5px;
         }
-        textarea {
-            width: 95%;
-            min-width: 200px;
-            max-width: 260px;
-            min-height: 100px;
-            max-height: 260px;
-            overflow-y: auto;
+        .res {
+            text-align: center;
+            textarea {
+                width: 100%;
+                height: 100px;
+                resize: none;
+                overflow-y: auto;
+            }
         }
+
     }
 </style>

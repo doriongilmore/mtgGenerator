@@ -118,14 +118,14 @@
 
 <style lang="less" scoped>
     .import {
+        overflow-x: hidden;
+        overflow-y: auto;
         text-align: center;
         height: 100%;
         textarea {
-            width: 95%;
-            min-width: 200px;
-            max-width: 260px;
-            min-height: 100px;
-            max-height: 260px;
+            width: 100%;
+            height: 100px;
+            resize: none;
             overflow-y: auto;
         }
     }
