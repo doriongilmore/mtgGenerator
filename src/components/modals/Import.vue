@@ -1,9 +1,11 @@
 <template>
     <div class="import">
-        <label>
+        <label>Copy-Paste<br>
             <textarea v-model="importText"></textarea>
         </label>
-        <button @click="doImport">Import</button>
+        <input type="file" style="display: none" ref="fileInput" @change="updateFile" accept="text/plain,application/json"/>
+        <Button :handle-click="chooseFile" text="Or choose a file"></Button>
+        <Button :handle-click="doImport" text="Import" bordered="true"></Button>
         <PulseLoader id="spinner" ref="spinner" :loading="isLoading"></PulseLoader>
     </div>
 </template>
@@ -13,6 +15,7 @@
     import { mapState } from "vuex";
     import CONST from "src/utils/CONST";
     import PulseLoader from 'vue-spinner/src/PulseLoader.vue';
+    import Button from "src/components/uiElements/Button.vue";
 
     const regexpQte = /\d+/g;
     const regexpSet = /\(.+\)|\[.+]|{.+}/g;
@@ -20,7 +23,7 @@
 
     export default {
         name: "Import",
-        components: { PulseLoader },
+        components: { Button, PulseLoader },
         data() {
             return {
                 importText: '',
@@ -33,6 +36,15 @@
             }),
         },
         methods: {
+            async updateFile(event) {
+                const file =  event && event.target && event.target.files && event.target.files[0] || null;
+                if (file) {
+                    this.importText = await this.getTextFromFile(file);
+                }
+            },
+            chooseFile() {
+                this.$refs.fileInput.click();
+            },
             async doImport() {
                 let listOrDeck;
                 try {
@@ -91,18 +103,23 @@
                         // todo reject if no result ?
                     });
                 })
-            }
+            },
+            getTextFromFile(file) {
+                return new Promise((resolve, reject) => {
+                    const fileReader = new FileReader();
+                    fileReader.onload = () => resolve(fileReader.result);
+                    fileReader.onerror = reject;
+                    fileReader.readAsText(file, "UTF-8"); // fileReader.result -> String.
+                });
+            },
         }
     };
 </script>
 
 <style lang="less" scoped>
     .import {
+        text-align: center;
         height: 100%;
-        /*.formRow {*/
-        /*    height: 30px;*/
-        /*    margin-bottom: 5px;*/
-        /*}*/
         textarea {
             width: 95%;
             min-width: 200px;
