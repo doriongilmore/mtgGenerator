@@ -13,8 +13,8 @@
                 <div class="type">{{card.type_line}}</div>
                 <div class="rarity">{{card.rarity}}</div>
             </div>
-            <div id="oracle" class="row" v-if="card.oracle_text">
-                {{card.oracle_text}}
+            <div id="oracle" ref="oracle" class="row" v-if="card.oracle_text">
+                {{oracle}}
             </div>
             <div id="legalities" class="row">
                 <div
@@ -34,8 +34,12 @@
 </template>
 
 <script>
+    import Vue from "vue";
     import { mapState } from "vuex";
     import Mana from "src/components/uiElements/Mana.vue";
+    import CONST from "src/utils/CONST";
+
+    const ManaClass = Vue.extend(Mana);
 
     export default {
         name: "Card",
@@ -53,10 +57,20 @@
             legalities() {
                 return Object.entries(this.card.legalities)
                     .map(el => ({ format: el[0], legal: el[1] }));
-            }
+            },
+            oracle() {
+                const processed = this.card.oracle_text.replace(CONST.mana.generalRegexp, (manaCost) => {
+                    const instance = new ManaClass({ propsData: { manaCost } });
+                    instance.$mount();
+                    return instance.$el.innerHTML;
+                });
+
+                return processed;
+            },
         },
         async mounted() {
             try {
+                this.$refs.oracle.innerHTML = this.oracle;
                 const res = await this.$store.dispatch('mtg/fetch', this.card.rulings_uri);
                 this.rules = res;
             } catch(e) {
