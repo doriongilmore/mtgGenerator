@@ -58,16 +58,11 @@ export default {
 <style lang="less" scoped>
 .button {
   padding: 2px;
-
   height: 28px;
-  /*display: flex;*/
 
   &.bordered {
     border: 1px black solid;
     border-radius: 5px;
-  }
-  &.hasText {
-    /*width: 100%;*/
   }
   &:not(.hasText) {
     width: 28px;
@@ -92,7 +87,8 @@ export default {
   }
 
   span, svg {
-    margin: auto
+    margin: auto;
+    vertical-align: middle;
   }
   svg {
     width: 26px;
