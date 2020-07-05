@@ -50,7 +50,7 @@ const KEY_FEATURE_STATS = {
 <img height="50px" src="http://doriongilmore.fr/mtgBuilder/assets/ignoreStats.png"/><br><br>
 Four graphs are available, the first three are kinda basic (converted mana cost, color, type).<br>
 The functionality one is based on the oracle text of a card, I've made choices and it can probably be improved,
-<a href="https://github.com/doriongilmore/mtgGenerator/issues/10" target="_blank"> see more here</a>
+<a href="https://github.com/doriongilmore/mtgGenerator/issues/10" target="_blank"> see more here</a>.
 `,
 };
 const KEY_FEATURE_DECKS = {

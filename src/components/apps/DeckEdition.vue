@@ -10,8 +10,8 @@
                         <Button :icon="'export'" :handle-click="onExport.bind(this, deck)"></Button>
                         <Button :icon="'import'" :handle-click="onImport"></Button>
                         <Button :icon="'print'" :handle-click="onPrint"></Button>
-                        <Button :icon="'save'" :handle-click="saveDeck"></Button>
                         <Button :icon="'delete'" :handle-click="deleteDeck.bind(this, deck)"></Button>
+                        <Button :icon="'save'" :handle-click="saveDeck" :disabled="!updateDone" :bordered="updateDone"></Button>
                     </div>
                 </div>
                 <div class="deckList" v-for="deckList in deck.lists">
@@ -67,23 +67,20 @@
     <!--    TOP RIGHT    -->
 
             <div id="search">
-                <div id="form">
-                    <form v-on:submit="handleSearch">
-                        <div class="searchHeader">
-                            <input
-                                    id="searchText"
-                                    type="text"
-                                    v-model="searchParams.name"
-                                    placeholder="Black Lotus"
-                            />
-                            <div class="buttons">
-                                <Button icon="search" :handle-click="handleSearch" class="submit"></Button>
-                                <Button icon="display" :handle-click="openSearch"></Button>
-                            </div>
-                        </div>
-                        <input type="submit" style="display: none"/>
-                    </form>
-                </div>
+                <form v-on:submit="handleSearch" id="form">
+                    <div class="searchHeader">
+                        <input
+                                type="text"
+                                v-model="searchParams.name"
+                                placeholder="Black Lotus"
+                        />
+                    </div>
+                    <div class="buttons">
+                        <Button icon="search" :handle-click="handleSearch" class="submit"></Button>
+                        <Button icon="display" :handle-click="openSearch"></Button>
+                    </div>
+                    <input type="submit" style="display: none"/>
+                </form>
                 <div id="results">
                     <div class="header">
                         <div class="name">Name</div>
@@ -170,9 +167,7 @@
             this.saveDeck();
         },
         async mounted() {
-            const height = this.$refs.container.parentElement.clientHeight
-                - this.$refs.stats.clientHeight;
-            this.$refs.deckEdition.style['grid-template-rows'] = `${height}px`;
+            this.resize();
 
             try {
                 this.tmpDeck = await this.$store.dispatch('decks/getTmpDeck');
@@ -182,11 +177,17 @@
                     if (!this.updateDone) { return }
                     this.saveDeck();
                 };
+                window.onresize = this.resize;
             } catch (e) {
                 console.error('error when loading from storage', e);
             }
         },
         methods: {
+            resize() {
+                const height = this.$refs.container.parentElement.clientHeight
+                    - this.$refs.stats.clientHeight;
+                this.$refs.deckEdition.style['grid-template-rows'] = `${height}px`;
+            },
             displaySpinner() {
                 this.isLoading = true;
             },
@@ -217,9 +218,7 @@
             onChange() {
                 this.updateDone = true;
                 this.stats = getStats(this.deck);
-                const height = this.$refs.container.parentElement.clientHeight
-                    - this.$refs.stats.clientHeight;
-                this.$refs.deckEdition.style['grid-template-rows'] = `${height}px`;
+                this.resize();
             },
             onImport() {
                 this.$store.dispatch('modals/openImport').then((listOrDeck) => {
@@ -343,7 +342,7 @@
 }
 #deckEdition {
     display: grid;
-    grid-template-columns: 40% 60%;
+    grid-template-columns: 50% 50%;
     grid-template-areas: "deckLists search";
     #deckLists {
         grid-area: deckLists;
@@ -356,17 +355,19 @@
         }
         #deckHeader {
             display: grid;
-            grid-template-columns: 60% 30%;
+            grid-template-columns: auto auto;
             grid-template-areas: "name buttons";
             .deckName {
                 grid-area: name;
+                input {
+                    width: 100%;
+                }
             }
             .buttons {
                 grid-area: buttons;
             }
         }
         .deckList {
-            width: 80%;
             border: rgba(100, 100, 100, 0.3) solid 2px;
 
             .listHeader {
@@ -389,7 +390,7 @@
 
             .cardRow, .resultRow {
                 display: grid;
-                grid-template-columns: 40% 15% auto;
+                grid-template-columns: 50% auto 35px 95px;
                 grid-template-areas: "name manaCost deckQte printConfig";
                 .name {
                     grid-area: name;
@@ -405,8 +406,8 @@
                 }
                 .printConfig {
                     grid-area: printConfig;
-                    input {
-                        width: 30px;
+                    select {
+                        width: 100%;
                     }
                 }
                 .type {
@@ -431,12 +432,16 @@
         height: auto;
         overflow-x: hidden;
         overflow-y: auto;
-        .searchHeader {
+        #form {
             display: grid;
-            grid-template-columns: 80% auto;
+            grid-template-columns: auto auto;
             grid-template-areas: "input buttons";
-            input {
+            .searchHeader {
                 grid-area: input;
+                input {
+                    width: 100%
+                }
+
             }
             .buttons {
                 grid-area: buttons;

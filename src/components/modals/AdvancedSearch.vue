@@ -9,7 +9,7 @@
             <div class="row" v-for="(text, index) in searchParams.texts" :v-key="text">
                 <label class="label" :for="text">Text</label>
                 <input class="input" :id="text" type="text" v-model="searchParams.texts[index]"/>
-                <Button class="other" icon="delete" :handle-click="removeText.bind(this, index)"></Button>
+                <Button class="other" icon="delete" text="Remove" :handle-click="removeText.bind(this, index)"></Button>
             </div>
             <div class="row">
                 <label class="label" for="newText">Text</label>
@@ -20,7 +20,7 @@
                         v-model="tmpText"
                         placeholder="Use '~' instead of the card name"
                 />
-                <Button class="other" icon="add" :handle-click="addText"></Button>
+                <Button class="other" icon="add" text="Add" :handle-click="addText"></Button>
             </div>
             <div class="row">
                 <label class="label">Colors</label>
@@ -62,14 +62,14 @@
             <div class="row" v-for="(type, index) in searchParams.types" :v-key="type">
                 <label class="label" :for="type">Type</label>
                 <input class="input" :id="type" type="text" v-model="searchParams.types[index]"/>
-                <Button class="other" icon="delete" :handle-click="removeType.bind(this, index)"></Button>
+                <Button class="other" icon="delete" text="Remove" :handle-click="removeType.bind(this, index)"></Button>
             </div>
             <div class="row">
                 <label class="label" for="newText">Type</label>
                 <select v-model="tmpType" class="input">
                     <option v-for="type in lists.typeList" :value="type.key">{{type.value}}</option>
                 </select>
-                <Button class="other" icon="add" :handle-click="addType"></Button>
+                <Button class="other" icon="add" text="Add" :handle-click="addType"></Button>
             </div>
         </div>
         <div class="buttons" ref="buttons">

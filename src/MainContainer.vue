@@ -1,15 +1,18 @@
 <template>
-  <div class="mainContainer">
+  <div :class="`mainContainer ${displayMenu ? 'displayMenu' : 'hideMenu'}`">
     <div class="menu">
       <router-link to="/" class="item">
-        Home
+        {{ displayMenu ? 'Home' : 'H' }}
       </router-link>
       <router-link to="/decks" class="item">
-        Decks
+        {{ displayMenu ? 'Decks' : 'D' }}
       </router-link>
       <router-link to="/deck" class="item">
-        Create a deck
+        {{ displayMenu ? 'Create a deck' : 'C' }}
       </router-link>
+      <div class="item" @click="toggleDisplayMenu">
+        {{ displayMenu ? 'Hide Menu' : 'M' }}
+      </div>
     </div>
     <div class="content" ref="content">
       <router-view></router-view>
@@ -25,6 +28,7 @@ export default {
   components: {},
   data() {
     return {
+      displayMenu: true,
       toOpen: "",
       currentOpen: ""
     };
@@ -43,7 +47,11 @@ export default {
 
     tl.play();
   },
-  methods: {},
+  methods: {
+    toggleDisplayMenu() {
+      this.displayMenu = !this.displayMenu;
+    }
+  },
 };
 </script>
 
@@ -51,10 +59,16 @@ export default {
 a {
   all: unset;
 }
+
+.mainContainer.hideMenu {
+  grid-template-columns: 5% auto;
+}
+.mainContainer.displayMenu {
+  grid-template-columns: 20% auto;
+}
 .mainContainer {
   overflow: hidden;
   display: grid;
-  grid-template-columns: 20% auto;
   grid-template-areas: "menu content";
 
   .menu {

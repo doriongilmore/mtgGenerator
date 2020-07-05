@@ -99,7 +99,7 @@
             }
             .cardType {
                 display: grid;
-                grid-template-columns: 80% auto;
+                grid-template-columns: auto auto;
                 grid-template-areas: "type rarity";
                 .type {
                     grid-area: type;

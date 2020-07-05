@@ -1,7 +1,6 @@
 <template>
     <div id="homeFeatures">
         <div class="tab" v-for="mainFeature in features">
-<!--            <input type="checkbox" disabled checked/>-->
             <Button
                     class="info"
                     :text="mainFeature.label"
@@ -23,9 +22,7 @@
         props: ['features'],
         methods: {
             openFeature(feature) {
-                if (feature.modal) {
-                    this.$store.dispatch('modals/openFeature', feature);
-                }
+                this.$store.dispatch('modals/openFeature', feature);
             },
         },
     };
@@ -34,10 +31,11 @@
 </script>
 
 <style lang="less" scoped>
-    #home {
+    #homeFeatures {
         div.tab {
+            width: 75%;
             position: relative;
-            left:20px;
+            left:5%;
             .info {
                 width: max-content;
             }

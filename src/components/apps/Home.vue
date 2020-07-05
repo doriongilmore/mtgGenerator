@@ -18,7 +18,7 @@
             and
             <a href="https://github.com/doriongilmore/mtgGenerator/issues/new?assignees=&labels=&template=feature_request.md&title=" target="_blank"> new features here</a>
             , please describe following the template.<br><br>
-            <a href="https://github.com/doriongilmore/mtgGenerator" target="_blank">You can find more info here</a>
+            <a href="https://github.com/doriongilmore/mtgGenerator" target="_blank">You can find more info on GitHub</a>
         </div>
     </div>
 </template>
@@ -45,8 +45,9 @@
 <style lang="less" scoped>
     #home {
         div.tab {
+            width: 80%;
             position: relative;
-            left:20px;
+            left:5%;
         }
     }
 </style>

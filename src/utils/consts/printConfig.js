@@ -1,8 +1,8 @@
 const DONT_PRINT = { key: 'DONT_PRINT', text: "Don't print" };
 const BORDER_0 = { key: 'BORDER_0', text: 'no bord', w: 57, h: 82 };
-const BORDER_1 = { key: 'BORDER_1', text: '1 mm bord', w: 59, h: 84 };
-const BORDER_2 = { key: 'BORDER_2', text: '2 mm bord', w: 61, h: 86 };
-const BORDER_3 = { key: 'BORDER_3', text: '3 mm bord', w: 63, h: 88 };
+const BORDER_1 = { key: 'BORDER_1', text: '1 mm', w: 59, h: 84 };
+const BORDER_2 = { key: 'BORDER_2', text: '2 mm', w: 61, h: 86 };
+const BORDER_3 = { key: 'BORDER_3', text: '3 mm', w: 63, h: 88 };
 
 /*
  * page size 210 x 297
