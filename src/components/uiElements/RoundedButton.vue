@@ -5,31 +5,46 @@
     v-on:click.prevent="handleClick"
     v-bind:title="title"
   >
-    <slot></slot>
+    <Delete v-if="icon === 'delete'" />
     <Display v-if="icon === 'display'" />
     <Download v-else-if="icon === 'download'" />
-    <Next v-else-if="icon === 'next'" />
-    <Playlist v-else-if="icon === 'playlist'" />
-    <Previous v-else-if="icon === 'previous'" />
+    <Export v-else-if="icon === 'export'" />
+    <Import v-else-if="icon === 'import'" />
+    <Info v-else-if="icon === 'info'" />
+    <Plus v-else-if="icon === 'add'" />
+    <Print v-if="icon === 'print'" />
+    <Save v-if="icon === 'save'" />
+    <Search v-else-if="icon === 'search'" />
+    <span><slot>{{text}}</slot></span>
   </div>
 </template>
 
 <script>
+import Delete from "src/assets/icons/Delete.vue";
 import Display from "src/assets/icons/Display.vue";
 import Download from "src/assets/icons/Download.vue";
-import Next from "src/assets/icons/Next.vue";
-import Playlist from "src/assets/icons/Playlist.vue";
-import Previous from "src/assets/icons/Previous.vue";
+import Export from "src/assets/icons/Export.vue";
+import Import from "src/assets/icons/Import.vue";
+import Info from "src/assets/icons/Info.vue";
+import Plus from "src/assets/icons/Plus.vue";
+import Print from "src/assets/icons/Print.vue";
+import Save from "src/assets/icons/Save.vue";
+import Search from "src/assets/icons/Search.vue";
 
 export default {
   name: "RoundedButton",
-  props: ["handleClick", "icon", "disabled", "active", "title"],
+  props: ["handleClick", "icon", "text", "disabled", "active", "title"],
   components: {
+    Delete,
     Display,
     Download,
-    Next,
-    Playlist,
-    Previous,
+    Export,
+    Import,
+    Info,
+    Plus,
+    Print,
+    Save,
+    Search,
   }
 };
 </script>

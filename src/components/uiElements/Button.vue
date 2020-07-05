@@ -11,10 +11,7 @@
     <Export v-else-if="icon === 'export'" />
     <Import v-else-if="icon === 'import'" />
     <Info v-else-if="icon === 'info'" />
-    <Next v-else-if="icon === 'next'" />
-    <Playlist v-else-if="icon === 'playlist'" />
     <Plus v-else-if="icon === 'add'" />
-    <Previous v-else-if="icon === 'previous'" />
     <Print v-if="icon === 'print'" />
     <Save v-if="icon === 'save'" />
     <Search v-else-if="icon === 'search'" />
@@ -29,10 +26,7 @@ import Download from "src/assets/icons/Download.vue";
 import Export from "src/assets/icons/Export.vue";
 import Import from "src/assets/icons/Import.vue";
 import Info from "src/assets/icons/Info.vue";
-import Next from "src/assets/icons/Next.vue";
-import Playlist from "src/assets/icons/Playlist.vue";
 import Plus from "src/assets/icons/Plus.vue";
-import Previous from "src/assets/icons/Previous.vue";
 import Print from "src/assets/icons/Print.vue";
 import Save from "src/assets/icons/Save.vue";
 import Search from "src/assets/icons/Search.vue";
@@ -47,10 +41,7 @@ export default {
     Export,
     Import,
     Info,
-    Next,
-    Playlist,
     Plus,
-    Previous,
     Print,
     Save,
     Search,
