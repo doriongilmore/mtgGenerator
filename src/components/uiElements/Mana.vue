@@ -6,6 +6,7 @@
       <Energy v-else-if="mana === 'E'" />
       <Green v-else-if="mana === 'G'" />
       <Incolor v-else-if="mana === 'I'" />
+      <Incolor v-else-if="mana === 'C'" />
       <Red v-else-if="mana === 'R'" />
       <Snow v-else-if="mana === 'S'" />
       <White v-else-if="mana === 'W'" />
@@ -19,19 +20,27 @@ import Black from "src/assets/mana/Black.vue";      // B
 import Blue from "src/assets/mana/Blue.vue";        // U
 import Energy from "src/assets/mana/Energy.vue";    // E
 import Green from "src/assets/mana/Green.vue";      // G
-import Incolor from "src/assets/mana/Incolor.vue";  // I
+import Incolor from "src/assets/mana/Incolor.vue";  // I | C
 import Red from "src/assets/mana/Red.vue";          // R
 import Snow from "src/assets/mana/Snow.vue";        // S
 import White from "src/assets/mana/White.vue";      // W
 
-const regexp = /\d+|X|S|W|B|U|G|R/gi;
+const cleanRegexp = /[\dXSWEICBUGR/]/gi;
+const regexp = /{[\dXSWEICBUGR/]+}/gi;
 
 export default {
   name: "Mana",
   props: ["manaCost"],
   computed: {
     manaList() {
-      return (this.manaCost || '').match(regexp) || [];
+      const list = [];
+      const manas = ((this.manaCost || '').match(regexp) || []).map(r => r.match(cleanRegexp));
+      for (let i = 0, l = manas.length; i < l; i++) {
+        for (let j = 0, m = manas[i].length; j < m; j++) {
+          list.push(manas[i][j]);
+        }
+      }
+      return list;
     }
   },
   components: {
