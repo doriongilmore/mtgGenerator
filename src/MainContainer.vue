@@ -1,16 +1,16 @@
 <template>
   <div :class="`mainContainer ${displayMenu ? 'displayMenu' : 'hideMenu'}`">
     <div class="menu">
-      <router-link to="/" class="item">
+      <router-link to="/" class="item" title="Home">
         {{ displayMenu ? 'Home' : 'H' }}
       </router-link>
-      <router-link to="/decks" class="item">
+      <router-link to="/decks" class="item" title="Decks">
         {{ displayMenu ? 'Decks' : 'D' }}
       </router-link>
-      <router-link to="/deck" class="item">
+      <router-link to="/deck" class="item" title="Create">
         {{ displayMenu ? 'Create a deck' : 'C' }}
       </router-link>
-      <div class="item" @click="toggleDisplayMenu">
+      <div class="item" @click="toggleDisplayMenu" title="Display/Hide">
         {{ displayMenu ? 'Hide Menu' : 'M' }}
       </div>
     </div>
@@ -78,7 +78,7 @@ a {
 
     .item {
       display: block;
-      padding: 20px;
+      padding: 20px 0;
       margin-top: 20px;
       border: 1px solid white;
 
