@@ -110,6 +110,7 @@
         },
         methods: {
             openInfo() {
+                console.groupEnd();
                 this.$store.dispatch('modals/openFeature', CONST.home.features.KEY_FEATURE_SEARCH)
                     .then(() => this.$store.dispatch('modals/openSearch'));
             },

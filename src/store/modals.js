@@ -2,6 +2,7 @@ export const modals = {
   namespaced: true,
   state: {
     //add modal options ?
+    noAnimation: false,
     modalName: null,
     modalData: null,
     resolve: null, //NIM
@@ -21,6 +22,7 @@ export const modals = {
           "wrong modals params :\n" + JSON.stringify(payload, null, 4)
         );
       }
+      state.noAnimation = !!payload.noAnimation;
       state.modalData = payload.modalData;
       state.modalName = payload.modalName;
       state.resolve = payload.resolve;
@@ -88,6 +90,7 @@ export const modals = {
       return new Promise((resolve, reject) => {
         commit("open", {
           modalName: "feature",
+          noAnimation: true,
           canClose: true,
           size: 'medium',
           modalData,

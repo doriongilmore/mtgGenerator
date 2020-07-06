@@ -10,35 +10,15 @@
           v-show="canClose && currentModal"
           class="close"
           @click="onClickClose"
-        >
-          X
-        </div>
+        >X</div>
         <!-- close button -->
         <!--modals-->
-        <Import
-          v-if="currentModal === 'import'"
-          @closeModal="closeAnim"
-        ></Import>
-        <Export
-          v-if="currentModal === 'export'"
-          @closeModal="closeAnim"
-        ></Export>
-        <Card
-                v-if="currentModal === 'card'"
-                @closeModal="closeAnim"
-        ></Card>
-        <AdvancedSearch
-                v-if="currentModal === 'search'"
-                @closeModal="closeAnim"
-        ></AdvancedSearch>
-        <HomeFeature
-                v-if="currentModal === 'feature'"
-                @closeModal="closeAnim"
-        ></HomeFeature>
-        <Confirmation
-                v-if="currentModal === 'confirm'"
-                @closeModal="closeAnim"
-        ></Confirmation>
+        <Import v-if="currentModal === 'import'"></Import>
+        <Export v-if="currentModal === 'export'"></Export>
+        <Card v-if="currentModal === 'card'"></Card>
+        <AdvancedSearch v-if="currentModal === 'search'"></AdvancedSearch>
+        <HomeFeature v-if="currentModal === 'feature'"></HomeFeature>
+        <Confirmation v-if="currentModal === 'confirm'"></Confirmation>
       </div>
       <div ref="loading" class="loading" v-show="isLoading && !isAnimating">
         <span>LOADING</span>
@@ -80,6 +60,7 @@ export default {
   computed: {
     ...mapState({
       modalName: state => state.modals.modalName,
+      noAnimation: state => state.modals.noAnimation,
       resolve: state => state.modals.resolve,
       reject: state => state.modals.reject,
       modalData: state => state.modals.modalData,
@@ -92,67 +73,21 @@ export default {
   },
   watch: {
     isLoading(newValue) {
+      const timeline = new TimelineLite({ pause: true });
       if (newValue) {
-        const timeline = new TimelineLite({ pause: true });
         timeline.add(TweenLite.to(this.$refs.modal, 0.2, { opacity: 0.2 }, 0));
-        timeline.add(
-          TweenLite.to(this.$refs.loading, 0.2, { opacity: 1 }, 0.1)
-        );
-        timeline.play();
+        timeline.add(TweenLite.to(this.$refs.loading, 0.2, { opacity: 1 }, 0.1));
       } else {
-        const timeline = new TimelineLite({ pause: true });
         timeline.add(TweenLite.to(this.$refs.loading, 0.2, { opacity: 0 }, 0));
         timeline.add(TweenLite.to(this.$refs.modal, 0.2, { opacity: 1 }, 0.1));
-        timeline.play();
       }
+      timeline.play();
     },
     modalName(newValue) {
       if (this.isAnimating) throw new Error("Opening a modal when animating");
       if (newValue === actualModalParams.modalName) return;
 
-      this.timeline = new TimelineLite({
-        paused: true,
-        onComplete: () => {
-          this.isAnimating = false;
-          this.currentModal = newValue;
-          this.timeline = null;
-          TweenLite.to(this.$refs.modal, 0.2, {
-            opacity: 1
-          });
-        }
-      });
-
-      this.timeline.add(
-        TweenLite.to(this.$refs.modal, 0.2, {
-          opacity: 0,
-          onComplete: () => {
-            this.currentModal = null;
-          }
-        }),
-        0
-      );
-
-      if (this.size !== actualModalParams.size) {
-        this.height = Math.round(
-          this.$refs.mainContainer.clientHeight *
-            CONST.modals.sizeRatio[this.size].height
-        );
-        this.width = Math.round(
-          this.$refs.mainContainer.clientWidth *
-            CONST.modals.sizeRatio[this.size].width
-        );
-        this.timeline.add(
-          TweenLite.to(this.$refs.mainAnim, 0.2, { height: this.height }),
-          0.2
-        );
-        this.timeline.add(
-          TweenLite.to(this.$refs.mainAnim, 0.2, { width: this.width }),
-          0.4
-        );
-      }
-
-      this.isAnimating = true;
-      this.timeline.play();
+      this.openAnim();
 
       actualModalParams.size = this.size;
       actualModalParams.modalName = newValue;
@@ -165,15 +100,14 @@ export default {
       e.stopPropagation();
       e.preventDefault();
       if (this.isAnimating || !this.canClose) return;
-      this.reject();
-      this.closeAnim();
+      this.onClickClose();
     },
     onClickMainAnim(e) {
       e.stopPropagation();
     },
     onClickClose() {
-      this.reject();
       this.closeAnim();
+      this.reject();
     },
 
     openAnim() {
@@ -212,6 +146,12 @@ export default {
     },
     closeAnim() {
       if (this.isAnimating) return;
+      if (this.noAnimation) {
+        this.isAnimating = false;
+        this.$store.commit("modals/close");
+        this.timeline = null;
+        return;
+      }
 
       this.timeline = new TimelineLite({
         paused: true,
