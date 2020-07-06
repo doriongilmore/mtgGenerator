@@ -33,8 +33,8 @@
     "webpack-zip-plugin": "^0.1.6"
   },
   "scripts": {
-    "dev": "webpack-dev-server --config ./webpack.config.js",
-    "build": "webpack --config ./webpack.config.js",
+    "dev": "export SUPPRESS_NO_CONFIG_WARNING=true && webpack-dev-server --config webpack.dev.config.js",
+    "build": "export SUPPRESS_NO_CONFIG_WARNING=true && webpack --config webpack.prod.config.js",
     "test": "echo 'no test implemented'"
   },
   "repository": {
