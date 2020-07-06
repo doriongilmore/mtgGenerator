@@ -4,7 +4,7 @@ This app brings together several tools to easily create Magic decks.
 
 UI only - will save your lists in browser's local storage, but you should save them on other websites or on a file for long term use.
 
-#### Features Covered :
+### Features Covered :
 - [X] card search (name - color - capacity - etc.)
   - use https://scryfall.com/ api
   - thanks to this sdk https://github.com/Yuudaari/scryfall-sdk
@@ -23,7 +23,7 @@ UI only - will save your lists in browser's local storage, but you should save t
   - pdf containing 9 real size cards by page
   - pdf generated with https://github.com/MrRio/jsPDF
 
-Feel free to propose Pull Requests
+### Feel free to propose Pull Requests
 
     git clone https://github.com/doriongilmore/mtgGenerator.git
     npm install
