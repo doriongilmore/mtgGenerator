@@ -34,6 +34,7 @@ If you need other ones please
 const KEY_SEARCH_NAME = { key: 'KEY_SEARCH_NAME', label: 'By Name' };
 const KEY_SEARCH_TEXT = { key: 'KEY_SEARCH_TEXT', label: 'By Text' };
 const KEY_SEARCH_COLOR = { key: 'KEY_SEARCH_COLOR', label: 'By Color' };
+const KEY_SEARCH_CMC = { key: 'KEY_SEARCH_CMC', label: 'By Mana Cost' };
 const KEY_SEARCH_RARITY = { key: 'KEY_SEARCH_RARITY', label: 'By Rarity' };
 const KEY_SEARCH_TYPE = { key: 'KEY_SEARCH_TYPE', label: 'By Type' };
 
@@ -59,7 +60,7 @@ const KEY_FEATURE_DECKS = {
 };
 const KEY_FEATURE_SEARCH = {
     label: 'Card Search',
-    list: [KEY_SEARCH_NAME, KEY_SEARCH_TEXT, KEY_SEARCH_COLOR, KEY_SEARCH_RARITY, KEY_SEARCH_TYPE],
+    list: [KEY_SEARCH_NAME, KEY_SEARCH_TEXT, KEY_SEARCH_COLOR, KEY_SEARCH_CMC, KEY_SEARCH_RARITY, KEY_SEARCH_TYPE],
     modal: true,
     doc: `Click on
 <img width="25px" src="http://doriongilmore.fr/mtgBuilder/assets/add.png"/>

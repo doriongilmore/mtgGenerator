@@ -1,5 +1,5 @@
 <template>
-  <div class="manaCost" :title="manaList.join('')">
+  <div class="manaCost">
     <div v-for="mana in manaList" class="mana">
       <img :src="mana.uri" :alt="mana.symbol" :title="mana.label">
     </div>

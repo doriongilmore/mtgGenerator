@@ -4,6 +4,7 @@ const path = require('path');
 const webpack = require('webpack');
 const { VueLoaderPlugin } = require('vue-loader');
 const CopyPlugin = require('copy-webpack-plugin');
+const WebpackZipPlugin = require('webpack-zip-plugin');
 const config = require("config");
 
 module.exports = {
@@ -59,6 +60,11 @@ module.exports = {
         new CopyPlugin([
             { from: './assets', to: './' },
         ]),
-        new webpack.DefinePlugin({ CONFIG: JSON.stringify(config) })
+        new webpack.DefinePlugin({ CONFIG: JSON.stringify(config) }),
+        new WebpackZipPlugin({
+            initialFile: './dist/',
+            endPath: './dist',
+            zipName: 'mtgBuilder.zip',
+        }),
     ]
 };
