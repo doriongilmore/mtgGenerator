@@ -22,9 +22,9 @@
         <div class="tab">
             Known bugs and future features are described <a href="https://github.com/doriongilmore/mtgGenerator/issues" target="_blank">here</a>, feel free to comment.<br>
             You can create
-            <a href="https://github.com/doriongilmore/mtgGenerator/issues/new?assignees=&labels=&template=bug_report.md&title=" target="_blank"> new issues here </a>
+            <a href="https://github.com/doriongilmore/mtgGenerator/issues/new?labels=bug&template=bug_report.md" target="_blank"> new issues here </a>
             and
-            <a href="https://github.com/doriongilmore/mtgGenerator/issues/new?assignees=&labels=&template=feature_request.md&title=" target="_blank"> new features here</a>
+            <a href="https://github.com/doriongilmore/mtgGenerator/issues/new?labels=enhancement&template=feature_request.md" target="_blank"> new features here</a>
             , please describe following the template.<br><br>
             <a href="https://github.com/doriongilmore/mtgGenerator" target="_blank">You can find more info on GitHub</a>
         </div>
