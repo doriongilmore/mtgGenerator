@@ -7,6 +7,27 @@
             viewBox="0 0 640 640"
     >
       <defs>
+        <radialGradient id="gradientWhite">
+          <stop offset="10%" stop-color="#f2e796" />
+          <stop offset="80%" stop-color="#e5c96e"/>
+        </radialGradient>
+        <radialGradient id="gradientGreen">
+          <stop offset="10%" stop-color="#50a750" />
+          <stop offset="80%" stop-color="#7e9719"/>
+        </radialGradient>
+        <radialGradient id="gradientRed">
+          <stop offset="10%" stop-color="#d5541a"/>
+          <stop offset="80%" stop-color="#ca5d29"/>
+        </radialGradient>
+        <radialGradient id="gradientBlack">
+          <stop offset="10%" stop-color="#634531"/>
+          <stop offset="80%" stop-color="#3d2d1e"/>
+        </radialGradient>
+        <radialGradient id="gradientBlue">
+          <stop offset="10%" stop-color="#62aea6"/>
+          <stop offset="80%" stop-color="#38a4b1"/>
+        </radialGradient>
+
         <path
           d="M360.95 121.47C360.95 144.48 342.6 163.17 320 163.17C297.4 163.17 279.05 144.48 279.05 121.47C279.05 98.45 297.4 79.76 320 79.76C342.6 79.76 360.95 98.45 360.95 121.47Z"
           id="white"
@@ -29,11 +50,11 @@
         ></path>
       </defs>
       <g>
-        <use xlink:href="#white" fill="#f2e796"></use>
-        <use xlink:href="#green" fill="#50a750"></use>
-        <use xlink:href="#red" fill="#e73e2e"></use>
-        <use xlink:href="#black" fill="#0d0f0b"></use>
-        <use xlink:href="#blue" fill="#119edd"></use>
+        <use xlink:href="#white" fill="url(#gradientWhite)"></use>
+        <use xlink:href="#green" fill="url(#gradientGreen)"></use>
+        <use xlink:href="#red" fill="url(#gradientRed)"></use>
+        <use xlink:href="#black" fill="url(#gradientBlack)"></use>
+        <use xlink:href="#blue" fill="url(#gradientBlue)"></use>
       </g>
     </svg>
   </div>
@@ -52,7 +73,7 @@ export default {
     right: 0;
     bottom: 0;
     left: 0;
-    background-color: rgb(101, 72, 62);
+    background: radial-gradient(#a65734, #a3502e, #9e4c2b);
     overflow: hidden;
 
     svg {
