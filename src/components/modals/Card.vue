@@ -24,7 +24,14 @@
                         :title="el.legal"
                 >{{el.format}}</div>
             </div>
-            <div id="rulings" ref="rulings" class="row"></div>
+            <div id="rulings" ref="rulings" class="row">
+                <div
+                        class="rule"
+                        v-for="(rule, index) in rulings"
+                        v-key="index"
+                >[{{rule.published_at}}] {{processSymbols(rule.comment)}}</div>
+            </div>
+
         </div>
     </div>
 </template>
@@ -40,6 +47,11 @@
     export default {
         name: "Card",
         components: { Mana },
+        data() {
+            return {
+                rulings: [],
+            };
+        },
         computed: {
             ...mapState({
                 /** @returns {Card} */
@@ -56,12 +68,7 @@
         async mounted() {
             try {
                 this.$refs.oracle.innerHTML = this.oracle;
-                const res = await this.$store.dispatch('mtg/fetch', this.card.rulings_uri);
-                for (let i = 0; i < res.length; i++) {
-                    const div = document.createElement('div');
-                    div.innerHTML = `[${res[i].published_at}] ${this.processSymbols(res[i].comment)}`;
-                    this.$refs.rulings.appendChild(div);
-                }
+                this.rulings = await this.$store.dispatch('mtg/fetch', this.card.rulings_uri);
             } catch(e) {
                 console.error('error fetching rules', e)
                 return [];
@@ -89,7 +96,7 @@
             grid-area: image;
             overflow-y: auto;
             img {
-                max-height: 600px;
+                max-height: 99%;
                 max-width: 100%;
             }
         }
@@ -97,7 +104,7 @@
             grid-area: info;
             margin-left: 5px;
             overflow-y: auto;
-            .row { margin-bottom: 10px; }
+            .row { margin: 10px 0; }
             .cardName {
                 display: grid;
                 grid-template-columns: auto auto;
@@ -121,6 +128,7 @@
                 }
             }
             #oracle {
+                padding: 5px 10px;
                 margin-right:15px;
                 border-style:outset;
                 border-color:rgba(255, 255, 255, 0.5);
@@ -135,7 +143,7 @@
                 .restricted { background-color: rgba(255, 160, 0, 0.4); }
             }
             #rulings {
-                div { margin-bottom: 5px; }
+               .rule { margin: 10px 0; }
             }
         }
     }
