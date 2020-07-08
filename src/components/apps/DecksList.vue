@@ -76,7 +76,8 @@
     }
     #decksList {
 
-        .deckRow{
+        .deckRow {
+            margin: 10px 0;
             display: grid;
             grid-template-rows: 30px;
             grid-template-columns: 20% 16% 16% 16% 16% auto;
