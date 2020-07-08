@@ -7,6 +7,7 @@ export const search = {
   state: {
     exact: false,
     name: BLANK_STRING,
+    lang: 'en',
     texts: [...BLANK_ARRAY],
     colorInclusion: EXACT_KEY,
     colors: [...BLANK_ARRAY],
@@ -21,6 +22,7 @@ export const search = {
   mutations: {
     clearSearch(state) {
         state.name = BLANK_STRING;
+        state.lang = 'en';
         state.texts = [...BLANK_ARRAY];
         state.colorInclusion = EXACT_KEY;
         state.colors = [...BLANK_ARRAY];
