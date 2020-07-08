@@ -357,6 +357,7 @@
         grid-template-columns: 50% 50%;
         grid-template-areas: "deckLists search";
         #deckLists {
+            padding-bottom: 10%;
             margin-right: 1%;
             padding-right: 1%;
             grid-area: deckLists;
@@ -451,6 +452,7 @@
         #search {
             padding-left: 1%;
             padding-right: 1%;
+            padding-bottom: 10%;
             height: auto;
             overflow-x: hidden;
             overflow-y: hidden;
