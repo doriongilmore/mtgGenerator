@@ -111,6 +111,8 @@ a {
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
     background-color: rgba(200, 200, 200, 0.8);
+    padding: 2%;
+    width: 94%;
   }
 }
 </style>
