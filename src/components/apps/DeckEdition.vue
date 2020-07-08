@@ -1,5 +1,5 @@
 <template>
-    <div ref="container">
+    <div ref="container" id="container">
         <GridLoader ref="spinner" id="spinner" :loading="isLoading" size="40px"></GridLoader>
         <div id="deckEdition" ref="deckEdition">
     <!--    TOP LEFT    -->
@@ -116,10 +116,10 @@
     <!--    BOTTOM    -->
 
         <div id="deckStats" ref="stats">
-            <PieChart id="byType" :chart-data="stats.byType"></PieChart>
-            <PieChart id="byColor" :chart-data="stats.byColor"></PieChart>
-            <BarChart id="byCmc" :chart-data="stats.byCmc" :options="yBeginAtZero"></BarChart>
-            <PieChart id="byFunctionality" :chart-data="stats.byFunctionality"></PieChart>
+            <PieChart id="byType" :chart-data="stats.byType" class="graph"></PieChart>
+            <PieChart id="byColor" :chart-data="stats.byColor" class="graph"></PieChart>
+            <BarChart id="byCmc" :chart-data="stats.byCmc" :options="yBeginAtZero" class="graph"></BarChart>
+            <PieChart id="byFunctionality" :chart-data="stats.byFunctionality" class="graph"></PieChart>
         </div>
     </div>
 </template>
@@ -184,13 +184,13 @@
         },
         methods: {
             resize() {
-                const MIN_EDITION = 200;
-                const parentHeight = this.$refs.container.parentElement.clientHeight;
-                const statsHeight = Math.max(MIN_EDITION, Math.min(this.$refs.stats.clientHeight, parentHeight - MIN_EDITION));
-                const editionHeight = parentHeight - statsHeight;
-                this.$refs.deckEdition.style['grid-template-rows'] = `${editionHeight}px`;
-                this.$refs.stats.style.height = 'auto';
-                this.$refs.stats.style.bottom = 0;
+                // const MIN_EDITION = 200;
+                // const parentHeight = this.$refs.container.parentElement.clientHeight;
+                // const statsHeight = Math.max(MIN_EDITION, Math.min(this.$refs.stats.clientHeight, parentHeight - MIN_EDITION));
+                // const editionHeight = parentHeight - statsHeight;
+                // this.$refs.deckEdition.style['grid-template-rows'] = `${editionHeight}px`;
+                // this.$refs.stats.style.height = 'auto';
+                // this.$refs.stats.style.bottom = 0;
             },
             displaySpinner() {
                 this.isLoading = true;
@@ -339,158 +339,176 @@
 </script>
 
 <style lang="less" scoped>
-#spinner{
-    position: absolute;
-    top: 30%;
-    left: 40%;
-}
-#deckEdition {
-    display: grid;
-    grid-template-columns: 50% 50%;
-    grid-template-areas: "deckLists search";
-    #deckLists {
-        grid-area: deckLists;
-        height: auto;
-        overflow-x: hidden;
-        overflow-y: auto;
+#container {
+    height: 100%;
+    overflow: hidden;
+    #spinner{
+        position: absolute;
+        top: 30%;
+        left: 40%;
+    }
+    #deckEdition {
+        max-height: 60%;
+        height: 60%;
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: 50% 50%;
+        grid-template-areas: "deckLists search";
+        #deckLists {
+            margin-right: 1%;
+            padding-right: 1%;
+            grid-area: deckLists;
+            height: auto;
+            overflow-x: hidden;
+            overflow-y: auto;
 
-        input {
-            background-color: transparent;
-        }
-        #deckHeader {
-            display: grid;
-            grid-template-columns: auto auto;
-            grid-template-areas: "name buttons";
-            .deckName {
-                grid-area: name;
-                input {
-                    width: 100%;
-                }
+            input {
+                background-color: transparent;
             }
-            .buttons {
-                grid-area: buttons;
-            }
-        }
-        .deckList {
-            border: rgba(100, 100, 100, 0.3) solid 2px;
-
-            .listHeader {
+            #deckHeader {
                 display: grid;
-                grid-template-columns: 60% 10% 20% 10%;
-                grid-template-areas: "name statIgnore cardCount buttons";
-                .listName {
+                grid-template-columns: auto auto;
+                grid-template-areas: "name buttons";
+                .deckName {
                     grid-area: name;
-                }
-                .cardCount {
-                    grid-area: cardCount;
-                }
-                .listStatIgnore {
-                    grid-area: statIgnore;
+                    input {
+                        width: 100%;
+                    }
                 }
                 .buttons {
                     grid-area: buttons;
                 }
             }
+            .deckList {
+                border: rgba(100, 100, 100, 0.3) solid 2px;
+                padding: 1%;
+                .listHeader {
+                    display: grid;
+                    grid-template-columns: 60% 10% 20% 10%;
+                    grid-template-areas: "name statIgnore cardCount buttons";
+                    .listName {
+                        grid-area: name;
+                    }
+                    .cardCount {
+                        grid-area: cardCount;
+                    }
+                    .listStatIgnore {
+                        grid-area: statIgnore;
+                    }
+                    .buttons {
+                        grid-area: buttons;
+                    }
+                }
 
-            .cardRow, .resultRow {
+                .cardRow, .resultRow {
+                    display: grid;
+                    grid-template-columns: 50% auto 35px 95px;
+                    grid-template-areas: "name manaCost deckQte printConfig";
+                    .name {
+                        grid-area: name;
+                    }
+                    .manaCost {
+                        grid-area: manaCost;
+                    }
+                    .deckQte {
+                        grid-area: deckQte;
+                        input {
+                            width: 30px;
+                        }
+                    }
+                    .printConfig {
+                        grid-area: printConfig;
+                        select {
+                            width: 100%;
+                        }
+                    }
+                    .type {
+                        display: none;
+                    }
+                    .setName {
+                        display: none;
+                    }
+                    .image {
+                        border: 2px black;
+                        position: relative;
+                        img {
+                            max-height: 300px;
+                        }
+                    }
+                }
+
+            }
+
+        }
+        #search {
+            padding-left: 1%;
+            padding-right: 1%;
+            height: auto;
+            overflow-x: hidden;
+            overflow-y: auto;
+            #form {
                 display: grid;
-                grid-template-columns: 50% auto 35px 95px;
-                grid-template-areas: "name manaCost deckQte printConfig";
-                .name {
-                    grid-area: name;
-                }
-                .manaCost {
-                    grid-area: manaCost;
-                }
-                .deckQte {
-                    grid-area: deckQte;
+                grid-template-columns: auto auto;
+                grid-template-areas: "input buttons";
+                .searchHeader {
+                    grid-area: input;
                     input {
-                        width: 30px;
+                        width: 100%
                     }
+
                 }
-                .printConfig {
-                    grid-area: printConfig;
-                    select {
-                        width: 100%;
-                    }
-                }
-                .type {
-                    display: none;
-                }
-                .setName {
-                    display: none;
-                }
-                .image {
-                    border: 2px black;
-                    position: relative;
-                    img {
-                        max-height: 300px;
-                    }
+                .buttons {
+                    grid-area: buttons;
                 }
             }
-
-        }
-
-    }
-    #search {
-        height: auto;
-        overflow-x: hidden;
-        overflow-y: auto;
-        #form {
-            display: grid;
-            grid-template-columns: auto auto;
-            grid-template-areas: "input buttons";
-            .searchHeader {
-                grid-area: input;
-                input {
-                    width: 100%
-                }
-
-            }
-            .buttons {
-                grid-area: buttons;
-            }
-        }
-        #results {
-            .header, .resultRow {
-                grid-area: search;
-                display: grid;
-                grid-template-columns: 40% 10% 20% 20%;
-                grid-template-areas: "name manaCost type setName";
-                .name {
-                    grid-area: name;
-                }
-                .manaCost {
-                    grid-area: manaCost;
-                }
-                .type {
-                    grid-area: type;
-                }
-                .setName {
-                    grid-area: setName;
-                }
-                .image {
-                    border: 2px black;
-                    position: relative;
-                    img {
-                        max-height: 300px;
+            #results {
+                .header, .resultRow {
+                    grid-area: search;
+                    display: grid;
+                    grid-template-columns: 40% 10% 20% 20%;
+                    grid-template-areas: "name manaCost type setName";
+                    .name {
+                        grid-area: name;
+                    }
+                    .manaCost {
+                        grid-area: manaCost;
+                    }
+                    .type {
+                        grid-area: type;
+                    }
+                    .setName {
+                        grid-area: setName;
+                    }
+                    .image {
+                        border: 2px black;
+                        position: relative;
+                        img {
+                            max-height: 300px;
+                        }
                     }
                 }
             }
         }
     }
-}
-#deckStats {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    display: grid;
-    grid-template-columns: 25% 25% 25% 25%;
-    grid-template-areas: "cmc color type function";
+    #deckStats {
+        max-height: 30%;
+        height: 30%;
+        position: absolute;
+        padding-right: 4%;
+        padding-left: 4%;
+        width: 88%;
+        display: grid;
+        grid-template-columns: 25% 25% 25% 25%;
+        grid-template-areas: "cmc color type function";
 
-    #byColor { grid-area: color }
-    #byCmc { grid-area: cmc }
-    #byType { grid-area: type }
-    #byFunctionality { grid-area: function }
+        .graph {
+            padding: 5%;
+            width: 80%;
+        }
+        #byColor { grid-area: color }
+        #byCmc { grid-area: cmc }
+        #byType { grid-area: type }
+        #byFunctionality { grid-area: function }
+    }
 }
 </style>

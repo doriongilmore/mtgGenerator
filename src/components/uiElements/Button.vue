@@ -57,6 +57,8 @@ export default {
 
 <style lang="less" scoped>
 .button {
+  text-align: center;
+  margin: 2px;
   padding: 2px;
   height: 28px;
 
