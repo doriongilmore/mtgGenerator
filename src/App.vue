@@ -50,6 +50,7 @@ export default {
 </script>
 <style lang="less">
 .app {
+  font-family: Georgia, sans-serif;
   position: absolute;
   top: 0;
   right: 0;
