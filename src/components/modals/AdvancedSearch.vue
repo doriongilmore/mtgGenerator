@@ -3,6 +3,12 @@
         <div class="rows" ref="content">
 
             <div class="row">
+                <label class="label">Language</label>
+                <select v-model="searchParams.lang" class="input">
+                    <option v-for="langParam in lists.langList" :value="langParam.key">{{langParam.value}}</option>
+                </select>
+            </div>
+            <div class="row">
                 <label class="label" for="searchName">Name</label>
                 <input class="input" id="searchName" type="text" v-model="searchParams.name"/>
             </div>

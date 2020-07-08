@@ -1,10 +1,8 @@
 import DeckFactory from "src/utils/DeckFactory";
 import { Cards } from "scryfall-sdk";
 
-const basicQuery = 'lang:any';
-
 function getQuery(args) {
-  let query = basicQuery;
+  let query = `lang:${args['lang'] || 'any'}`;
 
   const addToQuery = (key, value, comp = ':') => {
     query += ` ${key}${comp}${value}`
@@ -31,6 +29,17 @@ function getQuery(args) {
   }
 
   return query;
+}
+
+function isCorrectQuery(args) {
+  return args.lang !== 'any'
+      || args.name
+      || args.colors
+      || args.cmc
+      || args.set
+      || args.rarity
+      || (args.texts && args.texts.length)
+      || (args.types && args.types.length);
 }
 
 /**
@@ -81,15 +90,12 @@ export const mtg = {
     async search({ dispatch, commit, state }, args) {
       console.info('launch search', args);
       const options = { unique: "prints", page: 1 };
-      const query = getQuery(args);
+      const query = isCorrectQuery(args) ? getQuery(args) : '';
       const results = [];
       return new Promise((resolve, reject) => {
-        if (query === basicQuery) { resolve([]) }
+        if (!query) { resolve([]) }
         Cards.search(query, options).on("data", (c) => {
           results.push(DeckFactory.simplifyCard(c));
-          if (results.length > 100) {
-            resolve(results);
-          }
         }).on("end", () => {
           resolve(results);
         });
