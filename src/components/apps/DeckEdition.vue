@@ -14,44 +14,45 @@
                         <Button :icon="'save'" :handle-click="saveDeck" :disabled="!updateDone" :bordered="updateDone"></Button>
                     </div>
                 </div>
-                <div class="deckList" v-for="deckList in deck.lists">
-                    <div class="listHeader">
-                        <div class="listName">
-                            <input type="text" v-model="deckList.name" @change="onChange" />
-                        </div>
-                        <div class="listStatIgnore" title="Ignorer dans les stats">
-                            <input type="checkbox" v-model="deckList.ignoreStat" @change="onChange" />
-                        </div>
-                        <div class="cardCount">{{ getCardCount(deckList.list, true) }}</div>
-                        <div class="buttons">
-                            <Button :icon="'export'" :handle-click="onExport.bind(this, deckList)"></Button>
-                        </div>
+                <div class="lists">
+                    <div class="deckList" v-for="deckList in deck.lists">
+                        <div class="listHeader">
+                            <div class="listName">
+                                <input type="text" v-model="deckList.name" @change="onChange" />
+                            </div>
+                            <div class="listStatIgnore" title="Ignorer dans les stats">
+                                <input type="checkbox" v-model="deckList.ignoreStat" @change="onChange" />
+                            </div>
+                            <div class="cardCount">{{ getCardCount(deckList.list, true) }}</div>
+                            <div class="buttons">
+                                <Button :icon="'export'" :handle-click="onExport.bind(this, deckList)"></Button>
+                            </div>
 
-                    </div>
-                    <draggable
-                            class="dragArea list-group"
-                            :list="deckList.list"
-                            group="deck"
-                            :move="onMove"
-                            @change="onChange"
-                    >
-                        <div class="cardRow" v-for="card in deckList.list" :key="card.id">
-                            <div class="name" v-on:click="openCard(card)">{{ card.name }}</div>
-                            <Mana class="manaCost" :mana-cost="card.mana_cost"></Mana>
-                            <div class="deckQte">
-                                <input type="number" min="0" max="99" v-model="card.deckQte" @change="onChange"/>
-                            </div>
-                            <div class="printConfig">
-                                <select v-model="card.printConfig" @change="onChange">
-                                    <option v-for="conf in printConfig.list" :key="conf.key" :value="conf.key">
-                                        {{ conf.text }}
-                                    </option>
-                                </select>
-                            </div>
                         </div>
-                    </draggable>
-                </div>
-                <div class="deckList">
+                        <draggable
+                                class="dragArea list-group"
+                                :list="deckList.list"
+                                group="deck"
+                                :move="onMove"
+                                @change="onChange"
+                        >
+                            <div class="cardRow" v-for="card in deckList.list" :key="card.id">
+                                <div class="name" v-on:click="openCard(card)">{{ card.name }}</div>
+                                <Mana class="manaCost" :mana-cost="card.mana_cost"></Mana>
+                                <div class="deckQte">
+                                    <input type="number" min="0" max="99" v-model="card.deckQte" @change="onChange"/>
+                                </div>
+                                <div class="printConfig">
+                                    <select v-model="card.printConfig" @change="onChange">
+                                        <option v-for="conf in printConfig.list" :key="conf.key" :value="conf.key">
+                                            {{ conf.text }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </draggable>
+                    </div>
+                    <div class="deckList">
                     <h4>New list</h4>
                     <draggable
                             class="dragArea list-group"
@@ -61,6 +62,7 @@
                     >
                         <div class="cardRow" v-for="element in tmpList" :key="element.id"></div>
                     </draggable>
+                </div>
                 </div>
             </div>
 
@@ -360,7 +362,7 @@
             grid-area: deckLists;
             height: auto;
             overflow-x: hidden;
-            overflow-y: auto;
+            overflow-y: hidden;
 
             input {
                 background-color: transparent;
@@ -379,73 +381,79 @@
                     grid-area: buttons;
                 }
             }
-            .deckList {
-                border: rgba(100, 100, 100, 0.3) solid 2px;
-                padding: 1%;
-                .listHeader {
-                    display: grid;
-                    grid-template-columns: 60% 10% 20% 10%;
-                    grid-template-areas: "name statIgnore cardCount buttons";
-                    .listName {
-                        grid-area: name;
-                    }
-                    .cardCount {
-                        grid-area: cardCount;
-                    }
-                    .listStatIgnore {
-                        grid-area: statIgnore;
-                    }
-                    .buttons {
-                        grid-area: buttons;
-                    }
-                }
 
-                .cardRow, .resultRow {
-                    display: grid;
-                    grid-template-columns: 50% auto 35px 95px;
-                    grid-template-areas: "name manaCost deckQte printConfig";
-                    .name {
-                        grid-area: name;
-                    }
-                    .manaCost {
-                        grid-area: manaCost;
-                    }
-                    .deckQte {
-                        grid-area: deckQte;
-                        input {
-                            width: 30px;
-                        }
-                    }
-                    .printConfig {
-                        grid-area: printConfig;
-                        select {
-                            width: 100%;
-                        }
-                    }
-                    .type {
-                        display: none;
-                    }
-                    .setName {
-                        display: none;
-                    }
-                    .image {
-                        border: 2px black;
-                        position: relative;
-                        img {
-                            max-height: 300px;
-                        }
-                    }
-                }
+            .lists {
+                height: 100%;
+                overflow-x: hidden;
+                overflow-y: auto;
 
+                .deckList {
+                    border: rgba(100, 100, 100, 0.3) solid 2px;
+                    padding: 1%;
+                    .listHeader {
+                        display: grid;
+                        grid-template-columns: 60% 10% 20% 10%;
+                        grid-template-areas: "name statIgnore cardCount buttons";
+                        .listName {
+                            grid-area: name;
+                        }
+                        .cardCount {
+                            grid-area: cardCount;
+                        }
+                        .listStatIgnore {
+                            grid-area: statIgnore;
+                        }
+                        .buttons {
+                            grid-area: buttons;
+                        }
+                    }
+
+                    .cardRow, .resultRow {
+                        display: grid;
+                        grid-template-columns: 50% auto 35px 95px;
+                        grid-template-areas: "name manaCost deckQte printConfig";
+                        .name {
+                            grid-area: name;
+                        }
+                        .manaCost {
+                            grid-area: manaCost;
+                        }
+                        .deckQte {
+                            grid-area: deckQte;
+                            input {
+                                width: 30px;
+                            }
+                        }
+                        .printConfig {
+                            grid-area: printConfig;
+                            select {
+                                width: 100%;
+                            }
+                        }
+                        .type {
+                            display: none;
+                        }
+                        .setName {
+                            display: none;
+                        }
+                        .image {
+                            border: 2px black;
+                            position: relative;
+                            img {
+                                max-height: 300px;
+                            }
+                        }
+                    }
+
+                }
             }
-
         }
         #search {
             padding-left: 1%;
             padding-right: 1%;
             height: auto;
             overflow-x: hidden;
-            overflow-y: auto;
+            overflow-y: hidden;
             #form {
                 display: grid;
                 grid-template-columns: auto auto;
@@ -462,6 +470,9 @@
                 }
             }
             #results {
+                height: 100%;
+                overflow-x: hidden;
+                overflow-y: auto;
                 .header, .resultRow {
                     grid-area: search;
                     display: grid;
