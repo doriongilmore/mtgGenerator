@@ -8,7 +8,7 @@ const config = require("config");
 
 module.exports = {
     mode: 'development',
-    resolve: { alias: { src: path.resolve(__dirname, 'src') } },
+    resolve: { alias: { src: path.resolve(__dirname, 'src'), somewhere: path.resolve(__dirname, 'src', 'components', 'uiElements', 'NothingHere', 'whySoMuchObstination') } },
     entry: ['./src/index.js'],
     devServer: {
         hot: true,

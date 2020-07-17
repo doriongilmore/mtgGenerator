@@ -1,20 +1,22 @@
 <template>
     <div id="decksList">
         <GridLoader ref="spinner" id="spinner" :loading="isLoading" size="40px"></GridLoader>
-        <div
-                v-for="deck in decks"
-                :key="deck.id"
-                class="deckRow"
-        >
-            <div class="name">{{deck.name}}</div>
-            <Mana class="colors" :mana-cost="deck.colors"></Mana>
-            <div class="cardCount">{{deck.cardCount}}</div>
-            <div class="dateCreation">{{moment(deck.dateCreation).format('YY-MM-DD HH:mm')}}</div>
-            <div class="dateEdition">{{moment(deck.dateEdition).format('YY-MM-DD HH:mm')}}</div>
-            <div class="buttons">
-                <Button :icon="'print'" :handle-click="onPrint.bind(this, deck)"></Button>
-                <Button :icon="'display'" :handle-click="editDeck.bind(this, deck)"></Button>
-                <Button :icon="'delete'" :handle-click="deleteDeck.bind(this, deck)"></Button>
+        <div class="decksContainer">
+            <div
+                    v-for="deck in decks"
+                    :key="deck.id"
+                    class="deck"
+                    v-on:click="editDeck(deck)"
+            >
+                <div class="name">{{deck.name}}</div>
+                <Mana class="colors" :mana-cost="deck.colors"></Mana>
+                <div class="cardCount">{{deck.cardCount}}</div>
+                <div class="dateCreation">{{moment(deck.dateCreation).format('YY-MM-DD HH:mm')}}</div>
+                <div class="dateEdition">{{moment(deck.dateEdition).format('YY-MM-DD HH:mm')}}</div>
+                <div class="buttons">
+                    <Button :icon="'print'" :handle-click="onPrint.bind(this, deck)"></Button>
+                    <Button :icon="'delete'" :handle-click="deleteDeck.bind(this, deck)"></Button>
+                </div>
             </div>
         </div>
     </div>
@@ -74,32 +76,32 @@
         top: 30%;
         left: 40%;
     }
-    #decksList {
 
-        .deckRow {
-            margin: 10px 0;
-            display: grid;
-            grid-template-rows: 30px;
-            grid-template-columns: 20% 16% 16% 16% 16% auto;
-            grid-template-areas: "name colors cardCount dateCreation dateEdition buttons";
-            .name {
-                grid-area: name;
+    .decksContainer {
+        display: flex;
+
+        .deck {
+            margin: 15px;
+            padding: 15px;
+            flex-grow: 0;
+            border: 1px black solid;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            > div {
+                margin: 5px auto;
             }
-            .colors {
-                grid-area: colors;
-            }
-            .cardCount {
-                grid-area: cardCount;
-            }
-            .dateCreation {
-                grid-area: dateCreation;
-            }
-            .dateEdition {
-                grid-area: dateEdition;
-            }
-            .buttons {
-                grid-area: buttons;
-            }
+
+            .name {}
+            .colors {}
+            .cardCount {}
+            .dateCreation {}
+            .dateEdition {}
+            .buttons {}
+        }
+        .deck:hover {
+            cursor: pointer;
+            background: linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 10%, rgba(0,0,0,0) 90%, rgba(0,0,0,1));
         }
     }
 </style>

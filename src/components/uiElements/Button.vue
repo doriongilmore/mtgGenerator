@@ -2,7 +2,7 @@
   <div
     class="button"
     v-bind:class="{ disabled, bordered, hasText: !!text }"
-    v-on:click.prevent="onClick"
+    v-on:click.prevent.stop="onClick"
     v-bind:title="title"
   >
     <Delete v-if="icon === 'delete'" />

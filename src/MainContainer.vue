@@ -1,5 +1,9 @@
 <template>
-  <div :class="`mainContainer ${displayMenu ? 'displayMenu' : 'hideMenu'}`">
+  <div class="mainContainer">
+    <Something />
+  </div>
+
+  <!--<div :class="`mainContainer ${displayMenu ? 'displayMenu' : 'hideMenu'}`">
     <div class="menu">
       <router-link to="/" class="item" title="Home">
         {{ displayMenu ? 'Home' : 'H' }}
@@ -17,15 +21,16 @@
     <div class="content" ref="content">
       <router-view></router-view>
     </div>
-  </div>
+  </div>-->
 </template>
 
 <script>
 import { TweenLite, TimelineLite } from "gsap";
+import Something from "somewhere/Something.vue";
 
 export default {
   name: "MainContainer",
-  components: {},
+  components: {Something},
   data() {
     return {
       displayMenu: true,

@@ -1,7 +1,6 @@
 <template>
   <div class="app">
-    <Background></Background>
-    <!-- BG FIRST ! -->
+    <!--héhéhé, bg is not here =p-->
     <MainContainer></MainContainer>
     <!-- MODALS LAST ! -->
     <Modals v-if="showModal"></Modals>
@@ -10,7 +9,6 @@
 <script>
 //todo center svg
 import { mapState } from "vuex";
-import Background from "src/components/Background.vue";
 import Modals from "src/components/Modals.vue";
 import MainContainer from "src/MainContainer.vue";
 import CONST from "src/utils/CONST";
@@ -19,12 +17,11 @@ export default {
   name: "App",
   components: {
     Modals,
-    Background,
     MainContainer,
   },
   data() {
     return {
-      showModal: false,
+      showModal: false
     };
   },
   computed: {
@@ -49,6 +46,9 @@ export default {
 };
 </script>
 <style lang="less">
+body {
+  overflow: hidden;
+}
 .app {
   font-family: Georgia, sans-serif;
   position: absolute;
