@@ -1,9 +1,7 @@
 <template>
   <div class="mainContainer">
     <Something />
-  </div>
 
-  <!--<div :class="`mainContainer ${displayMenu ? 'displayMenu' : 'hideMenu'}`">
     <div class="menu">
       <router-link to="/" class="item" title="Home">
         {{ displayMenu ? 'Home' : 'H' }}
@@ -14,14 +12,14 @@
       <router-link to="/deck" class="item" title="Create">
         {{ displayMenu ? 'Create a deck' : 'C' }}
       </router-link>
-      <div class="item" @click="toggleDisplayMenu" title="Display/Hide">
+      <!--<div class="item" @click="toggleDisplayMenu" title="Display/Hide">
         {{ displayMenu ? 'Hide Menu' : 'M' }}
-      </div>
+      </div>-->
     </div>
     <div class="content" ref="content">
       <router-view></router-view>
     </div>
-  </div>-->
+  </div>
 </template>
 
 <script>
@@ -68,13 +66,12 @@ a {
 .mainContainer.hideMenu {
   grid-template-columns: 5% auto;
 }
-.mainContainer.displayMenu {
-  grid-template-columns: 20% auto;
-}
+
 .mainContainer {
   overflow: hidden;
   display: grid;
   grid-template-areas: "menu content";
+  grid-template-columns: 10% auto;
 
   .menu {
     grid-area: menu;
@@ -116,8 +113,6 @@ a {
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
     background-color: rgba(200, 200, 200, 0.8);
-    padding: 1% 2%;
-    width: 94%;
   }
 }
 </style>

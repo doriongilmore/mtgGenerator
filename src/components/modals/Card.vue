@@ -42,7 +42,7 @@
     import Mana from "src/components/uiElements/Mana.vue";
     import CONST from "src/utils/CONST";
 
-    const ManaClass = Vue.extend(Mana);
+    //const ManaClass = Vue.extend(Mana);
 
     export default {
         name: "Card",
@@ -76,11 +76,12 @@
         },
         methods: {
             processSymbols(text) {
-                return text.replace(CONST.mana.generalRegexp, (manaCost) => {
+                return text;
+                /*return text.replace(CONST.mana.generalRegexp, (manaCost) => {
                     const instance = new ManaClass({ propsData: { manaCost } });
                     instance.$mount();
                     return instance.$el.innerHTML;
-                })
+                })*/
             },
         },
     };

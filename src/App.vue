@@ -76,4 +76,24 @@ body {
     margin: auto;
   }
 }
+
+.U {
+  fill: #061922
+}
+
+  .B {
+    fill: #130c0e
+  }
+
+  .G {
+    fill: #00160b
+  }
+
+  .R {
+    fill: #200000
+  }
+
+  .W {
+    fill: #211d15
+  }
 </style>
