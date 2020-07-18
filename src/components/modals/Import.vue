@@ -6,7 +6,7 @@
         <input type="file" style="display: none" ref="fileInput" @change="updateFile" accept="text/plain,application/json"/>
         <Button :handle-click="chooseFile" text="Or choose a file"></Button>
         <Button :handle-click="doImport" text="Import" bordered="true"></Button>
-        <PulseLoader id="spinner" ref="spinner" :loading="isLoading"></PulseLoader>
+        <PulseLoader id="spinner" ref="spinner" :loading="isLoading" size="20px"></PulseLoader>
     </div>
 </template>
 

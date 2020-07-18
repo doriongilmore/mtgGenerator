@@ -9,7 +9,7 @@ function getQuery(args) {
   }
 
   const name = args.name && args.exact && `!"${args.name}"` || args.name;
-  if (name) { addToQuery('name', name) }
+  if (name) { addToQuery('', name, '') }
 
   const colors = (args.colors || []).join('');
   if (colors) { addToQuery('c', colors, args.colorInclusion) }

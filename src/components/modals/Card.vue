@@ -14,7 +14,15 @@
                 <div class="rarity">{{card.rarity}}</div>
             </div>
             <div id="oracle" ref="oracle" class="row" v-if="card.oracle_text">
-                {{oracle}}
+<!--                {{oracle}}-->
+                <div
+                        v-for="(oraclePart, index) in oracle"
+                        :v-key="`oracle_${index}`"
+                        class="oraclePart"
+                >
+                    <Mana v-if="oraclePart.isMana" :mana-cost="oraclePart.value"></Mana>
+                    <span v-else>{{ oraclePart.value }}</span>
+                </div>
             </div>
             <div id="legalities" class="row">
                 <div
@@ -27,9 +35,18 @@
             <div id="rulings" ref="rulings" class="row">
                 <div
                         class="rule"
-                        v-for="(rule, index) in rulings"
-                        v-key="index"
-                >[{{rule.published_at}}] {{processSymbols(rule.comment)}}</div>
+                        v-for="(rule, i) in rulings"
+                >
+
+                    <div
+                            v-for="(rulePart, j) in rule"
+                            :v-key="`rule_${i}_${j}`"
+                            class="oraclePart"
+                    >
+                        <Mana v-if="rulePart.isMana" :mana-cost="rulePart.value"></Mana>
+                        <span v-else>{{ rulePart.value }}</span>
+                    </div>
+                </div>
             </div>
 
         </div>
@@ -67,8 +84,11 @@
         },
         async mounted() {
             try {
-                this.$refs.oracle.innerHTML = this.oracle;
-                this.rulings = await this.$store.dispatch('mtg/fetch', this.card.rulings_uri);
+                this.rulings = (await this.$store.dispatch('mtg/fetch', this.card.rulings_uri)).map((r) => {
+                    const comments = this.processSymbols(r.comment);
+                    comments[0].value = `[${r.published_at}] ${comments[0].value}`;
+                    return comments;
+                })
             } catch(e) {
                 console.error('error fetching rules', e)
                 return [];
@@ -76,17 +96,35 @@
         },
         methods: {
             processSymbols(text) {
-                return text.replace(CONST.mana.generalRegexp, (manaCost) => {
-                    const instance = new ManaClass({ propsData: { manaCost } });
-                    instance.$mount();
-                    return instance.$el.innerHTML;
-                })
+                const processed = [];
+                const manas = [];
+                const texts = text.replace(CONST.mana.generalRegexp, (manaCost) => {
+                    manas.push(manaCost);
+                    return CONST.mana.textSeparator;
+                }).split(CONST.mana.textSeparator);
+                for (let i = 0, l = texts.length - 1; i < l; i++) {
+                    processed.push({ value: texts[i].replace(/\n/g, '\n\r'), isMana: false });
+                    processed.push({ value: manas[i], isMana: true });
+                }
+                processed.push({ value: texts[texts.length - 1].replace(/\n/g, '\n'), isMana: false });
+                console.info('processSymbols', { text, processed })
+                return processed;
             },
         },
     };
 </script>
 
 <style lang="less" scoped>
+    #oracle, .rule {
+        width: 100%;
+        display: inline-block;
+        .oraclePart {
+            display: inline-block;
+            span {
+                white-space: pre-wrap;
+            }
+        }
+    }
     .cardModal {
         height: 100%;
         display: grid;
