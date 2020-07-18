@@ -329,6 +329,7 @@ const symbology = [
 ];
 
 const mana = {
+    textSeparator: ' /// ',
     cleanRegexp,
     generalRegexp,
     symbology,
