@@ -1,38 +1,24 @@
-const BLANK_STRING = '';
-const EXACT_KEY = ':';
-const BLANK_ARRAY = [];
+import CONST from "../utils/CONST.js";
 
 export const search = {
   namespaced: true,
-  state: {
-    exact: false,
-    name: BLANK_STRING,
-    lang: 'en',
-    texts: [...BLANK_ARRAY],
-    colorInclusion: EXACT_KEY,
-    colors: [...BLANK_ARRAY],
-    cmcInclusion: EXACT_KEY,
-    cmc: BLANK_STRING,
-    rarityInclusion: EXACT_KEY,
-    rarity: BLANK_STRING,
-    typeInclusion: EXACT_KEY,
-    types: [...BLANK_ARRAY],
-    results: [...BLANK_ARRAY],
-  },
+  state: CONST.search.getDefaultState(),
   mutations: {
     clearSearch(state) {
-        state.name = BLANK_STRING;
-        state.lang = 'en';
-        state.texts = [...BLANK_ARRAY];
-        state.colorInclusion = EXACT_KEY;
-        state.colors = [...BLANK_ARRAY];
-        state.cmcInclusion = EXACT_KEY;
-        state.cmc = BLANK_STRING;
-        state.rarityInclusion = EXACT_KEY;
-        state.rarity = BLANK_STRING;
-        state.typeInclusion = EXACT_KEY;
-        state.types = [...BLANK_ARRAY];
-        state.results = [...BLANK_ARRAY];
+        const newState = CONST.search.getDefaultState();
+        state.exact = newState.exact;
+        state.name = newState.name;
+        state.lang = newState.lang;
+        state.texts = newState.texts;
+        state.colorInclusion = newState.colorInclusion;
+        state.colors = newState.colors;
+        state.cmcInclusion = newState.cmcInclusion;
+        state.cmc = newState.cmc;
+        state.rarityInclusion = newState.rarityInclusion;
+        state.rarity = newState.rarity;
+        state.typeInclusion = newState.typeInclusion;
+        state.types = newState.types;
+        state.results = newState.results;
     },
     removeText(state, index) {
       const newTexts = [...state.texts];

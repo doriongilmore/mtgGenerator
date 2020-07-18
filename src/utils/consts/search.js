@@ -23,9 +23,30 @@ const ar = { key: 'ar', value: 'Arabic' };
 const sa = { key: 'sa', value: 'Sanskrit' };
 const ph = { key: 'ph', value: 'Phyrexian' };
 
+const BLANK_STRING = '';
+const EXACT_KEY = ':';
+const BLANK_ARRAY = [];
+
 const search = {
+    getDefaultState() {
+        return {
+            exact: false,
+            name: BLANK_STRING,
+            lang: en.key,
+            texts: [...BLANK_ARRAY],
+            colorInclusion: EXACT_KEY,
+            colors: [...BLANK_ARRAY],
+            cmcInclusion: EXACT_KEY,
+            cmc: BLANK_STRING,
+            rarityInclusion: EXACT_KEY,
+            rarity: BLANK_STRING,
+            typeInclusion: EXACT_KEY,
+            types: [...BLANK_ARRAY],
+            results: [...BLANK_ARRAY],
+        }
+    },
     inclusion: [
-        { key: ':', value: 'Exact' },
+        { key: EXACT_KEY, value: 'Exact' },
         { key: '>=', value: 'At least' },
         { key: '<=', value: 'At most' },
     ],
