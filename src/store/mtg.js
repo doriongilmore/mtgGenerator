@@ -1,8 +1,9 @@
+import CONST from "src/utils/CONST.js";
 import DeckFactory from "src/utils/DeckFactory";
 import { Cards } from "scryfall-sdk";
 
 function getQuery(args) {
-  let query = `lang:${args['lang'] || 'any'}`;
+  let query = `lang:${args['lang'] || CONST.search.lang.any.key}`;
 
   const addToQuery = (key, value, comp = ':') => {
     query += ` ${key}${comp}${value}`
@@ -32,9 +33,9 @@ function getQuery(args) {
 }
 
 function isCorrectQuery(args) {
-  return args.lang !== 'any'
+  return !CONST.search.lang[args.lang].shouldCheck
       || args.name
-      || args.colors
+      || (args.colors && args.colors.length)
       || args.cmc
       || args.set
       || args.rarity

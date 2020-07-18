@@ -1,29 +1,38 @@
+/**
+ * shouldCheck true if too many results for a language search
+ * too many could be > 175 (one result page), but actually 1, 2, or >10k results, so simple decision
+ *
+ * @link https://scryfall.com/docs/api/languages
+ */
+const any = { key: 'any', value: 'All', shouldCheck: true };
+const en = { key: 'en', value: 'English', shouldCheck: true };
+const fr = { key: 'fr', value: 'French', shouldCheck: true };
+const es = { key: 'es', value: 'Spanish', shouldCheck: true };
+const de = { key: 'de', value: 'German', shouldCheck: true };
+const it = { key: 'it', value: 'Italian', shouldCheck: true };
+const pt = { key: 'pt', value: 'Portuguese', shouldCheck: true };
+const ja = { key: 'ja', value: 'Japanese', shouldCheck: true };
+const ko = { key: 'ko', value: 'Korean', shouldCheck: true };
+const ru = { key: 'ru', value: 'Russian', shouldCheck: true };
+const zhs = { key: 'zhs', value: 'Simplified Chinese', shouldCheck: true };
+const zht = { key: 'zht', value: 'Traditional Chinese', shouldCheck: true };
+const he = { key: 'he', value: 'Hebrew' };
+const la = { key: 'la', value: 'Latin' };
+const grc = { key: 'grc', value: 'Ancient Greek' };
+const ar = { key: 'ar', value: 'Arabic' };
+const sa = { key: 'sa', value: 'Sanskrit' };
+const ph = { key: 'ph', value: 'Phyrexian' };
+
 const search = {
     inclusion: [
         { key: ':', value: 'Exact' },
         { key: '>=', value: 'At least' },
         { key: '<=', value: 'At most' },
     ],
-    langList: [
-        { key: 'any', value: 'All' },
-        { key: 'en', value: 'English' },
-        { key: 'fr', value: 'French' },
-        { key: 'es', value: 'Spanish' },
-        { key: 'de', value: 'German' },
-        { key: 'it', value: 'Italian' },
-        { key: 'pt', value: 'Portuguese' },
-        { key: 'ja', value: 'Japanese' },
-        { key: 'ko', value: 'Korean' },
-        { key: 'ru', value: 'Russian' },
-        { key: 'zhs', value: 'Simplified Chinese' },
-        { key: 'zht', value: 'Traditional Chinese' },
-        { key: 'he', value: 'Hebrew' },
-        { key: 'la', value: 'Latin' },
-        { key: 'grc', value: 'Ancient Greek' },
-        { key: 'ar', value: 'Arabic' },
-        { key: 'sa', value: 'Sanskrit' },
-        { key: 'ph', value: 'Phyrexian' },
-    ],
+    lang: {
+        any, en, fr, es, de, it, pt, ja, ko, ru, zhs, zht, he, la, grc, ar, sa, ph,
+        list: [any, en, fr, es, de, it, pt, ja, ko, ru, zhs, zht, he, la, grc, ar, sa, ph],
+    },
     colorList: [
         { key: 'b', value: '{B}' },
         { key: 'u', value: '{U}' },
