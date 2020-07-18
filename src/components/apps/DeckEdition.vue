@@ -74,12 +74,12 @@
                         <input
                                 type="text"
                                 v-model="searchParams.name"
-                                placeholder="Black Lotus"
+                                placeholder="Enter a name"
                         />
                     </div>
                     <div class="buttons">
                         <Button icon="search" :handle-click="handleSearch" class="submit"></Button>
-                        <Button icon="display" :handle-click="openSearch"></Button>
+                        <Button icon="display" :handle-click="openSearch" text="Advanced Search"></Button>
                     </div>
                     <input type="submit" style="display: none"/>
                 </form>
