@@ -1,14 +1,3 @@
-<template>
-<div class="mtgText">
-    <span v-for="row in rows" class="row">
-        <span v-for="rowPart in row" class="part">
-            <Mana v-if="rowPart.isMana" :mana-cost="rowPart.value"></Mana>
-            <span v-else>{{ rowPart.value }}</span>
-        </span>
-    </span>
-</div>
-</template>
-
 <script>
     import Mana from "src/components/uiElements/Mana.vue";
     import CONST from "../../utils/CONST";
@@ -17,22 +6,22 @@
         name: "MtgText",
         props: ['text'],
         components: { Mana },
-        // render(createElement) {
-        //     const domRows = [];
-        //     for (let i = 0, l = this.rows.length; i < l; i++) {
-        //         const domParts = [];
-        //         for (let j = 0, m = this.rows[i].length; j < m; j++) {
-        //             const part = this.rows[i][j];
-        //             const domPart = !part.isMana
-        //                 ? part.value
-        //                 : createElement(Mana, { props: { mana_cost: part.value } });
-        //             domParts.push(domPart);
-        //         }
-        //         domRows.push(createElement('span', { class: 'row' }, domParts));
-        //     }
-        //
-        //     return createElement('div', { class: 'mtgText' }, domRows);
-        // },
+        render(createElement) {
+            const domRows = [];
+            for (let i = 0, l = this.rows.length; i < l; i++) {
+                const domParts = [];
+                for (let j = 0, m = this.rows[i].length; j < m; j++) {
+                    const part = this.rows[i][j];
+                    const domPart = !part.isMana
+                        ? part.value
+                        : createElement(Mana, { props: { manaCost: part.value } });
+                    domParts.push(domPart);
+                }
+                domRows.push(createElement('span', { class: 'row' }, domParts));
+            }
+
+            return createElement('div', { class: 'mtgText' }, domRows);
+        },
         computed: {
             rows() {
                 const rows = [];
@@ -62,8 +51,8 @@
         .row {
             display: inline-flex;
             width: 100%;
+            white-space: pre-wrap;
             .part {
-                white-space: pre-wrap;
                 display: inline-block;
             }
         }
