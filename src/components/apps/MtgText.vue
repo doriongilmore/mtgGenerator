@@ -49,11 +49,15 @@
 <style lang="less" scoped>
     .mtgText {
         .row {
-            display: inline-flex;
+            margin: 5px 0;
+            display: block;
             width: 100%;
             white-space: pre-wrap;
-            .part {
-                display: inline-block;
+            div {
+                display: inline;
+                div {
+                    display: inline;
+                }
             }
         }
     }
