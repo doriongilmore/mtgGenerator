@@ -2,25 +2,32 @@
     <div ref="container" id="container">
         <GridLoader ref="spinner" id="spinner" :loading="isLoading" size="40px"></GridLoader>
         <div id="deckEdition" ref="deckEdition">
+          <div id="deckHeader">
+            <b-navbar toggleable="sm" fixed="sm">
+              <b-navbar-brand class="deckName"><input type="text" v-model="deck.name" /></b-navbar-brand>
+              <b-navbar-toggle class="deckButtons" target="nav-collapse-deck"></b-navbar-toggle>
+              <b-collapse id="nav-collapse-deck" is-nav>
+                <b-navbar-nav class="deckButtons">
+                  <b-nav-item :class="'btn rounded-pill '+(updateDone?'btn-primary':'btn-light')" @click="saveDeck()">Save</b-nav-item>
+                  <b-nav-item class="btn btn-light rounded-pill" @click="onPrint()">Print</b-nav-item>
+                  <b-nav-item class="btn btn-light rounded-pill" @click="onImport()">Import</b-nav-item>
+                  <b-nav-item class="btn btn-light rounded-pill" @click="onExport(deck)">Export</b-nav-item>
+                  <b-nav-item class="btn btn-danger rounded-pill" @click="deleteDeck(deck)">Delete</b-nav-item>
+                </b-navbar-nav>
+              </b-collapse>
+            </b-navbar>
+          </div>
     <!--    TOP    -->
             <div id="deckLists">
-                <div id="deckHeader">
-                    <div class="deckName"><input type="text" v-model="deck.name" /></div>
-                    <div class="buttons">
-                        <Button :icon="'export'" :handle-click="onExport.bind(this, deck)"></Button>
-                        <Button :icon="'import'" :handle-click="onImport"></Button>
-                        <Button :icon="'print'" :handle-click="onPrint"></Button>
-                        <Button :icon="'delete'" :handle-click="deleteDeck.bind(this, deck)"></Button>
-                        <Button :icon="'save'" :handle-click="saveDeck" :disabled="!updateDone" :bordered="updateDone"></Button>
-                    </div>
-                </div>
                 <div class="lists">
                     <div class="deckList" v-for="deckList in deck.lists">
                         <div class="listHeader">
                             <div class="listName">
                                 <input type="text" v-model="deckList.name" @change="onChange" />
                             </div>
-                            <div class="listStatIgnore" title="Ignorer dans les stats">
+                            <div class="listStatIgnore" :title="`${deckList.ignoreStat?'ignored':'used'} in stats`">
+                              <b-icon-graph-down font-scale="1.2" v-if="deckList.ignoreStat"></b-icon-graph-down>
+                              <b-icon-graph-up font-scale="1.2" v-else></b-icon-graph-up>
                                 <input type="checkbox" v-model="deckList.ignoreStat" @change="onChange" />
                             </div>
                             <div class="cardCount">{{ getCardCount(deckList.list, true) }}</div>
@@ -355,8 +362,28 @@
 </script>
 
 <style lang="less" scoped>
+//Extra small (xs) <576px
+//Small (sm) ≥576px
+//Medium (md) ≥768px
+//Large (lg) ≥992px
+//Extra large (xl) ≥1200px
+@media screen and (max-width: 576px) {
+  #deckLists .lists { height: 80% }
+}
+@media screen and (min-width: 576px) {
+  #deckLists .lists { height: 87% }
+}
+@media screen and (min-width: 1000px) {
+    #deckLists .lists { height: 93% }
+}
+@media screen and (min-width: 1400px) {
+  #deckLists .lists { height: 100% }
+}
+
 #container {
-    height: 100%;
+  height: 100%;
+  padding-top: 0;
+
     #spinner{
         position: absolute;
         top: 30%;
@@ -365,6 +392,21 @@
     #deckEdition {
         height: 100%;
         overflow: hidden;
+        #deckHeader {
+          display: grid;
+          grid-template-columns: auto auto;
+          grid-template-areas: "name deckButtons";
+          .deckName {
+            grid-area: name;
+            input {
+              background-color: transparent;
+              width: 100%;
+            }
+          }
+          .deckButtons {
+            grid-area: deckButtons;
+          }
+        }
         #deckLists {
             padding-bottom: 10%;
             margin-right: 1%;
@@ -377,26 +419,10 @@
             input {
                 background-color: transparent;
             }
-            #deckHeader {
-                display: grid;
-                grid-template-columns: auto auto;
-                grid-template-areas: "name buttons";
-                .deckName {
-                    grid-area: name;
-                    input {
-                        width: 100%;
-                    }
-                }
-                .buttons {
-                    grid-area: buttons;
-                }
-            }
-
             .lists {
-                height: 100%;
                 overflow-x: hidden;
                 overflow-y: auto;
-                padding: 3% 0;
+                padding: 1% 3% 1% 1%;
 
                 .deckList {
                     border: rgba(100, 100, 100, 0.3) solid 2px;
@@ -458,6 +484,8 @@
 
                 }
             }
+
+
         }
 
     }
