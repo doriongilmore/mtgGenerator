@@ -1,6 +1,8 @@
 <template>
   <div id="decksList">
-    <!--      <b-button class="btn-outline-primary" ></b-button>-->
+    <b-button variant="danger" @click="resetAll()" class="mb-3 ml-2">
+      <b-icon-trash></b-icon-trash><span> Reset to default list</span>
+    </b-button>
     <b-container class="bv-example-row">
       <b-row cols="1" cols-md="2" cols-lg="3" cols-xl="4">
         <b-col v-for="deck in decks" :key="deck.id">
@@ -35,10 +37,12 @@ import Mana from '../uiElements/Mana.vue';
 import moment from 'moment';
 import DeckFactory from 'src/utils/DeckFactory';
 import CONST from '../../utils/CONST';
+import modals from '../../mixins/modals';
 
 export default {
   name: 'DecksList',
   components: { Mana },
+  mixins: [modals],
   data() {
     return {
       isLoading: false,
@@ -63,19 +67,27 @@ export default {
     editDeck(deck) {
       this.$router.push({ name: 'edition', params: { deckToEdit: deck } });
     },
-    deleteDeck(deck) {
-      this.$root.$once(CONST.modals.events.confirmation.resolve, async () => {
-        this.$root.$off(CONST.modals.events.confirmation.reject);
+    async deleteDeck(deck) {
+      try {
+        await this.confirmModal(CONST.modals.confirmationMessage.deckLost);
         this.$store.commit('decks/deleteDeck', deck);
         this.decks = await this.$store.dispatch('decks/getDecks');
-      });
-
-      this.$root.$once(CONST.modals.events.confirmation.reject, () => {
         // todo toast message
-        this.$root.$off(CONST.modals.events.confirmation.resolve);
-      });
-
-      this.$root.$emit(CONST.modals.events.confirmation.open, CONST.modals.confirmationMessage.deckLost);
+      } catch (e) {
+        // todo toast message
+        console.info('delete canceled');
+      }
+    },
+    async resetAll() {
+      try {
+        await this.confirmModal(CONST.modals.confirmationMessage.allDecksLost);
+        this.$store.commit('decks/reset');
+        this.decks = await this.$store.dispatch('decks/getDecks');
+        // todo toast message
+      } catch (e) {
+        // todo toast message
+        console.info('delete canceled');
+      }
     },
   },
 };

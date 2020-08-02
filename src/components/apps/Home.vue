@@ -1,6 +1,6 @@
 <template>
-  <div id="home">
-    <h3>Basic Info</h3>
+  <div id="home" class="ml-3">
+    <h3 class="mt-3">Basic Info</h3>
     <div class="tab">
       This app brings together several tools to easily create Magic: the Gathering decks.<br />
       Your lists are only saved in your browser's local storage<br />
@@ -11,7 +11,7 @@
     <!--        <h3>Some features :</h3>-->
     <!--        <HomeFeature :features="homeFeatures"></HomeFeature>-->
 
-    <h3>More Info :</h3>
+    <h3 class="mt-3">More Info :</h3>
     <div class="tab">
       Known bugs and future features are described
       <a href="https://github.com/doriongilmore/mtgGenerator/issues" target="_blank">here</a>, feel free to comment.<br />
