@@ -1,24 +1,17 @@
 <template>
     <div id="home">
-        <h3>MtG - Deck Builder - Doc</h3>
+        <h3>Basic Info</h3>
         <div class="tab">
             This app brings together several tools to easily create Magic: the Gathering decks.<br>
             Your lists are only saved in your browser's local storage<br>
-            You should save them on other websites or on a file for long term use.<br>
-        </div>
-        <h3>Offline Version</h3>
-        <div class="tab">
-            You can download an "offline" version <a href="http://doriongilmore.fr/mtgBuilder/mtgBuilder.zip">here</a>.<br>
-            Once unzipped, you just have to open the index.html file in a browser.<br><br>
-            Offline means without doriongilmore.fr, you will need an access to scryfall.com for card search.<br>
-            Once a card is saved in a deck you won't need scryfall anymore so you still have access to your decks.<br>
-            Be aware no synchronisation is done between this website and the offline version.<br>
+            <b>You should save them on a file</b> or on other websites for long term use.<br>
         </div>
 
-        <h3>Some features :</h3>
-        <HomeFeature :features="homeFeatures"></HomeFeature>
+<!-- TODO tooltip where appropriate instead of this doc that nobody will read  -->
+<!--        <h3>Some features :</h3>-->
+<!--        <HomeFeature :features="homeFeatures"></HomeFeature>-->
 
-        <h3>Bugs :</h3>
+        <h3>More Info :</h3>
         <div class="tab">
             Known bugs and future features are described <a href="https://github.com/doriongilmore/mtgGenerator/issues" target="_blank">here</a>, feel free to comment.<br>
             You can create
@@ -48,7 +41,11 @@
 
 <style lang="less" scoped>
     #home {
-        padding-bottom: 30px;
+      display: block;
+      width: 100%;
+      height: 97%;
+      overflow-y: auto;
+        padding-bottom: 2%;
         div.tab {
             width: 80%;
             position: relative;

@@ -20,9 +20,4 @@
     };
 </script>
 
-<style lang="less" scoped>
-    #featureModal {
-        height: 100%;
-        overflow-y: auto;
-    }
-</style>
+<style lang="less" scoped></style>
