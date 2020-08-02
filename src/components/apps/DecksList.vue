@@ -31,14 +31,14 @@
 </template>
 
 <script>
-import Button from '../uiElements/Button.vue';
 import Mana from '../uiElements/Mana.vue';
 import moment from 'moment';
 import DeckFactory from 'src/utils/DeckFactory';
+import CONST from '../../utils/CONST';
 
 export default {
   name: 'DecksList',
-  components: { Button, Mana },
+  components: { Mana },
   data() {
     return {
       isLoading: false,
@@ -63,14 +63,19 @@ export default {
     editDeck(deck) {
       this.$router.push({ name: 'edition', params: { deckToEdit: deck } });
     },
-    async deleteDeck(deck) {
-      try {
-        await this.$store.dispatch('modals/openConfirmation');
+    deleteDeck(deck) {
+      this.$root.$once(CONST.modals.events.confirmation.resolve, async () => {
+        this.$root.$off(CONST.modals.events.confirmation.reject);
         this.$store.commit('decks/deleteDeck', deck);
         this.decks = await this.$store.dispatch('decks/getDecks');
-      } catch (e) {
-        console.info('delete canceled');
-      }
+      });
+
+      this.$root.$once(CONST.modals.events.confirmation.reject, () => {
+        // todo toast message
+        this.$root.$off(CONST.modals.events.confirmation.resolve);
+      });
+
+      this.$root.$emit(CONST.modals.events.confirmation.open, CONST.modals.confirmationMessage.deckLost);
     },
   },
 };

@@ -276,13 +276,18 @@ export default {
      * Fires when user click on delete button
      */
     deleteDeck(deck) {
-      this.$store
-        .dispatch('modals/openConfirmation')
-        .then(() => {
-          this.$store.commit('decks/deleteDeck', deck);
-          this.$router.push({ name: 'deckList' });
-        })
-        .catch(() => console.info('delete canceled'));
+      this.$root.$once(CONST.modals.events.confirmation.resolve, () => {
+        this.$root.$off(CONST.modals.events.confirmation.reject);
+        this.$store.commit('decks/deleteDeck', deck);
+        this.$router.push({ name: 'deckList' });
+      });
+
+      this.$root.$once(CONST.modals.events.confirmation.reject, () => {
+        // todo toast message
+        this.$root.$off(CONST.modals.events.confirmation.resolve);
+      });
+
+      this.$root.$emit(CONST.modals.events.confirmation.open, CONST.modals.confirmationMessage.deckLost);
     },
     /**
      * Fires when user click on Enter key or search button

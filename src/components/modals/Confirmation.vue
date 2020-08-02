@@ -1,24 +1,37 @@
 <template>
-  <div class="confirm">
-    Are you sure ?
-    <div class="buttons">
-      <Button :text="'Yes'" :handle-click="confirm" class="button"></Button>
-      <Button :text="'No'" :handle-click="close"></Button>
-    </div>
-  </div>
+  <b-modal :id="modalId" size="sm" title="Warning" ref="modal" lazy>{{ text }}</b-modal>
 </template>
 
 <script>
-import { mapState } from 'vuex';
-import Button from 'src/components/uiElements/Button.vue';
+import CONST from '../../utils/CONST';
+
 export default {
   name: 'Confirmation',
-  components: { Button },
-  computed: {
-    ...mapState({
-      confirm: state => state.modals.resolve,
-      close: state => state.modals.reject,
-    }),
+  data() {
+    return {
+      modalId: 'modal-confirmation',
+      text: 'Are you sure ?',
+    };
+  },
+  mounted() {
+    this.$root.$on(CONST.modals.events.vue.beforeHide, (bvEvent, modalId) => {
+      if (modalId === this.modalId) {
+        const event =
+          bvEvent.trigger === CONST.modals.closeReason.confirm
+            ? CONST.modals.events.confirmation.resolve
+            : CONST.modals.events.confirmation.reject;
+        console.info(this.modalId, 'closed by', bvEvent.trigger, event);
+        this.$root.$emit(event);
+      }
+    });
+
+    this.$root.$on(CONST.modals.events.confirmation.open, message => {
+      if (message) {
+        this.text = message;
+      }
+      console.info(this.modalId, 'opened');
+      this.$refs.modal.show();
+    });
   },
 };
 </script>
