@@ -148,11 +148,13 @@ import BarChart from '../chartjs/BarChart.vue';
 import PieChart from '../chartjs/PieChart.vue';
 import { mapState } from 'vuex';
 import GridLoader from 'vue-spinner/src/GridLoader.vue';
+import modals from '../../mixins/modals';
 
 export default {
   name: 'DeckEdition',
   props: ['deckToEdit'],
   components: { draggable, Button, Mana, BarChart, PieChart, GridLoader },
+  mixins: [modals],
   data() {
     return {
       isLoading: false,
@@ -275,19 +277,16 @@ export default {
     /**
      * Fires when user click on delete button
      */
-    deleteDeck(deck) {
-      this.$root.$once(CONST.modals.events.confirmation.resolve, () => {
-        this.$root.$off(CONST.modals.events.confirmation.reject);
+    async deleteDeck(deck) {
+      try {
+        await this.confirmModal(CONST.modals.confirmationMessage.deckLost);
         this.$store.commit('decks/deleteDeck', deck);
-        this.$router.push({ name: 'deckList' });
-      });
-
-      this.$root.$once(CONST.modals.events.confirmation.reject, () => {
+        await this.$router.push({ name: 'deckList' });
         // todo toast message
-        this.$root.$off(CONST.modals.events.confirmation.resolve);
-      });
-
-      this.$root.$emit(CONST.modals.events.confirmation.open, CONST.modals.confirmationMessage.deckLost);
+      } catch (e) {
+        // todo toast message
+        console.info('delete canceled');
+      }
     },
     /**
      * Fires when user click on Enter key or search button

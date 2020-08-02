@@ -50,6 +50,14 @@ export const decks = {
       state.tmpDeck = deck;
       window.localStorage.setItem(CONST.storageKeys.tmpDeck, JSON.stringify(deck));
     },
+    reset(state) {
+      const deckList = JSON.parse(mockList);
+      const newDecksByIds = { ...deckList };
+      state.decksByIds = newDecksByIds;
+      state.tmpDeck = null;
+      window.localStorage.setItem(CONST.storageKeys.deckList, JSON.stringify(newDecksByIds));
+      window.localStorage.removeItem(CONST.storageKeys.tmpDeck);
+    },
   },
   actions: {
     getDecks({ commit, state }) {

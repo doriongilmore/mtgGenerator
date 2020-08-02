@@ -24,6 +24,9 @@ const modals = {
   },
   confirmationMessage: {
     deckLost: 'The deck will be lost permanently!',
+    allDecksLost:
+      'All you decks will be lost permanently and the "Classic List" will return to it\'s default state.' +
+      ' This can resolve some issues due to bad retro-compatibility during version update (probably of this site) ',
   },
   events: {
     vue: {
