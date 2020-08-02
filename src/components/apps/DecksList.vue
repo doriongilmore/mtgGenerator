@@ -1,22 +1,32 @@
 <template>
     <div id="decksList">
-        <GridLoader ref="spinner" id="spinner" :loading="isLoading" size="40px"></GridLoader>
-        <div
-                v-for="deck in decks"
-                :key="deck.id"
-                class="deckRow"
-        >
-            <div class="name">{{deck.name}}</div>
-            <Mana class="colors" :mana-cost="deck.colors"></Mana>
-            <div class="cardCount">{{deck.cardCount}}</div>
-            <div class="dateCreation">{{moment(deck.dateCreation).format('YY-MM-DD HH:mm')}}</div>
-            <div class="dateEdition">{{moment(deck.dateEdition).format('YY-MM-DD HH:mm')}}</div>
-            <div class="buttons">
-                <Button :icon="'print'" :handle-click="onPrint.bind(this, deck)"></Button>
-                <Button :icon="'display'" :handle-click="editDeck.bind(this, deck)"></Button>
-                <Button :icon="'delete'" :handle-click="deleteDeck.bind(this, deck)"></Button>
-            </div>
-        </div>
+      <b-container class="bv-example-row">
+        <b-row cols="1" cols-md="2" cols-lg="3" cols-xl="4">
+          <b-col v-for="deck in decks">
+
+            <!--        todo get card covers   -->
+            <!--           img-src="https://picsum.photos/600/300/?image=25"-->
+            <b-card
+
+                :title="deck.name"
+                img-top
+                class="mb-3"
+            >
+              <b-card-text>
+                <b-badge class="colors" variant="light" v-if="deck.colors">
+                  <Mana :mana-cost="deck.colors"></Mana>
+                </b-badge>
+                <b-badge class="cardCount" variant="secondary">{{deck.cardCount}}</b-badge>
+                <div class="dateCreation">created: {{moment(deck.dateCreation).format('YY-MM-DD HH:mm')}}</div>
+                <div class="dateEdition">updated: {{moment(deck.dateEdition).format('YY-MM-DD HH:mm')}}</div>
+              </b-card-text>
+              <b-button variant="primary" @click="editDeck(deck)">Edit</b-button>
+              <b-button variant="danger" @click="deleteDeck(deck)">Delete</b-button>
+            </b-card>
+          </b-col>
+        </b-row>
+      </b-container>
+
     </div>
 </template>
 
@@ -25,11 +35,10 @@
     import Mana from '../uiElements/Mana.vue';
     import moment from 'moment';
     import DeckFactory from "src/utils/DeckFactory";
-    import GridLoader from 'vue-spinner/src/GridLoader.vue';
 
     export default {
         name: "DecksList",
-        components: { Button, Mana, GridLoader },
+        components: { Button, Mana },
         data() {
             return {
                 isLoading: false,
@@ -69,37 +78,15 @@
 </script>
 
 <style lang="less" scoped>
-    #spinner{
-        position: absolute;
-        top: 30%;
-        left: 40%;
-    }
-    #decksList {
+#decksList {
+  display: block;
+  width: 100%;
+  height: 90%;
+  overflow-y: auto;
+  padding-bottom: 2%;
 
-        .deckRow {
-            margin: 10px 0;
-            display: grid;
-            grid-template-rows: 30px;
-            grid-template-columns: 20% 16% 16% 16% 16% auto;
-            grid-template-areas: "name colors cardCount dateCreation dateEdition buttons";
-            .name {
-                grid-area: name;
-            }
-            .colors {
-                grid-area: colors;
-            }
-            .cardCount {
-                grid-area: cardCount;
-            }
-            .dateCreation {
-                grid-area: dateCreation;
-            }
-            .dateEdition {
-                grid-area: dateEdition;
-            }
-            .buttons {
-                grid-area: buttons;
-            }
-        }
-    }
+  .card {
+    display: inline-flex;
+  }
+}
 </style>

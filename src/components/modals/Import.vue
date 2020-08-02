@@ -116,17 +116,4 @@
     };
 </script>
 
-<style lang="less" scoped>
-    .import {
-        overflow-x: hidden;
-        overflow-y: auto;
-        text-align: center;
-        height: 100%;
-        textarea {
-            width: 100%;
-            height: 100px;
-            resize: none;
-            overflow-y: auto;
-        }
-    }
-</style>
+<style lang="less" scoped></style>

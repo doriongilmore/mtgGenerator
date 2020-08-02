@@ -56,7 +56,10 @@ export default {
   right: 0;
   bottom: 0;
   left: 0;
-  background-color: rgb(50, 50, 50);
+}
+
+.card {
+  background-color: #fffa;
 }
 
 .buttons {
@@ -70,10 +73,4 @@ export default {
   }
 }
 
-.centerText {
-  display: flex;
-  span {
-    margin: auto;
-  }
-}
 </style>

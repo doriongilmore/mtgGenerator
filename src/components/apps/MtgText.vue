@@ -46,19 +46,4 @@
     };
 </script>
 
-<style lang="less" scoped>
-    .mtgText {
-        .row {
-            margin: 5px 0;
-            display: block;
-            width: 100%;
-            white-space: pre-wrap;
-            div {
-                display: inline;
-                div {
-                    display: inline;
-                }
-            }
-        }
-    }
-</style>
+<style lang="less" scoped></style>

@@ -107,48 +107,4 @@
     };
 </script>
 
-<style lang="less" scoped>
-    .export {
-        overflow-x: hidden;
-        overflow-y: auto;
-        height: 100%;
-
-        #type {
-            display: grid;
-            grid-template-areas: "left middle right";
-            .dorion {
-                grid-area: left;
-            }
-            .magiccorp {
-                grid-area: right;
-            }
-            .untap {
-                grid-area: middle;
-            }
-        }
-        #setType {
-            display: grid;
-            grid-template-areas: "left right";
-            .left {
-                grid-area: left;
-            }
-            .right {
-                grid-area: right;
-            }
-        }
-        .formRow {
-            height: 30px;
-            margin-bottom: 5px;
-        }
-        .res {
-            text-align: center;
-            textarea {
-                width: 100%;
-                height: 100px;
-                resize: none;
-                overflow-y: auto;
-            }
-        }
-
-    }
-</style>
+<style lang="less" scoped></style>

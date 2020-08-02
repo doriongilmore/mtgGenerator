@@ -22,18 +22,4 @@
     };
 </script>
 
-<style lang="less" scoped>
-    .confirm {
-        margin-top: 20px;
-        text-align: center;
-        .buttons {
-            margin-top: 30px;
-            width: 80%;
-            margin-left: 10%;
-            margin-right: 10%;
-            .button {
-                width: 50%;
-            }
-        }
-    }
-</style>
+<style lang="less" scoped></style>

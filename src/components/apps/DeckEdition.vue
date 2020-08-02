@@ -2,7 +2,7 @@
     <div ref="container" id="container">
         <GridLoader ref="spinner" id="spinner" :loading="isLoading" size="40px"></GridLoader>
         <div id="deckEdition" ref="deckEdition">
-    <!--    TOP LEFT    -->
+    <!--    TOP    -->
             <div id="deckLists">
                 <div id="deckHeader">
                     <div class="deckName"><input type="text" v-model="deck.name" /></div>
@@ -66,63 +66,76 @@
                 </div>
             </div>
 
-    <!--    TOP RIGHT    -->
-
-            <div id="search">
-                <form v-on:submit="handleSearch" id="form">
-                    <div class="searchHeader">
-                        <input
-                                type="text"
-                                v-model="searchParams.name"
-                                placeholder="Enter a name"
-                        />
-                    </div>
-                    <div class="buttons">
-                        <Button icon="search" :handle-click="handleSearch" class="submit"></Button>
-                        <Button icon="display" :handle-click="openSearch" text="Advanced Search"></Button>
-                    </div>
-                    <input type="submit" style="display: none"/>
-                </form>
-                <div id="results">
-                    <div class="header">
-                        <div class="name">Name</div>
-                        <div class="manaCost">Cost</div>
-                        <div class="type">Type</div>
-                        <div class="setName">Set</div>
-                    </div>
-                    <draggable
-                            class="dragArea list-group"
-                            :list="results"
-                            :group="{ name: 'deck', pull: 'clone', put: false }"
-                            :clone="addCardToDeck"
-                            :move="onMove"
-                            id="resultsBody"
-                    >
-
-                        <div
-                                v-for="result in results"
-                                :key="result.id"
-                                class="resultRow"
-                                v-on:click="openCard(result)"
-                        >
-                            <div class="name">{{ result.name }}</div>
-                            <Mana class="manaCost" :mana-cost="result.mana_cost"></Mana>
-                            <div class="type">{{ result.type_line }}</div>
-                            <div class="setName">{{ result.set_name }}</div>
-                        </div>
-                    </draggable>
-                </div>
-            </div>
         </div>
 
     <!--    BOTTOM    -->
+      <b-card title="Card Title" no-body id="footer">
+        <b-card-body class="text-center" v-if="sectionToDisplay === 'search'">
+          <div id="search">
+            <form v-on:submit="handleSearch" id="form">
+              <div class="searchHeader">
+                <input
+                    type="text"
+                    v-model="searchParams.name"
+                    placeholder="Enter a name"
+                />
+              </div>
+              <div class="buttons">
+                <Button icon="search" :handle-click="handleSearch" class="submit"></Button>
+                <Button icon="display" :handle-click="openSearch" text="Advanced Search"></Button>
+              </div>
+              <input type="submit" style="display: none"/>
+            </form>
+            <div id="results">
+              <div class="header">
+                <div class="name">Name</div>
+                <div class="manaCost">Cost</div>
+                <div class="type">Type</div>
+                <div class="setName">Set</div>
+              </div>
+              <draggable
+                  class="dragArea list-group"
+                  :list="results"
+                  :group="{ name: 'deck', pull: 'clone', put: false }"
+                  :clone="addCardToDeck"
+                  :move="onMove"
+                  id="resultsBody"
+              >
 
-        <div id="deckStats" ref="stats">
+                <div
+                    v-for="result in results"
+                    :key="result.id"
+                    class="resultRow"
+                    v-on:click="openCard(result)"
+                >
+                  <div class="name">{{ result.name }}</div>
+                  <Mana class="manaCost" :mana-cost="result.mana_cost"></Mana>
+                  <div class="type">{{ result.type_line }}</div>
+                  <div class="setName">{{ result.set_name }}</div>
+                </div>
+              </draggable>
+            </div>
+          </div>
+        </b-card-body>
+        <b-card-body class="text-center" v-if="sectionToDisplay === 'stats'">
+          <div id="deckStats" ref="stats">
             <PieChart id="byType" :chart-data="stats.byType" class="graph"></PieChart>
             <PieChart id="byColor" :chart-data="stats.byColor" class="graph"></PieChart>
             <BarChart id="byCmc" :chart-data="stats.byCmc" :options="yBeginAtZero" class="graph"></BarChart>
             <PieChart id="byFunctionality" :chart-data="stats.byFunctionality" class="graph"></PieChart>
-        </div>
+          </div>
+        </b-card-body>
+
+
+        <b-card-footer footer-tag="nav">
+          <b-nav card-footer tabs>
+            <b-nav-item :active="sectionToDisplay==='none'" @click="sectionToDisplay='none'">Hide</b-nav-item>
+            <b-nav-item :active="sectionToDisplay==='search'" @click="sectionToDisplay='search'">Search</b-nav-item>
+            <b-nav-item :active="sectionToDisplay==='stats'" @click="sectionToDisplay='stats'">Stats</b-nav-item>
+          </b-nav>
+        </b-card-footer>
+      </b-card>
+
     </div>
 </template>
 
@@ -145,6 +158,7 @@
         data() {
             return {
                 isLoading: false,
+                sectionToDisplay: 'none',
                 cardToDisplay: null,
                 tmpList: [],
                 tmpDeck: null,
@@ -343,25 +357,20 @@
 <style lang="less" scoped>
 #container {
     height: 100%;
-    overflow: hidden;
     #spinner{
         position: absolute;
         top: 30%;
         left: 40%;
     }
     #deckEdition {
-        max-height: 60%;
-        height: 60%;
+        height: 85%;
         overflow: hidden;
-        display: grid;
-        grid-template-columns: 50% 50%;
-        grid-template-areas: "deckLists search";
         #deckLists {
             padding-bottom: 10%;
             margin-right: 1%;
             padding-right: 1%;
             grid-area: deckLists;
-            height: auto;
+            height: 100%;
             overflow-x: hidden;
             overflow-y: hidden;
 
@@ -387,6 +396,7 @@
                 height: 100%;
                 overflow-x: hidden;
                 overflow-y: auto;
+                padding: 3% 0;
 
                 .deckList {
                     border: rgba(100, 100, 100, 0.3) solid 2px;
@@ -449,7 +459,20 @@
                 }
             }
         }
-        #search {
+
+    }
+    #footer {
+        position: absolute;
+        width: 100%;
+        max-height: 60%;
+        left: 0;
+        bottom: 0;
+
+        .card-body {
+            overflow: hidden;
+            height: 100%;
+
+          #search {
             padding-left: 1%;
             padding-right: 1%;
             padding-bottom: 10%;
@@ -457,71 +480,68 @@
             overflow-x: hidden;
             overflow-y: hidden;
             #form {
-                display: grid;
-                grid-template-columns: auto auto;
-                grid-template-areas: "input buttons";
-                .searchHeader {
-                    grid-area: input;
-                    input {
-                        width: 100%
-                    }
+              display: grid;
+              grid-template-columns: auto auto;
+              grid-template-areas: "input buttons";
+              .searchHeader {
+                grid-area: input;
+                input {
+                  width: 100%
+                }
 
-                }
-                .buttons {
-                    grid-area: buttons;
-                }
+              }
+              .buttons {
+                grid-area: buttons;
+              }
             }
             #results {
-                height: 100%;
-                overflow-x: hidden;
-                overflow-y: auto;
-                .header, .resultRow {
-                    grid-area: search;
-                    display: grid;
-                    grid-template-columns: 40% 10% 20% 20%;
-                    grid-template-areas: "name manaCost type setName";
-                    .name {
-                        grid-area: name;
-                    }
-                    .manaCost {
-                        grid-area: manaCost;
-                    }
-                    .type {
-                        grid-area: type;
-                    }
-                    .setName {
-                        grid-area: setName;
-                    }
-                    .image {
-                        border: 2px black;
-                        position: relative;
-                        img {
-                            max-height: 300px;
-                        }
-                    }
+              height: 100%;
+              overflow-x: hidden;
+              overflow-y: auto;
+              .header, .resultRow {
+                grid-area: search;
+                display: grid;
+                grid-template-columns: 40% 10% 20% 20%;
+                grid-template-areas: "name manaCost type setName";
+                .name {
+                  grid-area: name;
                 }
+                .manaCost {
+                  grid-area: manaCost;
+                }
+                .type {
+                  grid-area: type;
+                }
+                .setName {
+                  grid-area: setName;
+                }
+                .image {
+                  border: 2px black;
+                  position: relative;
+                  img {
+                    max-height: 300px;
+                  }
+                }
+              }
             }
-        }
-    }
-    #deckStats {
-        max-height: 30%;
-        height: 30%;
-        position: absolute;
-        padding-right: 4%;
-        padding-left: 4%;
-        width: 88%;
-        display: grid;
-        grid-template-columns: 25% 25% 25% 25%;
-        grid-template-areas: "cmc color type function";
+          }
 
-        .graph {
-            padding: 5%;
-            width: 80%;
+          #deckStats {
+            height: 100%;
+            padding-right: 1%;
+            padding-left: 1%;
+            width: 95%;
+            display: grid;
+            grid-template-columns: 25% 25% 25% 25%;
+            grid-template-areas: "cmc color type function";
+
+            #byColor { grid-area: color }
+            #byCmc { grid-area: cmc }
+            #byType { grid-area: type }
+            #byFunctionality { grid-area: function }
+          }
         }
-        #byColor { grid-area: color }
-        #byCmc { grid-area: cmc }
-        #byType { grid-area: type }
-        #byFunctionality { grid-area: function }
+
     }
 }
 </style>
