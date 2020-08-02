@@ -4,12 +4,11 @@
     <!-- BG FIRST ! -->
     <MainContainer></MainContainer>
     <!-- MODALS LAST ! -->
-    <Modals v-if="showModal"></Modals>
+    <Modals></Modals>
   </div>
 </template>
 <script>
 //todo center svg
-import { mapState } from 'vuex';
 import Background from 'src/components/Background.vue';
 import Modals from 'src/components/Modals.vue';
 import MainContainer from 'src/MainContainer.vue';
@@ -22,16 +21,6 @@ export default {
     Background,
     MainContainer,
   },
-  data() {
-    return {
-      showModal: false,
-    };
-  },
-  computed: {
-    ...mapState({
-      modalOpen: state => state.modals.open,
-    }),
-  },
   async mounted() {
     const typeList = CONST.search.typeList.map(el => {
       if (!el.uri) {
@@ -40,11 +29,6 @@ export default {
       return this.$store.dispatch('mtg/fetch', el.uri).then(res => res.map(t => ({ key: t, value: t })));
     });
     CONST.search.typeList = (await Promise.all(typeList)).reduce((list, arr) => [...list, ...arr], []);
-  },
-  watch: {
-    modalOpen(newValue) {
-      this.showModal = newValue;
-    },
   },
 };
 </script>
