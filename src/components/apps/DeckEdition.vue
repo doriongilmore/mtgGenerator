@@ -20,21 +20,23 @@
     <!--    TOP    -->
             <div id="deckLists">
                 <div class="lists">
-                    <div class="deckList" v-for="deckList in deck.lists">
+                    <div class="deckList" v-for="(deckList, listIndex) in deck.lists">
                         <div class="listHeader">
                             <div class="listName">
                                 <input type="text" v-model="deckList.name" @change="onChange" />
                             </div>
                             <div class="listStatIgnore" :title="`${deckList.ignoreStat?'ignored':'used'} in stats`">
-                              <b-icon-graph-down font-scale="1.2" v-if="deckList.ignoreStat"></b-icon-graph-down>
-                              <b-icon-graph-up font-scale="1.2" v-else></b-icon-graph-up>
-                                <input type="checkbox" v-model="deckList.ignoreStat" @change="onChange" />
+                              <label :for="'ignoreStat' + listIndex">
+                                <b-icon-graph-down font-scale="1.2" v-if="deckList.ignoreStat"></b-icon-graph-down>
+                                <b-icon-graph-up font-scale="1.2" v-else></b-icon-graph-up>
+                              </label>
+                              <input :id="'ignoreStat' + listIndex" type="checkbox" v-model="deckList.ignoreStat" @change="onChange" />
                             </div>
                             <div class="cardCount">{{ getCardCount(deckList.list, true) }}</div>
-                            <div class="buttons">
-                                <Button :icon="'export'" :handle-click="onExport.bind(this, deckList)"></Button>
-                            </div>
-
+                            <b-button class="listExport" variant="light">
+                                <b-icon-upload  @click="onExport(deckList)"></b-icon-upload>
+                                <span class="d-none d-lg-inline">Export</span>
+                            </b-button>
                         </div>
                         <draggable
                                 class="dragArea list-group"
@@ -44,11 +46,11 @@
                                 @change="onChange"
                         >
                             <div class="cardRow" v-for="card in deckList.list" :key="card.id">
-                                <div class="name" v-on:click="openCard(card)">{{ card.name }}</div>
-                                <Mana class="manaCost" :mana-cost="card.mana_cost"></Mana>
                                 <div class="deckQte">
-                                    <input type="number" min="0" max="99" v-model="card.deckQte" @change="onChange"/>
+                                <input type="number" min="0" max="99" v-model="card.deckQte" @change="onChange"/>
                                 </div>
+                                <Mana class="manaCost" :mana-cost="card.mana_cost"></Mana>
+                                <div class="name" v-on:click="openCard(card)">{{ card.name }}</div>
                                 <div class="printConfig">
                                     <select v-model="card.printConfig" @change="onChange">
                                         <option v-for="conf in printConfig.list" :key="conf.key" :value="conf.key">
@@ -429,10 +431,11 @@
                     padding: 1%;
                     .listHeader {
                         display: grid;
-                        grid-template-columns: 60% 10% 20% 10%;
-                        grid-template-areas: "name statIgnore cardCount buttons";
+                        grid-template-columns: 60% 20% 10% 10%;
+                        grid-template-areas: "name cardCount statIgnore buttons";
                         .listName {
                             grid-area: name;
+                            input { width: 90% }
                         }
                         .cardCount {
                             grid-area: cardCount;
@@ -440,15 +443,15 @@
                         .listStatIgnore {
                             grid-area: statIgnore;
                         }
-                        .buttons {
+                        .listExport {
                             grid-area: buttons;
                         }
                     }
 
                     .cardRow, .resultRow {
                         display: grid;
-                        grid-template-columns: 50% auto 35px 95px;
-                        grid-template-areas: "name manaCost deckQte printConfig";
+                        grid-template-columns: 10% 20% 50% 20%;
+                        grid-template-areas: "deckQte manaCost name printConfig";
                         .name {
                             grid-area: name;
                         }
@@ -458,7 +461,7 @@
                         .deckQte {
                             grid-area: deckQte;
                             input {
-                                width: 30px;
+                                width: 45px;
                             }
                         }
                         .printConfig {
