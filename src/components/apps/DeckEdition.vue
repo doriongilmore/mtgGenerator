@@ -148,13 +148,13 @@ import BarChart from '../chartjs/BarChart.vue';
 import PieChart from '../chartjs/PieChart.vue';
 import { mapState } from 'vuex';
 import GridLoader from 'vue-spinner/src/GridLoader.vue';
-import modals from '../../mixins/modals';
+import modalHandler from '../../mixins/modalHandler';
 
 export default {
   name: 'DeckEdition',
   props: ['deckToEdit'],
   components: { draggable, Button, Mana, BarChart, PieChart, GridLoader },
-  mixins: [modals],
+  mixins: [modalHandler],
   data() {
     return {
       isLoading: false,
@@ -264,7 +264,7 @@ export default {
         // update deck state for json export
         DeckFactory.update(listOrDeck);
       }
-      this.$store.dispatch('modals/openExport', listOrDeck);
+      this.exportModal(listOrDeck);
     },
     /**
      * Fires when user click on print button

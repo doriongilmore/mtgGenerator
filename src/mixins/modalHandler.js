@@ -25,5 +25,12 @@ export default {
     confirmModal(message) {
       return openModal(this, CONST.modals.events.confirmation, message);
     },
+    /**
+     * @param {Deck|DeckList} deckOrList
+     * @returns {Promise<void>}
+     */
+    exportModal(deckOrList) {
+      return openModal(this, CONST.modals.events.export, deckOrList);
+    },
   },
 };

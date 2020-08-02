@@ -37,12 +37,12 @@ import Mana from '../uiElements/Mana.vue';
 import moment from 'moment';
 import DeckFactory from 'src/utils/DeckFactory';
 import CONST from '../../utils/CONST';
-import modals from '../../mixins/modals';
+import modalHandler from '../../mixins/modalHandler';
 
 export default {
   name: 'DecksList',
   components: { Mana },
-  mixins: [modals],
+  mixins: [modalHandler],
   data() {
     return {
       isLoading: false,
