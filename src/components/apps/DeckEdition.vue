@@ -363,7 +363,7 @@
         left: 40%;
     }
     #deckEdition {
-        height: 85%;
+        height: 100%;
         overflow: hidden;
         #deckLists {
             padding-bottom: 10%;

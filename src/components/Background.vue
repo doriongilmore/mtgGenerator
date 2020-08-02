@@ -48,6 +48,8 @@ export default {
 <style lang="less" scoped>
   .container {
     position: absolute;
+    max-width: inherit;
+    width: 100%;
     top: 0;
     right: 0;
     bottom: 0;
