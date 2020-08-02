@@ -15,8 +15,14 @@
               <div class="dateCreation">created: {{ moment(deck.dateCreation).format('YY-MM-DD HH:mm') }}</div>
               <div class="dateEdition">updated: {{ moment(deck.dateEdition).format('YY-MM-DD HH:mm') }}</div>
             </b-card-text>
-            <b-button variant="primary" @click="editDeck(deck)">Edit</b-button>
-            <b-button variant="danger" @click="deleteDeck(deck)">Delete</b-button>
+            <b-button class="listExport" variant="primary" @click="editDeck(deck)">
+              <b-icon-pen></b-icon-pen><span> Edit</span>
+            </b-button>
+            <b-button class="listExport" variant="danger" @click="deleteDeck(deck)">
+              <b-icon-trash></b-icon-trash><span> Delete</span>
+            </b-button>
+            <!--            <b-button variant="primary" @click="editDeck(deck)">Edit</b-button>-->
+            <!--            <b-button variant="danger" @click="deleteDeck(deck)">Delete</b-button>-->
           </b-card>
         </b-col>
       </b-row>

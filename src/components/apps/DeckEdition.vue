@@ -8,13 +8,21 @@
           <b-navbar-toggle class="deckButtons" target="nav-collapse-deck"></b-navbar-toggle>
           <b-collapse id="nav-collapse-deck" is-nav>
             <b-navbar-nav class="deckButtons">
-              <b-nav-item :class="'btn rounded-pill ' + (updateDone ? 'btn-primary' : 'btn-light')" @click="saveDeck()"
-                >Save</b-nav-item
-              >
-              <b-nav-item class="btn btn-light rounded-pill" @click="onPrint()">Print</b-nav-item>
-              <b-nav-item class="btn btn-light rounded-pill" @click="onImport()">Import</b-nav-item>
-              <b-nav-item class="btn btn-light rounded-pill" @click="onExport(deck)">Export</b-nav-item>
-              <b-nav-item class="btn btn-danger rounded-pill" @click="deleteDeck(deck)">Delete</b-nav-item>
+              <b-nav-item :class="'btn rounded-pill ' + (updateDone ? 'btn-primary' : 'btn-light')" @click="saveDeck()">
+                <b-icon-printer></b-icon-printer><span class="d-sm-none d-lg-inline"> Save</span>
+              </b-nav-item>
+              <b-nav-item class="btn btn-light rounded-pill" @click="onPrint()">
+                <b-icon-printer></b-icon-printer><span class="d-sm-none d-lg-inline"> Print</span>
+              </b-nav-item>
+              <b-nav-item class="btn btn-light rounded-pill" @click="onImport()">
+                <b-icon-download></b-icon-download><span class="d-sm-none d-lg-inline"> Import</span>
+              </b-nav-item>
+              <b-nav-item class="btn btn-light rounded-pill" @click="onExport(deck)">
+                <b-icon-upload></b-icon-upload><span class="d-sm-none d-lg-inline"> Export</span>
+              </b-nav-item>
+              <b-nav-item class="btn btn-danger rounded-pill" @click="deleteDeck(deck)">
+                <b-icon-trash></b-icon-trash><span class="d-sm-none d-lg-inline"> Delete</span>
+              </b-nav-item>
             </b-navbar-nav>
           </b-collapse>
         </b-navbar>
@@ -40,9 +48,8 @@
                 />
               </div>
               <div class="cardCount">{{ getCardCount(deckList.list, true) }}</div>
-              <b-button class="listExport" variant="light">
-                <b-icon-upload @click="onExport(deckList)"></b-icon-upload>
-                <span class="d-none d-lg-inline">Export</span>
+              <b-button class="listExport" variant="light" @click="onExport(deckList)">
+                <b-icon-upload></b-icon-upload><span class="d-none d-lg-inline"> Export</span>
               </b-button>
             </div>
             <draggable class="dragArea list-group" :list="deckList.list" group="deck" :move="onMove" @change="onChange">
@@ -75,11 +82,15 @@
       <b-card-body class="text-center" v-if="sectionToDisplay === 'search'">
         <div id="search">
           <form v-on:submit="handleSearch" id="form">
-            <div class="searchHeader"><input type="text" v-model="searchParams.name" placeholder="Enter a name" /></div>
-            <div class="buttons">
-              <Button icon="search" :handle-click="handleSearch" class="submit"></Button>
-              <Button icon="display" :handle-click="openSearch" text="Advanced Search"></Button>
+            <div class="d-inline-block w-50">
+              <input class="w-100" type="text" v-model="searchParams.name" placeholder="Enter a name" />
             </div>
+            <b-button variant="light" @click="handleSearch()">
+              <b-icon-search></b-icon-search><span class="d-none d-lg-inline"> Search</span>
+            </b-button>
+            <b-button variant="light" @click="openSearch()">
+              <b-icon-tools></b-icon-tools><span class="d-none d-lg-inline"> Advanced Search</span>
+            </b-button>
             <input type="submit" style="display: none" />
           </form>
           <div id="results">
@@ -504,22 +515,7 @@ export default {
         padding-right: 1%;
         padding-bottom: 10%;
         height: auto;
-        overflow-x: hidden;
-        overflow-y: hidden;
-        #form {
-          display: grid;
-          grid-template-columns: auto auto;
-          grid-template-areas: 'input buttons';
-          .searchHeader {
-            grid-area: input;
-            input {
-              width: 100%;
-            }
-          }
-          .buttons {
-            grid-area: buttons;
-          }
-        }
+        overflow: hidden;
         #results {
           height: 100%;
           overflow-x: hidden;
