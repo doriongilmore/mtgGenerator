@@ -9,7 +9,7 @@
           <b-collapse id="nav-collapse-deck" is-nav>
             <b-navbar-nav class="deckButtons">
               <b-nav-item :class="'btn rounded-pill ' + (updateDone ? 'btn-primary' : 'btn-light')" @click="saveDeck()">
-                <b-icon-printer></b-icon-printer><span class="d-sm-none d-lg-inline"> Save</span>
+                <b-icon-clipboard-check></b-icon-clipboard-check><span class="d-sm-none d-lg-inline"> Save</span>
               </b-nav-item>
               <b-nav-item class="btn btn-light rounded-pill" @click="onPrint()">
                 <b-icon-printer></b-icon-printer><span class="d-sm-none d-lg-inline"> Print</span>
