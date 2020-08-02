@@ -27,23 +27,23 @@ const Y2 = 2 * PADDING_Y + CARD_Y;
 const Y3 = 3 * PADDING_Y + 2 * CARD_Y;
 
 const printConfig = {
-    DONT_PRINT,
-    BORDER_0,
-    BORDER_1,
-    BORDER_2,
-    BORDER_3,
-    PDF_POS: {
-        0: { x: X1, y: Y1 }, 1: { x: X2, y: Y1 }, 2: { x: X3, y: Y1 },
-        3: { x: X1, y: Y2 }, 4: { x: X2, y: Y2 }, 5: { x: X3, y: Y2 },
-        6: { x: X1, y: Y3 }, 7: { x: X2, y: Y3 }, 8: { x: X3, y: Y3 },
-    },
-    list: [
-        DONT_PRINT,
-        BORDER_0,
-        BORDER_1,
-        BORDER_2,
-        BORDER_3
-    ],
+  DONT_PRINT,
+  BORDER_0,
+  BORDER_1,
+  BORDER_2,
+  BORDER_3,
+  PDF_POS: {
+    0: { x: X1, y: Y1 },
+    1: { x: X2, y: Y1 },
+    2: { x: X3, y: Y1 },
+    3: { x: X1, y: Y2 },
+    4: { x: X2, y: Y2 },
+    5: { x: X3, y: Y2 },
+    6: { x: X1, y: Y3 },
+    7: { x: X2, y: Y3 },
+    8: { x: X3, y: Y3 },
+  },
+  list: [DONT_PRINT, BORDER_0, BORDER_1, BORDER_2, BORDER_3],
 };
 
 export default printConfig;

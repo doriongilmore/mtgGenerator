@@ -15,25 +15,27 @@
     <Print v-if="icon === 'print'" />
     <Save v-if="icon === 'save'" />
     <Search v-else-if="icon === 'search'" />
-    <span><slot>{{text}}</slot></span>
+    <span
+      ><slot>{{ text }}</slot></span
+    >
   </div>
 </template>
 
 <script>
-import Delete from "src/assets/icons/Delete.vue";
-import Display from "src/assets/icons/Display.vue";
-import Download from "src/assets/icons/Download.vue";
-import Export from "src/assets/icons/Export.vue";
-import Import from "src/assets/icons/Import.vue";
-import Info from "src/assets/icons/Info.vue";
-import Plus from "src/assets/icons/Plus.vue";
-import Print from "src/assets/icons/Print.vue";
-import Save from "src/assets/icons/Save.vue";
-import Search from "src/assets/icons/Search.vue";
+import Delete from 'src/assets/icons/Delete.vue';
+import Display from 'src/assets/icons/Display.vue';
+import Download from 'src/assets/icons/Download.vue';
+import Export from 'src/assets/icons/Export.vue';
+import Import from 'src/assets/icons/Import.vue';
+import Info from 'src/assets/icons/Info.vue';
+import Plus from 'src/assets/icons/Plus.vue';
+import Print from 'src/assets/icons/Print.vue';
+import Save from 'src/assets/icons/Save.vue';
+import Search from 'src/assets/icons/Search.vue';
 
 export default {
-  name: "Button",
-  props: ["handleClick", "icon", "text", "disabled", "bordered", "title"],
+  name: 'Button',
+  props: ['handleClick', 'icon', 'text', 'disabled', 'bordered', 'title'],
   components: {
     Delete,
     Display,
@@ -50,8 +52,8 @@ export default {
     onClick() {
       if (!this.handleClick || !!this.disabled) return;
       this.handleClick();
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -88,7 +90,8 @@ export default {
     }
   }
 
-  span, svg {
+  span,
+  svg {
     margin: auto;
     vertical-align: middle;
   }
