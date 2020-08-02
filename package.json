@@ -25,9 +25,11 @@
     "config": "^3.2.2",
     "copy-webpack-plugin": "^5.1.1",
     "css-loader": "^3.0.0",
+    "husky": "^4.2.5",
     "less": "^3.9.0",
     "less-loader": "^5.0.0",
-    "prettier": "1.18.2",
+    "prettier": "^1.19.1",
+    "pretty-quick": "^2.0.1",
     "vue-loader": "^15.7.0",
     "vue-style-loader": "^4.1.2",
     "vue-template-compiler": "^2.6.10",
@@ -39,7 +41,14 @@
   "scripts": {
     "dev": "export SUPPRESS_NO_CONFIG_WARNING=true && webpack-dev-server --config webpack.dev.config.js",
     "build": "export SUPPRESS_NO_CONFIG_WARNING=true && webpack --config webpack.prod.config.js",
+    "pretty": "prettier --write \"assets/index.html\" \"src/**/*.js\" \"src/**/*.vue\"",
+    "precommit": "prettier --write \"assets/index.html\" \"src/**/*.js\" \"src/**/*.vue\"",
     "test": "echo 'no test implemented'"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
   },
   "repository": {
     "type": "git",

@@ -1,81 +1,73 @@
 <template>
-    <div id="decksList">
-<!--      <b-button class="btn-outline-primary" ></b-button>-->
-      <b-container class="bv-example-row">
-        <b-row cols="1" cols-md="2" cols-lg="3" cols-xl="4">
-          <b-col v-for="deck in decks" :key="deck.id">
-
-            <!--        todo get card covers   -->
-            <!--           img-src="https://picsum.photos/600/300/?image=25"-->
-            <b-card
-
-                :title="deck.name"
-                img-top
-                class="mb-3"
-            >
-              <b-card-text>
-                <b-badge class="colors" variant="light" v-if="deck.colors">
-                  <Mana :mana-cost="deck.colors"></Mana>
-                </b-badge>
-                <b-badge class="cardCount" variant="secondary">{{deck.cardCount}}</b-badge>
-                <div class="dateCreation">created: {{moment(deck.dateCreation).format('YY-MM-DD HH:mm')}}</div>
-                <div class="dateEdition">updated: {{moment(deck.dateEdition).format('YY-MM-DD HH:mm')}}</div>
-              </b-card-text>
-              <b-button variant="primary" @click="editDeck(deck)">Edit</b-button>
-              <b-button variant="danger" @click="deleteDeck(deck)">Delete</b-button>
-            </b-card>
-          </b-col>
-        </b-row>
-      </b-container>
-
-    </div>
+  <div id="decksList">
+    <!--      <b-button class="btn-outline-primary" ></b-button>-->
+    <b-container class="bv-example-row">
+      <b-row cols="1" cols-md="2" cols-lg="3" cols-xl="4">
+        <b-col v-for="deck in decks" :key="deck.id">
+          <!--        todo get card covers   -->
+          <!--           img-src="https://picsum.photos/600/300/?image=25"-->
+          <b-card :title="deck.name" img-top class="mb-3">
+            <b-card-text>
+              <b-badge class="colors" variant="light" v-if="deck.colors">
+                <Mana :mana-cost="deck.colors"></Mana>
+              </b-badge>
+              <b-badge class="cardCount" variant="secondary">{{ deck.cardCount }}</b-badge>
+              <div class="dateCreation">created: {{ moment(deck.dateCreation).format('YY-MM-DD HH:mm') }}</div>
+              <div class="dateEdition">updated: {{ moment(deck.dateEdition).format('YY-MM-DD HH:mm') }}</div>
+            </b-card-text>
+            <b-button variant="primary" @click="editDeck(deck)">Edit</b-button>
+            <b-button variant="danger" @click="deleteDeck(deck)">Delete</b-button>
+          </b-card>
+        </b-col>
+      </b-row>
+    </b-container>
+  </div>
 </template>
 
 <script>
-    import Button from '../uiElements/Button.vue';
-    import Mana from '../uiElements/Mana.vue';
-    import moment from 'moment';
-    import DeckFactory from "src/utils/DeckFactory";
+import Button from '../uiElements/Button.vue';
+import Mana from '../uiElements/Mana.vue';
+import moment from 'moment';
+import DeckFactory from 'src/utils/DeckFactory';
 
-    export default {
-        name: "DecksList",
-        components: { Button, Mana },
-        data() {
-            return {
-                isLoading: false,
-                decks: [],
-                moment
-            };
-        },
-        computed: {
-        },
-        async created() {
-            try {
-                this.decks = await this.$store.dispatch('decks/getDecks');
-            } catch (e) {
-                console.error('error when loading from storage', e);
-            }
-        },
-        methods: {
-            async onPrint(deck) {
-                this.isLoading = true;
-                await DeckFactory.print(deck);
-                this.isLoading = false;
-            },
-            editDeck(deck) {
-                this.$router.push({ name: 'edition', params: { deckToEdit: deck } })
-            },
-            async deleteDeck(deck) {
-                try {
-                    await this.$store.dispatch('modals/openConfirmation');
-                    this.$store.commit('decks/deleteDeck', deck);
-                    this.decks = await this.$store.dispatch('decks/getDecks');
-                } catch (e) {
-                    console.info('delete canceled')
-                }
-            }
-        }
+export default {
+  name: 'DecksList',
+  components: { Button, Mana },
+  data() {
+    return {
+      isLoading: false,
+      decks: [],
+      moment,
+    };
+  },
+  computed: {},
+  async created() {
+    try {
+      this.decks = await this.$store.dispatch('decks/getDecks');
+    } catch (e) {
+      console.error('error when loading from storage', e);
     }
+  },
+  methods: {
+    async onPrint(deck) {
+      this.isLoading = true;
+      await DeckFactory.print(deck);
+      this.isLoading = false;
+    },
+    editDeck(deck) {
+      this.$router.push({ name: 'edition', params: { deckToEdit: deck } });
+    },
+    async deleteDeck(deck) {
+      try {
+        await this.$store.dispatch('modals/openConfirmation');
+        this.$store.commit('decks/deleteDeck', deck);
+        this.decks = await this.$store.dispatch('decks/getDecks');
+      } catch (e) {
+        console.info('delete canceled');
+      }
+    },
+  },
+};
 </script>
 
 <style lang="less" scoped>

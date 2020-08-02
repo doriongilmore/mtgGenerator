@@ -9,14 +9,14 @@
 </template>
 <script>
 //todo center svg
-import { mapState } from "vuex";
-import Background from "src/components/Background.vue";
-import Modals from "src/components/Modals.vue";
-import MainContainer from "src/MainContainer.vue";
-import CONST from "src/utils/CONST";
+import { mapState } from 'vuex';
+import Background from 'src/components/Background.vue';
+import Modals from 'src/components/Modals.vue';
+import MainContainer from 'src/MainContainer.vue';
+import CONST from 'src/utils/CONST';
 
 export default {
-  name: "App",
+  name: 'App',
   components: {
     Modals,
     Background,
@@ -30,21 +30,21 @@ export default {
   computed: {
     ...mapState({
       modalOpen: state => state.modals.open,
-    })
+    }),
   },
   async mounted() {
-    const typeList = CONST.search.typeList.map((el) => {
-      if (!el.uri) { return Promise.resolve([el]) }
-      return this.$store.dispatch('mtg/fetch', el.uri)
-              .then(res => res.map(t => ({ key: t, value: t })));
+    const typeList = CONST.search.typeList.map(el => {
+      if (!el.uri) {
+        return Promise.resolve([el]);
+      }
+      return this.$store.dispatch('mtg/fetch', el.uri).then(res => res.map(t => ({ key: t, value: t })));
     });
-    CONST.search.typeList = (await Promise.all(typeList))
-            .reduce((list, arr) => [...list, ...arr], []);
+    CONST.search.typeList = (await Promise.all(typeList)).reduce((list, arr) => [...list, ...arr], []);
   },
   watch: {
     modalOpen(newValue) {
       this.showModal = newValue;
-    }
+    },
   },
 };
 </script>
@@ -72,5 +72,4 @@ export default {
     border-left: 1px solid black;
   }
 }
-
 </style>

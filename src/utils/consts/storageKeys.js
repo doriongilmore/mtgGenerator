@@ -1,6 +1,6 @@
 const storageKeys = {
-    deckList: 'deckList',
-    tmpDeck: 'tmpDeck',
+  deckList: 'deckList',
+  tmpDeck: 'tmpDeck',
 };
 
 export default storageKeys;

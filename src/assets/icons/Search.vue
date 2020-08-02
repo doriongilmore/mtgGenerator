@@ -1,18 +1,18 @@
 <template>
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 490 490" >
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 490 490">
     <path
-            fill="none"
-            stroke="#000"
-            stroke-width="36"
-            stroke-linecap="round"
-            d="m280,278a153,153 0 1,0-2,2l170,170m-91-117 110,110-26,26-110-110"
+      fill="none"
+      stroke="#000"
+      stroke-width="36"
+      stroke-linecap="round"
+      d="m280,278a153,153 0 1,0-2,2l170,170m-91-117 110,110-26,26-110-110"
     />
   </svg>
 </template>
 
 <script>
 export default {
-  name: "Search"
+  name: 'Search',
 };
 </script>
 
