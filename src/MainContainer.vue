@@ -2,18 +2,18 @@
   <div class="mainContainer">
         <b-navbar toggleable="sm" type="light" variant="light" fixed="sm">
           <b-navbar-brand to="/">Mtg - Builder</b-navbar-brand>
-          <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+          <b-navbar-toggle target="nav-collapse-menu"></b-navbar-toggle>
 
-          <b-collapse id="nav-collapse" is-nav>
+          <b-collapse id="nav-collapse-menu" is-nav>
             <b-navbar-nav>
               <b-nav-item to="/decks" exact exact-active-class="active">Decks</b-nav-item>
               <b-nav-item to="/deck" exact exact-active-class="active">Create a deck</b-nav-item>
             </b-navbar-nav>
           </b-collapse>
         </b-navbar>
-        <b-card-body class="content">
+        <div class="content">
           <router-view></router-view>
-        </b-card-body>
+        </div>
   </div>
 </template>
 
@@ -63,6 +63,7 @@ export default {
     height: 100%;
   }
   .content {
+    padding: 0 1%;
     background-color: #fffa;
     height: 95%;
     overflow-y: auto;

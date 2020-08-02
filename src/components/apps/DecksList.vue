@@ -1,8 +1,9 @@
 <template>
     <div id="decksList">
+<!--      <b-button class="btn-outline-primary" ></b-button>-->
       <b-container class="bv-example-row">
         <b-row cols="1" cols-md="2" cols-lg="3" cols-xl="4">
-          <b-col v-for="deck in decks">
+          <b-col v-for="deck in decks" :key="deck.id">
 
             <!--        todo get card covers   -->
             <!--           img-src="https://picsum.photos/600/300/?image=25"-->
@@ -84,6 +85,7 @@
   height: 90%;
   overflow-y: auto;
   padding-bottom: 2%;
+  padding-top: 2%;
 
   .card {
     display: inline-flex;
