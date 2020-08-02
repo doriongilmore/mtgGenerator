@@ -4,33 +4,23 @@
 
 <script>
 import CONST from '../../utils/CONST';
+import modalFactory from '../../mixins/modalFactory';
 
 export default {
   name: 'Confirmation',
+  mixins: [modalFactory],
   data() {
     return {
+      eventData: CONST.modals.events.confirmation,
       modalId: 'modal-confirmation',
       text: 'Are you sure ?',
     };
   },
   mounted() {
-    this.$root.$on(CONST.modals.events.vue.beforeHide, (bvEvent, modalId) => {
-      if (modalId === this.modalId) {
-        const event =
-          bvEvent.trigger === CONST.modals.closeReason.confirm
-            ? CONST.modals.events.confirmation.resolve
-            : CONST.modals.events.confirmation.reject;
-        console.info(this.modalId, 'closed by', bvEvent.trigger, event);
-        this.$root.$emit(event);
-      }
-    });
-
-    this.$root.$on(CONST.modals.events.confirmation.open, message => {
+    this.listenEvents(message => {
       if (message) {
         this.text = message;
       }
-      console.info(this.modalId, 'opened');
-      this.$refs.modal.show();
     });
   },
 };

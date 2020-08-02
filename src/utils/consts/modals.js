@@ -1,3 +1,11 @@
+function getDefaultEvents(modalName) {
+  return {
+    open: `modal/${modalName}/open`,
+    resolve: `modal/${modalName}/ok`,
+    reject: `modal/${modalName}/cancel`,
+  };
+}
+
 const modals = {
   sizeRatio: {
     small: {
@@ -35,11 +43,8 @@ const modals = {
       beforeHide: 'bv::modal::hide',
       afterHide: 'bv::modal::hidden',
     },
-    confirmation: {
-      open: 'modal/confirmation/open',
-      resolve: 'modal/confirmation/ok',
-      reject: 'modal/confirmation/cancel',
-    },
+    confirmation: getDefaultEvents('confirmation'),
+    export: getDefaultEvents('export'),
   },
 };
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="export">
+  <b-modal class="export" :id="modalId" size="sm" title="Export" ref="modal" lazy ok-only ok-variant="light">
     <form>
       <div id="type" class="formRow">
         <div v-for="f in exportFormats" :key="f.key">
@@ -16,16 +16,14 @@
           <input type="radio" id="withoutSets" value="withoutSets" v-model="setFormat" /> Without Sets
         </label>
       </div>
-      <div class="res">
-        <label for="exportArea"
-          >Copy-Paste<br />
-          <textarea id="exportArea" class="formRow" :value="getExport"></textarea>
-        </label>
-        <Button :handle-click="saveFile" text="Or export to a file" bordered="true"></Button>
-        <a style="display: none;" ref="exportLink"></a>
-      </div>
+      <div class="res"><label for="exportArea">Copy-Paste</label></div>
+      <div><textarea id="exportArea" class="formRow" :value="getExport"></textarea></div>
+      <b-button class="listExport" variant="primary" @click="saveFile()">
+        <b-icon-upload></b-icon-upload><span> Or save into a file</span>
+      </b-button>
+      <a class="d-none" ref="exportLink"></a>
     </form>
-  </div>
+  </b-modal>
 </template>
 
 <script>
@@ -34,6 +32,7 @@ import draggable from 'vuedraggable';
 import Button from 'src/components/uiElements/Button.vue';
 import CONST from 'src/utils/CONST';
 import DeckFactory from 'src/utils/DeckFactory';
+import modalFactory from '../../mixins/modalFactory';
 
 let textFile = null;
 function makeTextFile(text) {
@@ -51,18 +50,26 @@ function makeTextFile(text) {
 export default {
   name: 'Export',
   components: { draggable, Button },
+  mixins: [modalFactory],
   data() {
     return {
+      eventData: CONST.modals.events.export,
+      modalId: 'modal-export',
       dorionKey: CONST.exportFormats.DORION.key,
       format: CONST.exportFormats.DORION,
       exportFormats: CONST.exportFormats.list,
       setFormat: 'withSets',
+      deckOrList: null,
     };
   },
+  mounted() {
+    this.listenEvents(deckOrList => {
+      if (deckOrList) {
+        this.deckOrList = deckOrList;
+      }
+    });
+  },
   computed: {
-    ...mapState({
-      deckOrList: state => state.modals.modalData,
-    }),
     getExport() {
       if (this.format.key === CONST.exportFormats.DORION.key) {
         return JSON.stringify(this.deckOrList);
