@@ -18,6 +18,20 @@ const stats = {
     { search: 'return target', key: 'control' },
     { search: 'destroy target', key: 'control' },
   ],
+  byCmc: {
+    default: {
+      '0': 0,
+      '1': 0,
+      '2': 0,
+      '3': 0,
+      '4': 0,
+      '5': 0,
+      '6+': 0,
+      '10+': 0,
+    },
+    moreThan10: '10+',
+    moreThan6: '6+',
+  },
   byColor: {
     I: {
       backgroundColor: 'rgba(100, 100, 100, 0.5)',

@@ -52,6 +52,11 @@ function getColorKey(color_identity) {
   }
   return 'I';
 }
+function getCmcKey(cmc) {
+  if (cmc >= 10) return CONST.stats.byCmc.moreThan10;
+  if (cmc >= 6) return CONST.stats.byCmc.moreThan6;
+  return String(cmc);
+}
 
 /**
  * @param {Deck} deck
@@ -59,7 +64,7 @@ function getColorKey(color_identity) {
 function getStats(deck) {
   const functionalityList = CONST.stats.functionalities;
   const byColor = {};
-  const byCmc = {};
+  const byCmc = { ...CONST.stats.byCmc.default };
   const byType = {};
   const byFunctionality = {};
   for (let i = 0, l = deck.lists.length; i < l; i++) {
@@ -71,6 +76,7 @@ function getStats(deck) {
     for (let i = 0, l = cards.length; i < l; i++) {
       const card = cards[i];
       const colorKey = getColorKey(card.color_identity);
+      const cmcKey = getCmcKey(card.cmc);
       const typeKey = getTypeKey(card.type_line);
       if (!byColor[colorKey]) {
         byColor[colorKey] = 0;
@@ -78,12 +84,9 @@ function getStats(deck) {
       if (!byType[typeKey]) {
         byType[typeKey] = 0;
       }
-      if (!byCmc[card.cmc]) {
-        byCmc[card.cmc] = 0;
-      }
       byColor[colorKey] += +card.deckQte;
       byType[typeKey] += +card.deckQte;
-      byCmc[card.cmc] += +card.deckQte;
+      byCmc[cmcKey] += +card.deckQte;
       const oracle = (card.oracle_text || '').toLowerCase();
       for (let i = 0, l = functionalityList.length; i < l; i++) {
         const search = functionalityList[i].search;
