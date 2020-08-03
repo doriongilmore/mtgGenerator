@@ -1,7 +1,7 @@
 <template>
   <div>
     <Confirmation></Confirmation>
-    <!--    <Import v-if="currentModal === 'import'"></Import>-->
+    <Import></Import>
     <Export></Export>
     <!--    <Card v-if="currentModal === 'card'"></Card>-->
     <!--    <AdvancedSearch v-if="currentModal === 'search'"></AdvancedSearch>-->
