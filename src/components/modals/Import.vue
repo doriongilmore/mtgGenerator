@@ -1,28 +1,32 @@
 <template>
-  <div class="import">
-    <label
-      >Copy-Paste<br />
-      <textarea v-model="importText"></textarea>
-    </label>
-    <input
-      type="file"
-      style="display: none"
-      ref="fileInput"
-      @change="updateFile"
-      accept="text/plain,application/json"
-    />
-    <Button :handle-click="chooseFile" text="Or choose a file"></Button>
-    <Button :handle-click="doImport" text="Import" bordered="true"></Button>
-    <PulseLoader id="spinner" ref="spinner" :loading="isLoading" size="20px"></PulseLoader>
-  </div>
+  <b-modal class="import" :id="modalId" size="md" title="Import" ref="modal" lazy hide-footer>
+    <div><label class="text-center w-100" for="importArea">Copy-Paste</label></div>
+    <b-textarea class="mb-3" no-resize id="importArea" v-model="importText"></b-textarea>
+    <input type="file" class="d-none" ref="fileInput" @change="updateFile" accept="text/plain,application/json" />
+    <b-btn-group class="text-center w-100">
+      <b-button variant="info" @click="chooseFile()">
+        <b-icon-file-text></b-icon-file-text><span> Or choose a file</span>
+      </b-button>
+      <b-button variant="primary" @click="doImport()">
+        <b-icon-download></b-icon-download><span> Then Import</span>
+      </b-button>
+    </b-btn-group>
+    <b-progress
+      class="mt-3"
+      :value="progressValue"
+      :max="progressMax"
+      show-progress
+      animated
+      v-if="isLoading"
+      height="25px"
+    ></b-progress>
+  </b-modal>
 </template>
 
 <script>
 import DeckFactory from 'src/utils/DeckFactory';
-import { mapState } from 'vuex';
 import CONST from 'src/utils/CONST';
-import PulseLoader from 'vue-spinner/src/PulseLoader.vue';
-import Button from 'src/components/uiElements/Button.vue';
+import modalFactory from '../../mixins/modalFactory';
 
 const regexpQte = /\d+/g;
 const regexpSet = /\(.+\)|\[.+]|{.+}/g;
@@ -30,17 +34,19 @@ const regexpCleanSet = /[()\[\]{}]/g;
 
 export default {
   name: 'Import',
-  components: { Button, PulseLoader },
+  mixins: [modalFactory],
+  mounted() {
+    this.listenEvents();
+  },
   data() {
     return {
+      eventConfig: CONST.modals.events.import,
+      modalId: 'modal-import',
       importText: '',
       isLoading: false,
+      progressValue: 0,
+      progressMax: 0,
     };
-  },
-  computed: {
-    ...mapState({
-      closeImport: state => state.modals.resolve,
-    }),
   },
   methods: {
     async updateFile(event) {
@@ -57,7 +63,6 @@ export default {
       try {
         listOrDeck = JSON.parse(this.importText);
       } catch (e) {
-        this.isLoading = true;
         const lists = [];
         let actualList = { name: 'Main', list: [] };
         const sideboardList = { name: 'Sideboard', list: [] };
@@ -65,7 +70,11 @@ export default {
           .split('\n')
           .map(e => e.trim())
           .filter(e => !!e);
-        for (let i = 0, l = list.length; i < l; i++) {
+        this.progressValue = 0;
+        this.progressMax = list.length;
+        this.isLoading = true;
+        for (let i = 0; i < this.progressMax; i++) {
+          this.progressValue = i;
           const row = list[i];
           if (row.startsWith('//')) {
             // list name -> new list
@@ -95,7 +104,7 @@ export default {
         listOrDeck.lists = lists;
       }
       this.isLoading = false;
-      this.closeImport(listOrDeck);
+      this.close(listOrDeck);
     },
     async formatCardRow(row) {
       const [setPart = ''] = row.match(regexpSet) || [];
@@ -112,7 +121,7 @@ export default {
       return realCard;
     },
     searchCard(cardName, set) {
-      const args = { name: cardName, exact: true };
+      const args = { name: cardName, exact: true, lang: CONST.search.lang.any.key };
       if (set) {
         args.set = set;
       }

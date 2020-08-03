@@ -27,9 +27,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
-import draggable from 'vuedraggable';
-import Button from 'src/components/uiElements/Button.vue';
 import CONST from 'src/utils/CONST';
 import DeckFactory from 'src/utils/DeckFactory';
 import modalFactory from '../../mixins/modalFactory';
@@ -49,11 +46,17 @@ function makeTextFile(text) {
 
 export default {
   name: 'Export',
-  components: { draggable, Button },
   mixins: [modalFactory],
+  mounted() {
+    this.listenEvents(deckOrList => {
+      if (deckOrList) {
+        this.deckOrList = deckOrList;
+      }
+    });
+  },
   data() {
     return {
-      eventData: CONST.modals.events.export,
+      eventConfig: CONST.modals.events.export,
       modalId: 'modal-export',
       dorionKey: CONST.exportFormats.DORION.key,
       format: CONST.exportFormats.DORION,
@@ -61,13 +64,6 @@ export default {
       setFormat: 'withSets',
       deckOrList: null,
     };
-  },
-  mounted() {
-    this.listenEvents(deckOrList => {
-      if (deckOrList) {
-        this.deckOrList = deckOrList;
-      }
-    });
   },
   computed: {
     getExport() {

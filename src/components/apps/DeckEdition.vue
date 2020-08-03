@@ -1,6 +1,5 @@
 <template>
   <div ref="container" id="container">
-    <GridLoader ref="spinner" id="spinner" :loading="isLoading" size="40px"></GridLoader>
     <div id="deckEdition" ref="deckEdition">
       <div id="deckHeader">
         <b-navbar toggleable="sm" fixed="sm">
@@ -13,6 +12,7 @@
               </b-nav-item>
               <b-nav-item class="btn btn-light rounded-pill" @click="onPrint()">
                 <b-icon-printer></b-icon-printer><span class="d-sm-none d-lg-inline"> Print</span>
+                <b-spinner v-if="isPrinting" small></b-spinner>
               </b-nav-item>
               <b-nav-item class="btn btn-light rounded-pill" @click="onImport()">
                 <b-icon-download></b-icon-download><span class="d-sm-none d-lg-inline"> Import</span>
@@ -93,6 +93,7 @@
             </b-button>
             <input type="submit" style="display: none" />
           </form>
+          <b-spinner v-if="isSearching"></b-spinner>
           <div id="results">
             <div class="header">
               <div class="name">Name</div>
@@ -142,22 +143,23 @@ import draggable from 'vuedraggable';
 import CONST from 'src/utils/CONST';
 import DeckFactory from 'src/utils/DeckFactory';
 import { getStats, getEmptyStats } from 'src/utils/DeckStats';
-import Button from '../uiElements/Button.vue';
 import Mana from '../uiElements/Mana.vue';
 import BarChart from '../chartjs/BarChart.vue';
 import PieChart from '../chartjs/PieChart.vue';
 import { mapState } from 'vuex';
-import GridLoader from 'vue-spinner/src/GridLoader.vue';
 import modalHandler from '../../mixins/modalHandler';
 
 export default {
   name: 'DeckEdition',
   props: ['deckToEdit'],
-  components: { draggable, Button, Mana, BarChart, PieChart, GridLoader },
+  components: { draggable, Mana, BarChart, PieChart },
   mixins: [modalHandler],
   data() {
     return {
-      isLoading: false,
+      isPrinting: false,
+      isSearching: false,
+      progressValue: 0,
+      progressMax: 0,
       sectionToDisplay: 'none',
       cardToDisplay: null,
       tmpList: [],
@@ -212,12 +214,6 @@ export default {
       // this.$refs.stats.style.height = 'auto';
       // this.$refs.stats.style.bottom = 0;
     },
-    displaySpinner() {
-      this.isLoading = true;
-    },
-    hideSpinner() {
-      this.isLoading = false;
-    },
     openSearch() {
       this.$store.dispatch('modals/openSearch', this.searchParams).then(this.handleSearch);
     },
@@ -244,7 +240,7 @@ export default {
       this.resize();
     },
     onImport() {
-      this.$store.dispatch('modals/openImport').then(listOrDeck => {
+      this.importModal().then(listOrDeck => {
         // todo param replace/append to do = or push
         if (listOrDeck.lists) {
           this.deck.lists = listOrDeck.lists;
@@ -270,9 +266,9 @@ export default {
      * Fires when user click on print button
      */
     async onPrint() {
-      this.displaySpinner();
+      this.isPrinting = true;
       await DeckFactory.print(this.deck);
-      this.hideSpinner();
+      this.isPrinting = false;
     },
     /**
      * Fires when user click on delete button
@@ -293,15 +289,15 @@ export default {
      */
     handleSearch(event) {
       event && event.preventDefault();
-      this.displaySpinner();
+      this.isSearching = true;
       this.$store
         .dispatch('mtg/search', this.searchParams)
         .then(results => {
-          this.hideSpinner();
+          this.isSearching = false;
           this.$store.commit('search/setResults', results);
         })
         .catch(error => {
-          this.hideSpinner();
+          this.isSearching = false;
           console.error('error during search', { args: this.searchParams, error });
           this.$store.commit('search/setResults', []);
         });
