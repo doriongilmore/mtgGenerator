@@ -1,5 +1,15 @@
 <template>
-  <b-modal class="export" :id="modalId" size="sm" title="Export" ref="modal" lazy ok-only ok-variant="light">
+  <b-modal
+    class="export"
+    :id="modalId"
+    size="sm"
+    title="Export"
+    ref="modal"
+    lazy
+    ok-only
+    ok-variant="light"
+    hide-footer
+  >
     <form>
       <div id="type" class="formRow">
         <div v-for="f in exportFormats" :key="f.key">
@@ -16,11 +26,14 @@
           <input type="radio" id="withoutSets" value="withoutSets" v-model="setFormat" /> Without Sets
         </label>
       </div>
-      <div class="res"><label for="exportArea">Copy-Paste</label></div>
-      <div><textarea id="exportArea" class="formRow" :value="getExport"></textarea></div>
-      <b-button class="listExport" variant="primary" @click="saveFile()">
-        <b-icon-upload></b-icon-upload><span> Or save into a file</span>
-      </b-button>
+      <div class="text-center w-100"><b-label for="exportArea">Copy-Paste</b-label></div>
+
+      <b-textarea id="exportArea" class="formRow mb-3" :value="getExport" no-resize></b-textarea>
+      <b-btn-group class="text-center w-100">
+        <b-button class="listExport" variant="primary" @click="saveFile()">
+          <b-icon-upload></b-icon-upload><span> Or save into a file</span>
+        </b-button>
+      </b-btn-group>
       <a class="d-none" ref="exportLink"></a>
     </form>
   </b-modal>

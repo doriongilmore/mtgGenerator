@@ -1,6 +1,6 @@
 <template>
   <b-modal class="import" :id="modalId" size="md" title="Import" ref="modal" lazy hide-footer>
-    <div><label class="text-center w-100" for="importArea">Copy-Paste</label></div>
+    <div class="text-center w-100"><b-label for="importArea">Copy-Paste</b-label></div>
     <b-textarea class="mb-3" no-resize id="importArea" v-model="importText"></b-textarea>
     <input type="file" class="d-none" ref="fileInput" @change="updateFile" accept="text/plain,application/json" />
     <b-btn-group class="text-center w-100">
