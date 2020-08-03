@@ -5,7 +5,6 @@
     <Export></Export>
     <!--    <Card v-if="currentModal === 'card'"></Card>-->
     <!--    <AdvancedSearch v-if="currentModal === 'search'"></AdvancedSearch>-->
-    <!--    <HomeFeature v-if="currentModal === 'feature'"></HomeFeature>-->
   </div>
 </template>
 
