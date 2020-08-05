@@ -67,7 +67,7 @@
       </b-row>
       <b-row class="mt-1">
         <b-col sm="3"><label for="tmpType">Type</label></b-col>
-        <b-col sm="6"><b-form-select :options="typeList" v-model="tmpType"></b-form-select></b-col>
+        <b-col sm="6"><b-form-select :options="typeList" v-model="tmpType" id="tmpType"></b-form-select></b-col>
         <b-col sm="3">
           <b-button pill @click="addType()" variant="primary"><b-icon-plus></b-icon-plus></b-button>
         </b-col>

@@ -267,7 +267,11 @@ export default {
      */
     async onPrint() {
       this.isPrinting = true;
-      await DeckFactory.print(this.deck);
+      try {
+        await DeckFactory.print(this.deck);
+      } catch (e) {
+        alert('only works on Firefox at the moment, will be fixed soon.');
+      }
       this.isPrinting = false;
     },
     /**
