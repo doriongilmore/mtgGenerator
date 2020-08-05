@@ -38,5 +38,12 @@ export default {
     importModal() {
       return openModal(this, CONST.modals.events.import);
     },
+    /**
+     * @param {Card} card
+     * @returns {Promise<void>}
+     */
+    cardModal(card) {
+      return openModal(this, CONST.modals.events.card, card);
+    },
   },
 };

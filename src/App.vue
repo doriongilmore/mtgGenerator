@@ -42,6 +42,7 @@ export default {
   left: 0;
 }
 
+.modal-content,
 .card {
   background-color: #fffa;
 }
