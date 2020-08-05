@@ -45,5 +45,8 @@ export default {
     cardModal(card) {
       return openModal(this, CONST.modals.events.card, card);
     },
+    searchModal() {
+      return openModal(this, CONST.modals.events.search);
+    },
   },
 };

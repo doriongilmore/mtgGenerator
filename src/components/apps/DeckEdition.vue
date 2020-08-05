@@ -215,7 +215,7 @@ export default {
       // this.$refs.stats.style.bottom = 0;
     },
     openSearch() {
-      this.$store.dispatch('modals/openSearch', this.searchParams).then(this.handleSearch);
+      this.searchModal().then(this.handleSearch);
     },
     openCard(card) {
       this.cardModal(card);
@@ -478,6 +478,8 @@ export default {
             .printConfig {
               grid-area: printConfig;
               select {
+                background-color: transparent;
+                text-align-last: center;
                 width: 100%;
               }
             }

@@ -1,96 +1,110 @@
 <template>
-  <div id="advancedSearch" ref="container">
-    <div class="rows" ref="content">
-      <div class="row">
-        <label class="label">Language</label>
-        <select v-model="searchParams.lang" class="input">
-          <option v-for="langParam in lists.lang.list" :value="langParam.key">{{ langParam.value }}</option>
-        </select>
-      </div>
-      <div class="row">
-        <label class="label" for="searchName">Name</label>
-        <input class="input" id="searchName" type="text" v-model="searchParams.name" />
-      </div>
-      <div class="row" v-for="(text, index) in searchParams.texts" :v-key="text">
-        <label class="label" :for="text">Text</label>
-        <input class="input" :id="text" type="text" v-model="searchParams.texts[index]" />
-        <Button class="other" icon="delete" text="Remove" :handle-click="removeText.bind(this, index)"></Button>
-      </div>
-      <div class="row">
-        <label class="label" for="newText">Text</label>
-        <input
-          class="input"
-          id="newText"
-          type="text"
-          v-model="tmpText"
-          placeholder="Use '~' instead of the card name"
-        />
-        <Button class="other" icon="add" text="Add" :handle-click="addText"></Button>
-      </div>
-      <div class="row">
-        <label class="label">Colors</label>
-        <div class="input mana_row">
-          <div v-for="color in lists.colorList" :class="`mana_input ${color.key}`">
-            <label :for="color.key">
+  <b-modal class="cardModal" :id="modalId" title="Search" size="xl" ref="modal" lazy hide-footer centered>
+    <b-container fluid>
+      <b-row>
+        <b-col sm="3"><label for="lang">Language</label></b-col>
+        <b-col sm="9"><b-form-select :options="langList" v-model="searchParams.lang" id="lang"></b-form-select></b-col>
+      </b-row>
+      <b-row class="mt-1">
+        <b-col sm="3"><label for="name">Name</label></b-col>
+        <b-col sm="9"><b-form-input v-model="searchParams.name" id="name" type="text"></b-form-input></b-col>
+      </b-row>
+      <b-row class="mt-1" v-for="(text, index) in searchParams.texts" :v-key="text">
+        <b-col sm="3"><label :for="`text-${index}`">Text</label></b-col>
+        <b-col sm="6">
+          <b-form-input v-model="searchParams.texts[index]" :id="`text-${index}`" type="text"></b-form-input>
+        </b-col>
+        <b-col sm="3">
+          <b-button pill @click="removeText(index)" variant="danger"><b-icon-trash></b-icon-trash></b-button>
+        </b-col>
+      </b-row>
+      <b-row class="mt-1">
+        <b-col sm="3"><label for="tmpText">Text</label></b-col>
+        <b-col sm="6"><b-form-input v-model="tmpText" id="tmpText" type="text"></b-form-input></b-col>
+        <b-col sm="3">
+          <b-button pill @click="addText()" variant="primary"><b-icon-plus></b-icon-plus></b-button>
+        </b-col>
+      </b-row>
+      <b-row class="mt-1">
+        <b-col sm="3"><label for="color">Colors</label></b-col>
+        <b-col sm="6" id="color" class="table-hover">
+          <b-form-checkbox-group>
+            <b-form-checkbox v-for="color in lists.colorList" v-model="searchParams.colors" :value="color.key">
               <Mana :mana-cost="color.value"></Mana>
-            </label>
-            <input type="checkbox" v-model="searchParams.colors" :id="color.key" :value="color.key" multiple />
-          </div>
-        </div>
-        <select v-model="searchParams.colorInclusion" class="other">
-          <option v-for="incParam in lists.inclusion" :value="incParam.key">{{ incParam.value }}</option>
-        </select>
-      </div>
-      <div class="row">
-        <label class="label">Cost</label>
-        <input class="input" type="number" min="0" v-model="searchParams.cmc" />
-        <select v-model="searchParams.cmcInclusion" class="other">
-          <option v-for="incParam in lists.inclusion" :value="incParam.key">{{ incParam.value }}</option>
-        </select>
-      </div>
-      <div class="row">
-        <label class="label">Rarity</label>
-        <select v-model="searchParams.rarity" class="input">
-          <option value="">Tous</option>
-          <option v-for="rarParam in lists.rarityList" :value="rarParam.key">{{ rarParam.value }}</option>
-        </select>
-        <select v-model="searchParams.rarityInclusion" class="other">
-          <option v-for="incParam in lists.inclusion" :value="incParam.key">{{ incParam.value }}</option>
-        </select>
-      </div>
-
-      <div class="row" v-for="(type, index) in searchParams.types" :v-key="type">
-        <label class="label" :for="type">Type</label>
-        <input class="input" :id="type" type="text" v-model="searchParams.types[index]" />
-        <Button class="other" icon="delete" text="Remove" :handle-click="removeType.bind(this, index)"></Button>
-      </div>
-      <div class="row">
-        <label class="label" for="newText">Type</label>
-        <select v-model="tmpType" class="input">
-          <option v-for="type in lists.typeList" :value="type.key">{{ type.value }}</option>
-        </select>
-        <Button class="other" icon="add" text="Add" :handle-click="addType"></Button>
-      </div>
-    </div>
-    <div class="buttons" ref="buttons">
-      <Button text="Info" icon="info" :handle-click="openInfo"></Button>
-      <Button text="Clean" icon="delete" :handle-click="clearSearch"></Button>
-      <Button text="Search" icon="search" :handle-click="close"></Button>
-    </div>
-  </div>
+            </b-form-checkbox>
+          </b-form-checkbox-group>
+        </b-col>
+        <b-col sm="3">
+          <b-form-select :options="inclusionList" v-model="searchParams.colorInclusion"></b-form-select>
+        </b-col>
+      </b-row>
+      <b-row class="mt-1">
+        <b-col sm="3"><label for="cost">Cost</label></b-col>
+        <b-col sm="6">
+          <b-form-input type="number" id="cost" min="0" number v-model="searchParams.cmc"></b-form-input>
+        </b-col>
+        <b-col sm="3">
+          <b-form-select :options="inclusionList" v-model="searchParams.cmcInclusion"></b-form-select>
+        </b-col>
+      </b-row>
+      <b-row class="mt-1">
+        <b-col sm="3"><label for="rarity">Rarity</label></b-col>
+        <b-col sm="6">
+          <b-form-select :options="rarityList" v-model="searchParams.rarity" id="rarity"></b-form-select>
+        </b-col>
+        <b-col sm="3">
+          <b-form-select :options="inclusionList" v-model="searchParams.rarityInclusion"></b-form-select>
+        </b-col>
+      </b-row>
+      <b-row class="mt-1" v-for="(type, index) in searchParams.types" :v-key="type">
+        <b-col sm="3"><label :for="`type-${index}`">Type</label></b-col>
+        <b-col sm="6">
+          <b-form-input v-model="searchParams.types[index]" :id="`type-${index}`" type="text" disabled></b-form-input>
+        </b-col>
+        <b-col sm="3">
+          <b-button pill @click="removeType(index)" variant="danger"><b-icon-trash></b-icon-trash></b-button>
+        </b-col>
+      </b-row>
+      <b-row class="mt-1">
+        <b-col sm="3"><label for="tmpType">Type</label></b-col>
+        <b-col sm="6"><b-form-select :options="typeList" v-model="tmpType"></b-form-select></b-col>
+        <b-col sm="3">
+          <b-button pill @click="addType()" variant="primary"><b-icon-plus></b-icon-plus></b-button>
+        </b-col>
+      </b-row>
+      <b-row class="mt-2">
+        <b-col sm="6">
+          <b-button variant="secondary" class="w-100" @click="clearSearch()">
+            <b-icon-trash></b-icon-trash> Clean
+          </b-button>
+        </b-col>
+        <b-col sm="6">
+          <b-button variant="primary" class="w-100" @click="close()"> <b-icon-search></b-icon-search> Search </b-button>
+        </b-col>
+      </b-row>
+    </b-container>
+  </b-modal>
 </template>
 
 <script>
 import { mapState } from 'vuex';
-import Button from 'src/components/uiElements/Button.vue';
 import Mana from 'src/components/uiElements/Mana.vue';
 import CONST from 'src/utils/CONST';
+import modalFactory from '../../mixins/modalFactory';
+
+const parseList = e => ({ text: e.value, value: e.key });
 
 export default {
   name: 'AdvancedSearch',
-  components: { Mana, Button },
+  components: { Mana },
+  mixins: [modalFactory],
+  mounted() {
+    this.listenEvents();
+  },
   data() {
     return {
+      eventConfig: CONST.modals.events.search,
+      modalId: 'modal-search',
       rules: [],
       tmpText: '',
       tmpType: '',
@@ -99,21 +113,22 @@ export default {
   },
   computed: {
     ...mapState({
-      close: state => state.modals.resolve,
       searchParams: state => state.search,
     }),
-  },
-  mounted() {
-    const height = this.$refs.container.parentElement.clientHeight - this.$refs.buttons.clientHeight;
-    this.$refs.content.style.height = `${height}px`;
+    inclusionList() {
+      return this.lists.inclusion.map(parseList);
+    },
+    langList() {
+      return this.lists.lang.list.map(parseList);
+    },
+    rarityList() {
+      return this.lists.rarityList.map(parseList);
+    },
+    typeList() {
+      return this.lists.typeList.map(parseList);
+    },
   },
   methods: {
-    openInfo() {
-      console.groupEnd();
-      this.$store
-        .dispatch('modals/openFeature', CONST.home.features.KEY_FEATURE_SEARCH)
-        .then(() => this.$store.dispatch('modals/openSearch'));
-    },
     clearSearch() {
       this.$store.commit('search/clearSearch');
       this.tmpText = '';

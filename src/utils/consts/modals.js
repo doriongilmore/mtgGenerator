@@ -47,6 +47,7 @@ const modals = {
     export: getDefaultEvents('export'),
     import: getDefaultEvents('import'),
     card: getDefaultEvents('card'),
+    search: getDefaultEvents('search'),
   },
 };
 

@@ -4,12 +4,11 @@
     <Import></Import>
     <Export></Export>
     <Card></Card>
-    <!--    <AdvancedSearch v-if="currentModal === 'search'"></AdvancedSearch>-->
+    <AdvancedSearch></AdvancedSearch>
   </div>
 </template>
 
 <script>
-// import CONST from 'src/utils/CONST';
 import Import from 'src/components/modals/Import.vue';
 import Export from 'src/components/modals/Export.vue';
 import Card from 'src/components/modals/Card.vue';
