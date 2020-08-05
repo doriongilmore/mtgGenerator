@@ -1,5 +1,5 @@
 <template>
-  <b-modal :id="modalId" size="sm" title="Warning" ref="modal" lazy>{{ text }}</b-modal>
+  <b-modal :id="modalId" size="sm" title="Warning" ref="modal" lazy ok-variant="danger">{{ text }}</b-modal>
 </template>
 
 <script>

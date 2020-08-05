@@ -218,7 +218,7 @@ export default {
       this.$store.dispatch('modals/openSearch', this.searchParams).then(this.handleSearch);
     },
     openCard(card) {
-      this.$store.dispatch('modals/openCard', card);
+      this.cardModal(card);
     },
     saveDeck() {
       DeckFactory.update(this.deck);

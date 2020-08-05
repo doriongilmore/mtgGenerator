@@ -3,7 +3,7 @@
     <Confirmation></Confirmation>
     <Import></Import>
     <Export></Export>
-    <!--    <Card v-if="currentModal === 'card'"></Card>-->
+    <Card></Card>
     <!--    <AdvancedSearch v-if="currentModal === 'search'"></AdvancedSearch>-->
   </div>
 </template>

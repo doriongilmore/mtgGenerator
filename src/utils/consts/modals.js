@@ -46,6 +46,7 @@ const modals = {
     confirmation: getDefaultEvents('confirmation'),
     export: getDefaultEvents('export'),
     import: getDefaultEvents('import'),
+    card: getDefaultEvents('card'),
   },
 };
 
