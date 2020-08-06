@@ -80,44 +80,7 @@
     <!--    BOTTOM    -->
     <b-card title="Card Title" no-body id="footer">
       <b-card-body class="text-center" v-if="sectionToDisplay === 'search'">
-        <div id="search">
-          <form v-on:submit="handleSearch" id="form">
-            <div class="d-inline-block w-50">
-              <input class="w-100" type="text" v-model="searchParams.name" placeholder="Enter a name" />
-            </div>
-            <b-button variant="light" @click="handleSearch()">
-              <b-icon-search></b-icon-search><span class="d-none d-lg-inline"> Search</span>
-            </b-button>
-            <b-button variant="light" @click="openSearch()">
-              <b-icon-tools></b-icon-tools><span class="d-none d-lg-inline"> Advanced Search</span>
-            </b-button>
-            <input type="submit" style="display: none" />
-          </form>
-          <b-spinner v-if="isSearching"></b-spinner>
-          <div id="results">
-            <div class="header">
-              <div class="name">Name</div>
-              <div class="manaCost">Cost</div>
-              <div class="type">Type</div>
-              <div class="setName">Set</div>
-            </div>
-            <draggable
-              class="dragArea list-group"
-              :list="results"
-              :group="{ name: 'deck', pull: 'clone', put: false }"
-              :clone="addCardToDeck"
-              :move="onMove"
-              id="resultsBody"
-            >
-              <div v-for="result in results" :key="result.id" class="resultRow" v-on:click="openCard(result)">
-                <div class="name">{{ result.name }}</div>
-                <Mana class="manaCost" :mana-cost="result.mana_cost"></Mana>
-                <div class="type">{{ result.type_line }}</div>
-                <div class="setName">{{ result.set_name }}</div>
-              </div>
-            </draggable>
-          </div>
-        </div>
+        <Search></Search>
       </b-card-body>
       <b-card-body class="text-center" v-if="sectionToDisplay === 'stats'">
         <div id="deckStats" ref="stats">
@@ -148,20 +111,17 @@ import BarChart from '../chartjs/BarChart.vue';
 import PieChart from '../chartjs/PieChart.vue';
 import { mapState } from 'vuex';
 import modalHandler from '../../mixins/modalHandler';
+import Search from './Search.vue';
 
 export default {
   name: 'DeckEdition',
   props: ['deckToEdit'],
-  components: { draggable, Mana, BarChart, PieChart },
+  components: { draggable, Mana, BarChart, PieChart, Search },
   mixins: [modalHandler],
   data() {
     return {
       isPrinting: false,
-      isSearching: false,
-      progressValue: 0,
-      progressMax: 0,
-      sectionToDisplay: 'none',
-      cardToDisplay: null,
+      sectionToDisplay: 'search',
       tmpList: [],
       tmpDeck: null,
       _deck: null,
@@ -172,10 +132,6 @@ export default {
     };
   },
   computed: {
-    ...mapState({
-      searchParams: state => state.search,
-      results: state => state.search.results,
-    }),
     deck() {
       return this._deck || this.deckToEdit || this.tmpDeck || {};
     },
@@ -213,9 +169,6 @@ export default {
       // this.$refs.deckEdition.style['grid-template-rows'] = `${editionHeight}px`;
       // this.$refs.stats.style.height = 'auto';
       // this.$refs.stats.style.bottom = 0;
-    },
-    openSearch() {
-      this.searchModal().then(this.handleSearch);
     },
     openCard(card) {
       this.cardModal(card);
@@ -287,24 +240,6 @@ export default {
         // todo toast message
         console.info('delete canceled');
       }
-    },
-    /**
-     * Fires when user click on Enter key or search button
-     */
-    handleSearch(event) {
-      event && event.preventDefault();
-      this.isSearching = true;
-      this.$store
-        .dispatch('mtg/search', this.searchParams)
-        .then(results => {
-          this.isSearching = false;
-          this.$store.commit('search/setResults', results);
-        })
-        .catch(error => {
-          this.isSearching = false;
-          console.error('error during search', { args: this.searchParams, error });
-          this.$store.commit('search/setResults', []);
-        });
     },
     /**
      * Fires automatically when dragdrop detected, checks if allowed
@@ -508,45 +443,6 @@ export default {
     .card-body {
       overflow: hidden;
       height: 100%;
-
-      #search {
-        padding-left: 1%;
-        padding-right: 1%;
-        padding-bottom: 10%;
-        height: auto;
-        overflow: hidden;
-        #results {
-          height: 100%;
-          overflow-x: hidden;
-          overflow-y: auto;
-          .header,
-          .resultRow {
-            grid-area: search;
-            display: grid;
-            grid-template-columns: 40% 10% 20% 20%;
-            grid-template-areas: 'name manaCost type setName';
-            .name {
-              grid-area: name;
-            }
-            .manaCost {
-              grid-area: manaCost;
-            }
-            .type {
-              grid-area: type;
-            }
-            .setName {
-              grid-area: setName;
-            }
-            .image {
-              border: 2px black;
-              position: relative;
-              img {
-                max-height: 300px;
-              }
-            }
-          }
-        }
-      }
 
       #deckStats {
         height: 100%;
