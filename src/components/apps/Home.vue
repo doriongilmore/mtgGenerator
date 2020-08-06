@@ -36,17 +36,8 @@
 </template>
 
 <script>
-import HomeFeature from 'src/components/apps/HomeFeature.vue';
-import CONST from 'src/utils/CONST';
-
 export default {
   name: 'Home',
-  data() {
-    return {
-      homeFeatures: CONST.home.features.list,
-    };
-  },
-  components: { HomeFeature },
 };
 </script>
 
