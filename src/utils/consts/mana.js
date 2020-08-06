@@ -1,10 +1,11 @@
 const generalRegexp = /{[\dTQXSWEICBUGR/]+}/gi;
-const cleanRegexp = /[\dTQXSWEICBUGR/]/gi;
+const cleanRegexp = /\d{1,2}|[TQXYZSWEICBUGR]/gi;
 /**
  *  @see https://api.scryfall.com/symbology?pretty=true
  *  svg_uri -> uri
  *  english -> label
  */
+/*
 const symbology = [
   {
     symbol: '{T}',
@@ -327,12 +328,22 @@ const symbology = [
     label: 'one snow mana',
   },
 ];
+*/
+const colors = {
+  B: '#665f5f',//'#BAB1AB',
+  U : '#0e67ab',//'#C1D7E9',
+  C: '#CAC5C0',//'#CAC5C0',
+  G: '#00733d',//'#A3C095',
+  R: '#d32029',//'#E49977',
+  W: '#f8e7b9',//'#F8F6D8'
+};
 
 const mana = {
   textSeparator: ' /// ',
   cleanRegexp,
   generalRegexp,
-  symbology,
+  // symbology, // not used at the moment, probably not needed anymore
+  colors,
 };
 
 export default mana;
