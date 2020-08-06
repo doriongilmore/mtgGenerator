@@ -18,36 +18,14 @@
 </template>
 
 <script>
-import { TweenLite, TimelineLite } from 'gsap';
-
 export default {
   name: 'MainContainer',
-  components: {},
   data() {
     return {
       displayMenu: true,
       toOpen: '',
       currentOpen: '',
     };
-  },
-  computed: {},
-  mounted() {
-    const menuItems = document.querySelectorAll('.item');
-    const tl = new TimelineLite({
-      paused: true,
-    });
-
-    menuItems.forEach(menuItem => {
-      tl.add(new TweenLite.to(menuItem, 0.1, { x: 0, y: 0 }));
-    });
-    tl.add(new TweenLite.to(this.$refs.content, 0.4, { x: 0, y: 0 }), 0);
-
-    tl.play();
-  },
-  methods: {
-    toggleDisplayMenu() {
-      this.displayMenu = !this.displayMenu;
-    },
   },
 };
 </script>
