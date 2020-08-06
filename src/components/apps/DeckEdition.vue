@@ -2,7 +2,7 @@
   <div ref="container" id="container">
     <div id="deckEdition" ref="deckEdition">
       <div id="deckHeader">
-        <b-navbar toggleable="sm" fixed="sm">
+        <b-navbar toggleable="sm" fixed="sm" class="w-100">
           <b-navbar-brand class="deckName"><input type="text" v-model="deck.name"/></b-navbar-brand>
           <b-navbar-toggle class="deckButtons" target="nav-collapse-deck"></b-navbar-toggle>
           <b-collapse id="nav-collapse-deck" is-nav>
@@ -407,18 +407,11 @@ export default {
     height: 100%;
     overflow: hidden;
     #deckHeader {
-      display: grid;
-      grid-template-columns: auto auto;
-      grid-template-areas: 'name deckButtons';
       .deckName {
-        grid-area: name;
         input {
           background-color: transparent;
           width: 100%;
         }
-      }
-      .deckButtons {
-        grid-area: deckButtons;
       }
     }
     #deckLists {

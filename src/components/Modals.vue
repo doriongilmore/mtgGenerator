@@ -13,7 +13,6 @@ import Import from 'src/components/modals/Import.vue';
 import Export from 'src/components/modals/Export.vue';
 import Card from 'src/components/modals/Card.vue';
 import AdvancedSearch from 'src/components/modals/AdvancedSearch.vue';
-import HomeFeature from 'src/components/modals/HomeFeature.vue';
 import Confirmation from 'src/components/modals/Confirmation.vue';
 
 export default {
@@ -23,7 +22,6 @@ export default {
     Export,
     Card,
     AdvancedSearch,
-    HomeFeature,
     Confirmation,
   },
 };
