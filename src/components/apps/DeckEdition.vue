@@ -121,7 +121,7 @@ export default {
   data() {
     return {
       isPrinting: false,
-      sectionToDisplay: 'search',
+      sectionToDisplay: 'none',
       tmpList: [],
       tmpDeck: null,
       _deck: null,
