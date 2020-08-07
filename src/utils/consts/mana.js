@@ -330,12 +330,20 @@ const symbology = [
 ];
 */
 const colors = {
-  B: '#665f5f',//'#BAB1AB',
-  U : '#0e67ab',//'#C1D7E9',
-  C: '#CAC5C0',//'#CAC5C0',
-  G: '#00733d',//'#A3C095',
-  R: '#d32029',//'#E49977',
-  W: '#f8e7b9',//'#F8F6D8'
+  B: '#BAB1AB',
+  U: '#C1D7E9',
+  C: '#CAC5C0',
+  G: '#A3C095',
+  R: '#E49977',
+  W: '#F8F6D8',
+};
+const darkColors = {
+  B: '#665f5f',
+  U: '#0e67ab',
+  C: '#CAC5C0',
+  G: '#00733d',
+  R: '#d32029',
+  W: '#f8e7b9',
 };
 
 const mana = {
@@ -344,6 +352,7 @@ const mana = {
   generalRegexp,
   // symbology, // not used at the moment, probably not needed anymore
   colors,
+  darkColors,
 };
 
 export default mana;

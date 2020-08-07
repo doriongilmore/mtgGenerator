@@ -27,7 +27,7 @@
         <b-col sm="3">Set</b-col>
       </b-row>
       <draggable
-        class="dragArea list-group"
+        class="dragArea list-group pre-scrollable"
         :list="results"
         :group="{ name: 'deck', pull: 'clone', put: false }"
         :clone="addCardToDeck"
@@ -129,4 +129,9 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+#resultsBody {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+</style>
