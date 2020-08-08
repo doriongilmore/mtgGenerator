@@ -3,78 +3,111 @@
     <div id="deckEdition" ref="deckEdition">
       <div id="deckHeader">
         <b-navbar toggleable="sm" fixed="sm" class="w-100">
-          <b-navbar-brand class="deckName"><input type="text" v-model="deck.name"/></b-navbar-brand>
+          <b-navbar-brand><b-input type="text" v-model="deck.name" trim @change="onChange()"/></b-navbar-brand>
+          <b-nav-item :class="`btn rounded-pill ${updateDone ? 'btn-primary' : 'btn-light'}`" @click="saveDeck()">
+            <b-icon-clipboard-check :variant="!updateDone ? 'secondary' : 'light'"></b-icon-clipboard-check>
+            <span :class="`d-sm-none d-lg-inline ${updateDone ? 'btn-primary' : 'btn-light'}`"> Save</span>
+          </b-nav-item>
           <b-navbar-toggle class="deckButtons" target="nav-collapse-deck"></b-navbar-toggle>
           <b-collapse id="nav-collapse-deck" is-nav>
             <b-navbar-nav class="deckButtons">
-              <b-nav-item :class="'btn rounded-pill ' + (updateDone ? 'btn-primary' : 'btn-light')" @click="saveDeck()">
-                <b-icon-clipboard-check></b-icon-clipboard-check><span class="d-sm-none d-lg-inline"> Save</span>
-              </b-nav-item>
               <b-nav-item class="btn btn-light rounded-pill" @click="onPrint()">
-                <b-icon-printer></b-icon-printer><span class="d-sm-none d-lg-inline"> Print</span>
+                <b-icon-printer></b-icon-printer><span class="d-sm-none d-lg-inline btn-light"> Print</span>
                 <b-spinner v-if="isPrinting" small></b-spinner>
               </b-nav-item>
               <b-nav-item class="btn btn-light rounded-pill" @click="onImport()">
-                <b-icon-download></b-icon-download><span class="d-sm-none d-lg-inline"> Import</span>
+                <b-icon-download></b-icon-download><span class="d-sm-none d-lg-inline btn-light"> Import</span>
               </b-nav-item>
               <b-nav-item class="btn btn-light rounded-pill" @click="onExport(deck)">
-                <b-icon-upload></b-icon-upload><span class="d-sm-none d-lg-inline"> Export</span>
+                <b-icon-upload></b-icon-upload><span class="d-sm-none d-lg-inline btn-light"> Export</span>
               </b-nav-item>
-              <b-nav-item class="btn btn-danger rounded-pill" @click="deleteDeck(deck)">
-                <b-icon-trash></b-icon-trash><span class="d-sm-none d-lg-inline"> Delete</span>
+              <b-nav-item class="btn btn-light rounded-pill" @click="deleteDeck(deck)">
+                <b-icon-trash variant="danger"></b-icon-trash>
+                <span class="d-sm-none d-lg-inline btn-outline-danger"> Delete</span>
               </b-nav-item>
             </b-navbar-nav>
           </b-collapse>
         </b-navbar>
       </div>
       <!--    TOP    -->
-      <div id="deckLists">
-        <div class="lists">
-          <div class="deckList" v-for="(deckList, listIndex) in deck.lists">
-            <div class="listHeader">
-              <div class="listName">
-                <input type="text" v-model="deckList.name" @change="onChange" />
-              </div>
-              <div class="listStatIgnore" :title="`${deckList.ignoreStat ? 'ignored' : 'used'} in stats`">
-                <label :for="'ignoreStat' + listIndex">
-                  <b-icon-graph-down font-scale="1.2" v-if="deckList.ignoreStat"></b-icon-graph-down>
-                  <b-icon-graph-up font-scale="1.2" v-else></b-icon-graph-up>
-                </label>
-                <input
-                  :id="'ignoreStat' + listIndex"
-                  type="checkbox"
-                  v-model="deckList.ignoreStat"
+      <b-container class="lists mt-3" v-for="(deckList, listIndex) in deck.lists" :key="`deckList-${listIndex}`">
+        <b-row class="listHeader">
+          <b-col cols="5" md="4" lg="6"><b-input type="text" v-model="deckList.name" @change="onChange"/></b-col>
+          <b-col cols="3">{{ getCardCount(deckList.list, true) }}</b-col>
+          <b-col cols="2" lg="1" :title="`${deckList.ignoreStat ? 'ignored' : 'used'} in stats`" class="d-inline">
+            <label :for="'ignoreStat' + listIndex">
+              <b-icon-graph-down font-scale="1.2" v-if="deckList.ignoreStat"></b-icon-graph-down>
+              <b-icon-graph-up font-scale="1.2" v-else></b-icon-graph-up>
+            </label>
+            <input
+              :id="'ignoreStat' + listIndex"
+              class="w-50"
+              type="checkbox"
+              v-model="deckList.ignoreStat"
+              @change="onChange"
+            />
+          </b-col>
+          <b-col cols="2" md="3" lg="2">
+            <b-button variant="light" @click="onExport(deckList)">
+              <b-icon-upload></b-icon-upload><span class="d-none d-md-inline"> Export</span>
+            </b-button>
+          </b-col>
+        </b-row>
+        <draggable class="w-100" :list="deckList.list" group="deck" :move="onMove" @change="onChange">
+          <b-row v-for="card in deckList.list" :key="card.id" class="mt-1">
+            <!-- list body -->
+
+            <b-col cols="3" class="deckQte">
+              <b-btn-group>
+                <b-button pill size="sm" variant="light" @click="increment(card, false)">
+                  <b-icon-dash scale="1.5"></b-icon-dash>
+                </b-button>
+                <b-input
+                  type="text"
+                  class="form-control input-number"
+                  min="1"
+                  max="99"
+                  v-model="card.deckQte"
                   @change="onChange"
                 />
-              </div>
-              <div class="cardCount">{{ getCardCount(deckList.list, true) }}</div>
-              <b-button class="listExport" variant="light" @click="onExport(deckList)">
-                <b-icon-upload></b-icon-upload><span class="d-none d-lg-inline"> Export</span>
-              </b-button>
-            </div>
-            <draggable class="dragArea list-group" :list="deckList.list" group="deck" :move="onMove" @change="onChange">
-              <div class="cardRow" v-for="card in deckList.list" :key="card.id">
-                <div class="deckQte">
-                  <input type="number" min="0" max="99" v-model="card.deckQte" @change="onChange" />
-                </div>
-                <Mana class="manaCost" :mana-cost="card.mana_cost"></Mana>
-                <div class="name" v-on:click="openCard(card)">{{ card.name }}</div>
-                <div class="printConfig">
-                  <select v-model="card.printConfig" @change="onChange">
-                    <option v-for="conf in printConfig.list" :key="conf.key" :value="conf.key">{{ conf.text }}</option>
-                  </select>
-                </div>
-              </div>
-            </draggable>
-          </div>
-          <div class="deckList">
-            <h4>New list</h4>
-            <draggable class="dragArea list-group" :list="tmpList" group="deck" @change="createNewList">
-              <div class="cardRow" v-for="element in tmpList" :key="element.id"></div>
-            </draggable>
-          </div>
-        </div>
-      </div>
+                <b-button pill size="sm" variant="light" @click="increment(card, true)">
+                  <b-icon-plus scale="1.5"></b-icon-plus>
+                </b-button>
+              </b-btn-group>
+            </b-col>
+            <b-col cols="4" v-on:click="openCard(card)">{{ card.name }}</b-col>
+            <b-col cols="3"><Mana :mana-cost="card.mana_cost"></Mana></b-col>
+            <b-col cols="2">
+              <select v-model="card.printConfig" @change="onChange">
+                <option v-for="conf in printConfig.list" :key="conf.key" :value="conf.key">{{ conf.text }}</option>
+              </select>
+            </b-col>
+          </b-row>
+        </draggable>
+      </b-container>
+      <b-container class="mt-3 mb-2">
+        <b-row class="listHeader">
+          <b-col cols="12">
+            <b-button variant="light" @click="createNewList()">
+              <b-icon-plus></b-icon-plus><span class="d-inline"> Add a new list</span>
+            </b-button>
+          </b-col>
+        </b-row>
+        <draggable class="dragArea list-group" :list="tmpList" group="deck" @change="createNewList">
+          <b-row v-for="card in tmpList" :key="card.id">
+            <b-col cols="2" class="deckQte">
+              <b-input type="number" min="0" max="99" v-model="card.deckQte" @change="onChange" />
+            </b-col>
+            <b-col cols="5" class="name" v-on:click="openCard(card)">{{ card.name }}</b-col>
+            <b-col cols="2"><Mana class="manaCost" :mana-cost="card.mana_cost"></Mana></b-col>
+            <b-col cols="3" class="printConfig">
+              <select v-model="card.printConfig" @change="onChange">
+                <option v-for="conf in printConfig.list" :key="conf.key" :value="conf.key">{{ conf.text }}</option>
+              </select>
+            </b-col>
+          </b-row>
+        </draggable>
+      </b-container>
     </div>
 
     <!--    BOTTOM    -->
@@ -83,12 +116,7 @@
         <Search></Search>
       </b-card-body>
       <b-card-body class="text-center" v-if="sectionToDisplay === 'stats'">
-        <div id="deckStats" ref="stats">
-          <PieChart id="byType" :chart-data="stats.byType" class="graph"></PieChart>
-          <PieChart id="byColor" :chart-data="stats.byColor" class="graph"></PieChart>
-          <BarChart id="byCmc" :chart-data="stats.byCmc" :options="yBeginAtZero" class="graph"></BarChart>
-          <PieChart id="byFunctionality" :chart-data="stats.byFunctionality" class="graph"></PieChart>
-        </div>
+        <Stats :deck="deck"></Stats>
       </b-card-body>
       <b-card-footer footer-tag="nav">
         <b-nav card-footer tabs>
@@ -105,18 +133,15 @@
 import draggable from 'vuedraggable';
 import CONST from 'src/utils/CONST';
 import DeckFactory from 'src/utils/DeckFactory';
-import { getStats, getEmptyStats } from 'src/utils/DeckStats';
 import Mana from '../uiElements/Mana.vue';
-import BarChart from '../chartjs/BarChart.vue';
-import PieChart from '../chartjs/PieChart.vue';
-import { mapState } from 'vuex';
 import modalHandler from '../../mixins/modalHandler';
 import Search from './Search.vue';
+import Stats from './Stats.vue';
 
 export default {
   name: 'DeckEdition',
   props: ['deckToEdit'],
-  components: { draggable, Mana, BarChart, PieChart, Search },
+  components: { draggable, Mana, Search, Stats },
   mixins: [modalHandler],
   data() {
     return {
@@ -127,8 +152,6 @@ export default {
       _deck: null,
       updateDone: false,
       printConfig: CONST.printConfig,
-      stats: getEmptyStats(),
-      yBeginAtZero: CONST.stats.defaultOptions.yBeginAtZero,
     };
   },
   computed: {
@@ -137,38 +160,25 @@ export default {
     },
   },
   beforeDestroy() {
-    if (!this.updateDone) {
-      return;
+    if (this.updateDone) {
+      this.saveDeck();
     }
-    this.saveDeck();
   },
   async mounted() {
-    this.resize();
-
     try {
       this.tmpDeck = await this.$store.dispatch('decks/getTmpDeck');
       this._deck = this.deckToEdit || this.tmpDeck;
-      this.stats = getStats(this.deck);
-      window.onbeforeunload = () => {
-        if (!this.updateDone) {
-          return;
-        }
-        this.saveDeck();
-      };
-      window.onresize = this.resize;
+      window.onbeforeunload = () => this.beforeDestroy();
     } catch (e) {
       console.error('error when loading from storage', e);
     }
   },
   methods: {
-    resize() {
-      // const MIN_EDITION = 200;
-      // const parentHeight = this.$refs.container.parentElement.clientHeight;
-      // const statsHeight = Math.max(MIN_EDITION, Math.min(this.$refs.stats.clientHeight, parentHeight - MIN_EDITION));
-      // const editionHeight = parentHeight - statsHeight;
-      // this.$refs.deckEdition.style['grid-template-rows'] = `${editionHeight}px`;
-      // this.$refs.stats.style.height = 'auto';
-      // this.$refs.stats.style.bottom = 0;
+    increment(card, inc) {
+      if ((inc && +card.deckQte < 99) || (!inc && +card.deckQte)) {
+        card.deckQte = String(+card.deckQte + (inc ? 1 : -1));
+        this.onChange();
+      }
     },
     openCard(card) {
       this.cardModal(card);
@@ -189,8 +199,6 @@ export default {
     },
     onChange() {
       this.updateDone = true;
-      this.stats = getStats(this.deck);
-      this.resize();
     },
     onImport() {
       this.importModal().then(listOrDeck => {
@@ -303,135 +311,32 @@ export default {
 </script>
 
 <style lang="less" scoped>
-//Extra small (xs) <576px
-//Small (sm) ≥576px
-//Medium (md) ≥768px
-//Large (lg) ≥992px
-//Extra large (xl) ≥1200px
-@media screen and (max-width: 576px) {
-  #deckLists .lists {
-    height: 80%;
-  }
-}
-@media screen and (min-width: 576px) {
-  #deckLists .lists {
-    height: 87%;
-  }
-}
-@media screen and (min-width: 1000px) {
-  #deckLists .lists {
-    height: 93%;
-  }
-}
-@media screen and (min-width: 1400px) {
-  #deckLists .lists {
-    height: 100%;
-  }
-}
-
 #container {
   height: 100%;
   padding-top: 0;
 
-  #spinner {
-    position: absolute;
-    top: 30%;
-    left: 40%;
-  }
   #deckEdition {
-    height: 100%;
-    overflow: hidden;
-    #deckHeader {
-      .deckName {
-        input {
-          background-color: transparent;
-          width: 100%;
-        }
-      }
-    }
-    #deckLists {
-      padding-bottom: 10%;
-      margin-right: 1%;
-      padding-right: 1%;
-      grid-area: deckLists;
-      height: 100%;
-      overflow-x: hidden;
-      overflow-y: hidden;
-
-      input {
+    height: 90%;
+    max-height: inherit;
+    .deckQte {
+      .btn-sm {
+        padding: 0.4rem;
         background-color: transparent;
       }
-      .lists {
-        overflow-x: hidden;
-        overflow-y: auto;
-        padding: 1% 3% 1% 1%;
-
-        .deckList {
-          border: rgba(100, 100, 100, 0.3) solid 2px;
-          padding: 1%;
-          .listHeader {
-            display: grid;
-            grid-template-columns: 60% 20% 10% 10%;
-            grid-template-areas: 'name cardCount statIgnore buttons';
-            .listName {
-              grid-area: name;
-              input {
-                width: 90%;
-              }
-            }
-            .cardCount {
-              grid-area: cardCount;
-            }
-            .listStatIgnore {
-              grid-area: statIgnore;
-            }
-            .listExport {
-              grid-area: buttons;
-            }
-          }
-
-          .cardRow,
-          .resultRow {
-            display: grid;
-            grid-template-columns: 10% 20% 50% 20%;
-            grid-template-areas: 'deckQte manaCost name printConfig';
-            .name {
-              grid-area: name;
-            }
-            .manaCost {
-              grid-area: manaCost;
-            }
-            .deckQte {
-              grid-area: deckQte;
-              input {
-                width: 45px;
-              }
-            }
-            .printConfig {
-              grid-area: printConfig;
-              select {
-                background-color: transparent;
-                text-align-last: center;
-                width: 100%;
-              }
-            }
-            .type {
-              display: none;
-            }
-            .setName {
-              display: none;
-            }
-            .image {
-              border: 2px black;
-              position: relative;
-              img {
-                max-height: 300px;
-              }
-            }
-          }
-        }
+      input {
+        background-color: transparent;
+        width: 45px;
       }
     }
+  }
+  input {
+    background-color: transparent;
+    width: 100%;
+  }
+  select {
+    background-color: transparent;
+    text-align-last: center;
+    width: 100%;
   }
   #footer {
     position: absolute;
@@ -443,29 +348,6 @@ export default {
     .card-body {
       overflow: hidden;
       height: 100%;
-
-      #deckStats {
-        height: 100%;
-        padding-right: 1%;
-        padding-left: 1%;
-        width: 95%;
-        display: grid;
-        grid-template-columns: 25% 25% 25% 25%;
-        grid-template-areas: 'cmc color type function';
-
-        #byColor {
-          grid-area: color;
-        }
-        #byCmc {
-          grid-area: cmc;
-        }
-        #byType {
-          grid-area: type;
-        }
-        #byFunctionality {
-          grid-area: function;
-        }
-      }
     }
   }
 }

@@ -1,22 +1,18 @@
 <template>
   <b-modal class="export" :id="modalId" size="sm" title="Export" ref="modal" lazy hide-footer>
     <form>
-      <div id="type" class="formRow">
-        <div v-for="f in exportFormats" :key="f.key">
-          <label :for="f.key" :class="f.short" :title="f.value">
-            <input type="radio" :id="f.key" :value="f" v-model="format" /> {{ f.short }}
-          </label>
-        </div>
-      </div>
-      <div id="setType" class="formRow" v-if="format.key !== dorionKey">
-        <label for="withSets" class="left">
-          <input type="radio" id="withSets" value="withSets" v-model="setFormat" /> With Sets
-        </label>
-        <label for="withoutSets" class="right">
-          <input type="radio" id="withoutSets" value="withoutSets" v-model="setFormat" /> Without Sets
-        </label>
-      </div>
-      <div class="text-center w-100">Copy-Paste</div>
+      <b-form-row class="mb-2">
+        <b-col cols="4" v-for="f in exportFormats" :key="f.key">
+          <b-radio :id="f.key" :value="f" v-model="format"> {{ f.short }}</b-radio>
+        </b-col>
+      </b-form-row>
+
+      <b-form-row class="mb-2" v-if="format.key !== dorionKey">
+        <b-col cols="6"><b-radio value="withSets" v-model="setFormat"> With Sets</b-radio></b-col>
+        <b-col cols="6"><b-radio value="withoutSets" v-model="setFormat"> Without Sets</b-radio></b-col>
+      </b-form-row>
+
+      <div class="text-center w-100 mb-1">Copy-Paste</div>
 
       <b-textarea id="exportArea" class="formRow mb-3" :value="getExport" no-resize></b-textarea>
       <b-btn-group class="text-center w-100">
