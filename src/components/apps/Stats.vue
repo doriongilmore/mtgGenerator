@@ -1,10 +1,10 @@
 <template>
   <b-container id="deckStats" class="pre-scrollable">
     <b-row>
-      <b-col cols="6" md="3"><BarChart :chart-data="stats.byCmc" :options="yBeginAtZero"/></b-col>
-      <b-col cols="6" md="3"><PieChart :chart-data="stats.byColor"/></b-col>
-      <b-col cols="6" md="3"><PieChart :chart-data="stats.byType"/></b-col>
-      <b-col cols="6" md="3"><PieChart :chart-data="stats.byFunctionality"/></b-col>
+      <b-col cols="6" lg="3"><BarChart :chart-data="stats.byCmc" :options="yBeginAtZero"/></b-col>
+      <b-col cols="6" lg="3"><PieChart :chart-data="stats.byColor"/></b-col>
+      <b-col cols="6" lg="3"><PieChart :chart-data="stats.byType"/></b-col>
+      <b-col cols="6" lg="3"><PieChart :chart-data="stats.byFunctionality"/></b-col>
     </b-row>
   </b-container>
 </template>
