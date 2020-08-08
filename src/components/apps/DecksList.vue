@@ -1,11 +1,20 @@
 <template>
   <div id="decksList">
-    <b-button variant="danger" @click="resetAll()" class="mb-3 ml-2">
-      <b-icon-trash></b-icon-trash><span> Reset to default list</span>
-    </b-button>
     <b-container class="bv-example-row">
-      <b-row cols="1" cols-md="2" cols-lg="3" cols-xl="4">
-        <b-col v-for="deck in decks" :key="deck.id">
+      <b-row>
+        <b-col cols="6">
+          <b-button variant="primary" href="#/deck" class="mb-3 ml-2">
+            <b-icon-plus-circle-fill></b-icon-plus-circle-fill><span> Create a deck</span>
+          </b-button>
+        </b-col>
+        <b-col cols="6">
+          <b-button variant="danger" @click="resetAll()" class="mb-3 ml-2">
+            <b-icon-trash></b-icon-trash><span> Reset to default list</span>
+          </b-button>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col v-for="deck in decks" :key="deck.id" cols="12" cols-md="6" cols-lg="4" cols-xl="3">
           <!--        todo get card covers   -->
           <!--           img-src="https://picsum.photos/600/300/?image=25"-->
           <b-card :title="deck.name" img-top class="mb-3">

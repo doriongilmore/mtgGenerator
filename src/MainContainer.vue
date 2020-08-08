@@ -1,19 +1,10 @@
 <template>
   <div class="mainContainer">
-    <b-navbar toggleable="sm" type="light" variant="light" fixed="sm">
+    <b-nav tabs class="bg-light pl-4">
       <b-navbar-brand to="/">Mtg - Builder</b-navbar-brand>
-      <b-navbar-toggle target="nav-collapse-menu"></b-navbar-toggle>
-
-      <b-collapse id="nav-collapse-menu" is-nav>
-        <b-navbar-nav>
-          <b-nav-item to="/decks" exact exact-active-class="active">Decks</b-nav-item>
-          <b-nav-item to="/deck" exact exact-active-class="active">Create a deck</b-nav-item>
-        </b-navbar-nav>
-      </b-collapse>
-    </b-navbar>
-    <div class="content">
-      <router-view></router-view>
-    </div>
+      <b-nav-item to="/decks" exact exact-active-class="active">Decks</b-nav-item>
+    </b-nav>
+    <div class="content"><router-view></router-view></div>
   </div>
 </template>
 
