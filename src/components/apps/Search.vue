@@ -3,28 +3,30 @@
     <b-form v-on:submit="handleSearch" id="form">
       <b-container>
         <b-row>
-          <b-col sm="1"><b-spinner v-if="isSearching"></b-spinner></b-col>
-          <b-col sm="5"><b-input type="text" v-model="searchParams.name" placeholder="Enter a name"></b-input></b-col>
-          <b-col sm="3">
+          <b-col cols="1"><b-spinner v-if="isSearching"></b-spinner></b-col>
+          <b-col cols="7" md="5">
+            <b-input type="text" v-model="searchParams.name" placeholder="Enter a name"></b-input>
+          </b-col>
+          <b-col cols="2" md="3">
             <b-button variant="light" @click="handleSearch()">
-              <b-icon-search></b-icon-search><span class="d-lg-inline"> Search</span>
+              <b-icon-search></b-icon-search><span class="d-none d-md-inline"> Search</span>
             </b-button>
           </b-col>
-          <b-col sm="3">
+          <b-col cols="2" md="3">
             <b-button variant="light" @click="openSearch()">
-              <b-icon-tools></b-icon-tools><span class="d-lg-inline"> Filters</span>
+              <b-icon-tools></b-icon-tools><span class="d-none d-md-inline"> Filters</span>
             </b-button>
           </b-col>
         </b-row>
       </b-container>
-      <input type="submit" style="display: none" />
+      <input type="submit" class="d-none" />
     </b-form>
     <b-container>
       <b-row class="mt-2">
-        <b-col sm="4">Name</b-col>
-        <b-col sm="2" class="text-left">Cost</b-col>
-        <b-col sm="3">Type</b-col>
-        <b-col sm="3">Set</b-col>
+        <b-col cols="4">Name</b-col>
+        <b-col cols="2" class="text-left">Cost</b-col>
+        <b-col cols="3">Type</b-col>
+        <b-col cols="3">Set</b-col>
       </b-row>
       <draggable
         class="dragArea list-group pre-scrollable"
@@ -35,10 +37,10 @@
         id="resultsBody"
       >
         <b-row v-for="result in results" :key="result.id" class="mt-1 text-center">
-          <b-col sm="4" @click="openCard(result)">{{ result.name }}</b-col>
-          <b-col sm="2"><Mana :mana-cost="result.mana_cost"></Mana></b-col>
-          <b-col sm="3">{{ result.type_line }}</b-col>
-          <b-col sm="3">{{ result.set_name }}</b-col>
+          <b-col cols="4" @click="openCard(result)">{{ result.name }}</b-col>
+          <b-col cols="2"><Mana :mana-cost="result.mana_cost"></Mana></b-col>
+          <b-col cols="3">{{ result.type_line }}</b-col>
+          <b-col cols="3">{{ result.set_name }}</b-col>
         </b-row>
       </draggable>
     </b-container>
