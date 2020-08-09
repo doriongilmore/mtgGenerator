@@ -2,7 +2,6 @@
   <div class="manaContainer">
     <div v-for="manas of manaList">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
-        <circle cx="20" cy="20" r="20" fill="#000" />
         <g v-if="manas.length === 1">
           <circle cx="20" cy="20" r="20" :fill="colors[manas[0]] || colors.C" />
           <text
@@ -42,18 +41,19 @@
             height="35"
             width="35"
             transform="translate(-17.5 -17.5)"
-            :href="`#${manas[0]}`"
+            :href="`manaDefs.svg#${manas[0]}`"
             :class="manas[0]"
           />
           <circle cx="20" cy="20" r="20" fill="url(#sphereEffect)" />
         </g>
         <g v-else>
-          <circle cx="20" cy="20" r="20" :fill="`url(#${manas.join('')})`" />
+          <circle cx="20" cy="20" r="20" :fill="`url(manaDefs.svg#${manas.join('')})`" />
           <text v-if="manas[0] === '2'" x="8" y="18" font-family="ui-serif" font-size="20">2</text>
-          <use v-else x="3" y="3" height="20" width="20" :href="`#${manas[0]}`" :class="manas[0]" />
-          <use x="17" y="17" height="20" width="20" :href="`#${manas[1]}`" :class="manas[1]" />
+          <use v-else x="3" y="3" height="20" width="20" :href="`manaDefs.svg#${manas[0]}`" :class="manas[0]" />
+          <use x="17" y="17" height="20" width="20" :href="`manaDefs.svg#${manas[1]}`" :class="manas[1]" />
           <circle cx="20" cy="20" r="20" fill="url(#sphereEffect)" />
         </g>
+        <circle cx="20" cy="20" r="20" stroke="#000" stroke-width="1px" fill="transparent" />
       </svg>
     </div>
   </div>

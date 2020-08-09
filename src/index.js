@@ -1,24 +1,34 @@
-import Vue from 'vue';
-import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
-import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap-vue/dist/bootstrap-vue.css';
-import VueX from 'vuex';
-import VueRouter from 'vue-router';
+// import Vue from 'vue';
+// import { CardPlugin, DropdownPlugin, LayoutPlugin, ModalPlugin, TablePlugin } from 'bootstrap-vue';
 
-import App from 'src/App.vue';
-import { storeOpts } from 'src/store';
-import { routeOpts } from 'src/routes';
+function loadApp() {
+  import(/* webpackChunkName: "modules" */ './modules.js')
+    .then(({ default: modules }) => {
+      const { Vue, IconComponentList, VueUseList, VueX, VueRouter, App, storeOpts, routeOpts } = modules;
 
-Vue.use(BootstrapVue);
-Vue.use(IconsPlugin); // Maybe not necessary
-Vue.use(VueX);
-Vue.use(VueRouter);
+      for (let i = 0, l = IconComponentList.length; i < l; i++) {
+        const icon = IconComponentList[i];
+        Vue.component(icon.name, icon.module);
+      }
+      for (let i = 0, l = VueUseList.length; i < l; i++) {
+        Vue.use(VueUseList[i]);
+      }
+      Vue.use(VueX);
+      Vue.use(VueRouter);
 
-const store = new VueX.Store(storeOpts);
-export const router = new VueRouter(routeOpts);
+      const store = new VueX.Store(storeOpts);
+      const router = new VueRouter(routeOpts);
 
-new Vue({
-  store,
-  router,
-  render: h => h(App),
-}).$mount('#app');
+      const loader = document.getElementById('loader');
+      loader && loader.classList.add('d-none');
+
+      new Vue({
+        store,
+        router,
+        render: h => h(App),
+      }).$mount('#app');
+    })
+    .catch(e => console.error('Error while loading App', e));
+}
+
+loadApp();
