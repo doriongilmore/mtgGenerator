@@ -8,6 +8,7 @@ import { storeOpts } from 'src/store';
 import { routeOpts } from 'src/routes';
 
 import {
+  BIconFilterCircleFill,
   BIconClipboardCheck,
   BIconFileText,
   BIconPen,
@@ -19,10 +20,8 @@ import {
   BIconDownload,
   BIconUpload,
   BIconTrash,
-  BIconDash,
-  BIconPlus,
+  BIconDashCircleFill,
   BIconPlusCircleFill,
-  // IconsPlugin,
   NavPlugin,
   NavbarPlugin,
   DropdownPlugin,
@@ -41,6 +40,7 @@ import {
 } from 'bootstrap-vue';
 
 const IconComponentList = [
+  { name: 'b-icon-filter-circle-fill', module: BIconFilterCircleFill },
   { name: 'b-icon-file-text', module: BIconFileText },
   { name: 'b-icon-clipboard-check', module: BIconClipboardCheck },
   { name: 'b-icon-pen', module: BIconPen },
@@ -52,13 +52,11 @@ const IconComponentList = [
   { name: 'b-icon-download', module: BIconDownload },
   { name: 'b-icon-upload', module: BIconUpload },
   { name: 'b-icon-trash', module: BIconTrash },
-  { name: 'b-icon-dash', module: BIconDash },
-  { name: 'b-icon-plus', module: BIconPlus },
   { name: 'b-icon-plus-circle-fill', module: BIconPlusCircleFill },
+  { name: 'b-icon-dash-circle-fill', module: BIconDashCircleFill },
 ];
 
 const VueUseList = [
-  // IconsPlugin,
   NavPlugin,
   NavbarPlugin,
   DropdownPlugin,

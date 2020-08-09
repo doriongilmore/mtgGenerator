@@ -1,6 +1,6 @@
 <template>
   <div id="search">
-    <b-form v-on:submit="handleSearch" id="form">
+    <form v-on:submit="handleSearch" id="form">
       <b-container>
         <b-row>
           <b-col cols="1"><b-spinner v-if="isSearching"></b-spinner></b-col>
@@ -20,7 +20,7 @@
         </b-row>
       </b-container>
       <input type="submit" class="d-none" />
-    </b-form>
+    </form>
     <b-container>
       <b-row class="mt-2">
         <b-col cols="4">Name</b-col>
@@ -30,6 +30,7 @@
       </b-row>
       <draggable
         class="dragArea list-group pre-scrollable"
+        handle=".btn-drag"
         :list="results"
         :group="{ name: 'deck', pull: 'clone', put: false }"
         :clone="addCardToDeck"
@@ -37,7 +38,10 @@
         id="resultsBody"
       >
         <b-row v-for="result in results" :key="result.id" class="mt-1 text-center">
-          <b-col cols="4" @click="openCard(result)">{{ result.name }}</b-col>
+          <b-col cols="1" class="btn-drag">
+            <b-icon-filter-circle-fill variant="secondary" scale="1.5"></b-icon-filter-circle-fill>
+          </b-col>
+          <b-col cols="3" @click="openCard(result)">{{ result.name }}</b-col>
           <b-col cols="2"><Mana :mana-cost="result.mana_cost"></Mana></b-col>
           <b-col cols="3">{{ result.type_line }}</b-col>
           <b-col cols="3">{{ result.set_name }}</b-col>
@@ -131,9 +135,12 @@ export default {
 };
 </script>
 
-<style>
+<style lang="less">
 #resultsBody {
   overflow-x: hidden;
   overflow-y: auto;
+  .btn-drag {
+    cursor: grab;
+  }
 }
 </style>

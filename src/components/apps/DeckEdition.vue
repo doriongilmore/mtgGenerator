@@ -53,29 +53,42 @@
             </b-button>
           </b-col>
         </b-row>
-        <draggable class="w-100" :list="deckList.list" group="deck" :move="onMove" @change="onChange">
+        <draggable
+          class="w-100"
+          handle=".btn-drag"
+          :list="deckList.list"
+          group="deck"
+          :move="onMove"
+          @change="onChange"
+        >
           <b-row v-for="card in deckList.list" :key="card.id" class="mt-1">
             <!-- list body -->
-
-            <b-col cols="3" class="deckQte">
-              <b-btn-group>
-                <b-button pill size="sm" variant="light" @click="increment(card, false)">
-                  <b-icon-dash scale="1.5"></b-icon-dash>
-                </b-button>
-                <b-input
-                  type="text"
-                  class="form-control input-number"
-                  min="1"
-                  max="99"
-                  v-model="card.deckQte"
-                  @change="onChange"
-                />
-                <b-button pill size="sm" variant="light" @click="increment(card, true)">
-                  <b-icon-plus scale="1.5"></b-icon-plus>
-                </b-button>
-              </b-btn-group>
+            <b-col cols="1" class="btn-drag">
+              <b-icon-filter-circle-fill variant="light" scale="1.5" class="mt-2"></b-icon-filter-circle-fill>
             </b-col>
-            <b-col cols="4" v-on:click="openCard(card)">{{ card.name }}</b-col>
+            <b-col cols="3" class="deckQte d-inline-flex">
+              <b-icon-dash-circle-fill
+                class="mt-2 ml-0 mr-2"
+                variant="light"
+                scale="1.5"
+                @click="increment(card, false)"
+              ></b-icon-dash-circle-fill>
+              <b-input
+                type="text"
+                class="form-control input-number"
+                min="1"
+                max="99"
+                v-model="card.deckQte"
+                @change="onChange"
+              />
+              <b-icon-plus-circle-fill
+                class="mt-2 ml-2 mr-0"
+                variant="light"
+                scale="1.5"
+                @click="increment(card, true)"
+              ></b-icon-plus-circle-fill>
+            </b-col>
+            <b-col cols="3" v-on:click="openCard(card)">{{ card.name }}</b-col>
             <b-col cols="3"><Mana :mana-cost="card.mana_cost"></Mana></b-col>
             <b-col cols="2">
               <select v-model="card.printConfig" @change="onChange">
@@ -89,7 +102,7 @@
         <b-row class="listHeader">
           <b-col cols="12">
             <b-button variant="light" @click="createNewList()">
-              <b-icon-plus></b-icon-plus><span class="d-inline"> Add a new list</span>
+              <b-icon-plus-circle-fill></b-icon-plus-circle-fill><span class="d-inline"> Add a new list</span>
             </b-button>
           </b-col>
         </b-row>
@@ -315,6 +328,9 @@ export default {
   height: 100%;
   padding-top: 0;
 
+  .btn-drag {
+    cursor: grab;
+  }
   #deckEdition {
     height: 90%;
     max-height: inherit;
