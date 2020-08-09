@@ -1,15 +1,11 @@
 <template>
   <div class="app">
-    <Background></Background>
-    <!-- BG FIRST ! -->
     <MainContainer></MainContainer>
     <!-- MODALS LAST ! -->
     <Modals></Modals>
   </div>
 </template>
 <script>
-//todo center svg
-import Background from 'src/components/Background.vue';
 import Modals from 'src/components/Modals.vue';
 import MainContainer from 'src/MainContainer.vue';
 import CONST from 'src/utils/CONST';
@@ -18,7 +14,6 @@ export default {
   name: 'App',
   components: {
     Modals,
-    Background,
     MainContainer,
   },
   async mounted() {
