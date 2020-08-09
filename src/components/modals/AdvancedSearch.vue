@@ -24,7 +24,12 @@
         <b-col cols="3"><label for="tmpText">Text</label></b-col>
         <b-col cols="6"><b-form-input v-model="tmpText" id="tmpText" type="text"></b-form-input></b-col>
         <b-col cols="3">
-          <b-button pill @click="addText()" variant="primary"><b-icon-plus></b-icon-plus></b-button>
+          <b-icon-plus-circle-fill
+            @click="addText()"
+            variant="primary"
+            scale="2"
+            class="mt-2"
+          ></b-icon-plus-circle-fill>
         </b-col>
       </b-row>
       <b-row class="mt-1">
@@ -75,7 +80,12 @@
         <b-col cols="3"><label for="tmpType">Type</label></b-col>
         <b-col cols="6"><b-form-select :options="typeList" v-model="tmpType" id="tmpType"></b-form-select></b-col>
         <b-col cols="3">
-          <b-button pill @click="addType()" variant="primary"><b-icon-plus></b-icon-plus></b-button>
+          <b-icon-plus-circle-fill
+            @click="addType()"
+            variant="primary"
+            scale="2"
+            class="mt-2"
+          ></b-icon-plus-circle-fill>
         </b-col>
       </b-row>
       <b-row class="mt-2">

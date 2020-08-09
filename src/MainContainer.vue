@@ -33,7 +33,7 @@ export default {
   .content {
     padding: 0 1%;
     background-color: #fffa;
-    height: 95%;
+    height: 100%;
     overflow-y: auto;
   }
 }
