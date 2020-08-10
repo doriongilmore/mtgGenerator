@@ -34,11 +34,15 @@
         <b-row class="listHeader">
           <b-col cols="5" md="4" lg="6"><b-input type="text" v-model="deckList.name" @change="onChange"/></b-col>
           <b-col cols="3">{{ getCardCount(deckList.list, true) }}</b-col>
-          <b-col cols="2" lg="1" :title="`${deckList.ignoreStat ? 'ignored' : 'used'} in stats`" class="d-inline">
-            <label :for="'ignoreStat' + listIndex">
-              <b-icon-graph-down font-scale="1.2" v-if="deckList.ignoreStat"></b-icon-graph-down>
-              <b-icon-graph-up font-scale="1.2" v-else></b-icon-graph-up>
-            </label>
+          <b-col
+            cols="2"
+            lg="1"
+            :title="`${deckList.ignoreStat ? 'ignored' : 'used'} in stats`"
+            class="form-control btn"
+            @click="deckList.ignoreStat = !deckList.ignoreStat"
+          >
+            <b-icon-graph-down font-scale="1.2" v-if="deckList.ignoreStat"></b-icon-graph-down>
+            <b-icon-graph-up font-scale="1.2" v-else></b-icon-graph-up>
             <input
               :id="'ignoreStat' + listIndex"
               class="w-50"
@@ -68,7 +72,7 @@
             </b-col>
             <b-col cols="3" class="deckQte d-inline-flex">
               <b-icon-dash-circle-fill
-                class="mt-2 ml-0 mr-2"
+                class="mt-1 ml-0 mr-2 btn"
                 variant="light"
                 scale="1.5"
                 @click="increment(card, false)"
@@ -82,7 +86,7 @@
                 @change="onChange"
               />
               <b-icon-plus-circle-fill
-                class="mt-2 ml-2 mr-0"
+                class="mt-1 ml-0 mr-0 btn"
                 variant="light"
                 scale="1.5"
                 @click="increment(card, true)"
@@ -124,11 +128,11 @@
     </div>
 
     <!--    BOTTOM    -->
-    <b-card title="Card Title" no-body id="footer">
-      <b-card-body class="text-center" v-if="sectionToDisplay === 'search'">
+    <b-card title="Card Title" no-body id="footer" class="h-50">
+      <b-card-body class="text-center h-100" v-if="sectionToDisplay === 'search'">
         <Search></Search>
       </b-card-body>
-      <b-card-body class="text-center" v-if="sectionToDisplay === 'stats'">
+      <b-card-body class="text-center h-100" v-if="sectionToDisplay === 'stats'">
         <Stats :deck="deck"></Stats>
       </b-card-body>
       <b-card-footer footer-tag="nav">
@@ -357,7 +361,6 @@ export default {
   #footer {
     position: absolute;
     width: 100%;
-    max-height: 60%;
     left: 0;
     bottom: 0;
 

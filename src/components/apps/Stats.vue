@@ -1,12 +1,12 @@
 <template>
-  <b-container id="deckStats" class="pre-scrollable">
-    <b-row>
-      <b-col cols="6" lg="3"><BarChart :chart-data="stats.byCmc" :options="yBeginAtZero"/></b-col>
-      <b-col cols="6" lg="3"><PieChart :chart-data="stats.byColor"/></b-col>
-      <b-col cols="6" lg="3"><PieChart :chart-data="stats.byType"/></b-col>
-      <b-col cols="6" lg="3"><PieChart :chart-data="stats.byFunctionality"/></b-col>
-    </b-row>
-  </b-container>
+  <div id="deckStats" class="container h-100">
+    <div class="row  h-100">
+      <div class="col-12 col-sm-6 col-lg-3"><BarChart :chart-data="stats.byCmc" :options="yBeginAtZero" /></div>
+      <div class="col-12 col-sm-6 col-lg-3"><PieChart :chart-data="stats.byColor" /></div>
+      <div class="col-12 col-sm-6 col-lg-3"><PieChart :chart-data="stats.byType" /></div>
+      <div class="col-12 col-sm-6 col-lg-3"><PieChart :chart-data="stats.byFunctionality" /></div>
+    </div>
+  </div>
 </template>
 <script>
 import CONST from '../../utils/CONST';
@@ -30,7 +30,7 @@ export default {
   },
 };
 </script>
-<style>
+<style lang="less">
 #deckStats {
   overflow-x: hidden;
   overflow-y: auto;

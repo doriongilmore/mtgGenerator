@@ -16,20 +16,15 @@
         <b-col cols="6">
           <b-form-input v-model="searchParams.texts[index]" :id="`text-${index}`" type="text"></b-form-input>
         </b-col>
-        <b-col cols="3">
-          <b-button pill @click="removeText(index)" variant="danger"><b-icon-trash></b-icon-trash></b-button>
+        <b-col cols="3" class="btn btn-danger" @click="removeText(index)">
+          <b-icon-trash></b-icon-trash>
         </b-col>
       </b-row>
       <b-row class="mt-1">
         <b-col cols="3"><label for="tmpText">Text</label></b-col>
         <b-col cols="6"><b-form-input v-model="tmpText" id="tmpText" type="text"></b-form-input></b-col>
-        <b-col cols="3">
-          <b-icon-plus-circle-fill
-            @click="addText()"
-            variant="primary"
-            scale="2"
-            class="mt-2"
-          ></b-icon-plus-circle-fill>
+        <b-col cols="3" class="btn btn-light" @click="addText()">
+          <b-icon-plus-circle-fill></b-icon-plus-circle-fill>
         </b-col>
       </b-row>
       <b-row class="mt-1">
@@ -72,20 +67,15 @@
         <b-col cols="6">
           <b-form-input v-model="searchParams.types[index]" :id="`type-${index}`" type="text" disabled></b-form-input>
         </b-col>
-        <b-col cols="3">
-          <b-button pill @click="removeType(index)" variant="danger"><b-icon-trash></b-icon-trash></b-button>
+        <b-col cols="3" class="btn btn-danger" @click="removeType(index)">
+          <b-icon-trash></b-icon-trash>
         </b-col>
       </b-row>
       <b-row class="mt-1">
         <b-col cols="3"><label for="tmpType">Type</label></b-col>
         <b-col cols="6"><b-form-select :options="typeList" v-model="tmpType" id="tmpType"></b-form-select></b-col>
-        <b-col cols="3">
-          <b-icon-plus-circle-fill
-            @click="addType()"
-            variant="primary"
-            scale="2"
-            class="mt-2"
-          ></b-icon-plus-circle-fill>
+        <b-col cols="3" class="btn btn-light" @click="addType()">
+          <b-icon-plus-circle-fill></b-icon-plus-circle-fill>
         </b-col>
       </b-row>
       <b-row class="mt-2">

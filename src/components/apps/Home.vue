@@ -1,5 +1,5 @@
 <template>
-  <div id="home" class="ml-3">
+  <div id="home" class="container">
     <h3 class="mt-3">Basic Info</h3>
     <div class="tab">
       This app brings together several tools to easily create Magic: the Gathering decks.<br />

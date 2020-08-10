@@ -1,4 +1,3 @@
-import home from './consts/home';
 import printConfig from './consts/printConfig';
 import stats from './consts/stats';
 import mana from './consts/mana';
@@ -14,7 +13,6 @@ const CONST = {
   exportFormats,
   search,
   stats,
-  home,
   mana,
 };
 
