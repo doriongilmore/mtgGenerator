@@ -1,5 +1,5 @@
 <template>
-  <div id="search">
+  <div id="search" class="h-100">
     <form v-on:submit="handleSearch" id="form">
       <b-container>
         <b-row>
@@ -21,15 +21,15 @@
       </b-container>
       <input type="submit" class="d-none" />
     </form>
-    <b-container>
-      <b-row class="mt-2">
+    <div class="container h-75">
+      <div class="row mt-2">
         <b-col cols="4">Name</b-col>
         <b-col cols="2" class="text-left">Cost</b-col>
         <b-col cols="3">Type</b-col>
         <b-col cols="3">Set</b-col>
-      </b-row>
+      </div>
       <draggable
-        class="dragArea list-group pre-scrollable"
+        class="dragArea list-group pre-scrollable h-100"
         handle=".btn-drag"
         :list="results"
         :group="{ name: 'deck', pull: 'clone', put: false }"
@@ -37,7 +37,7 @@
         :move="onMove"
         id="resultsBody"
       >
-        <b-row v-for="result in results" :key="result.id" class="mt-1 text-center">
+        <b-row v-for="result in results" :key="result.id" class="mt-1 text-center h-75">
           <b-col cols="1" class="btn-drag">
             <b-icon-filter-circle-fill variant="secondary" scale="1.5"></b-icon-filter-circle-fill>
           </b-col>
@@ -47,7 +47,7 @@
           <b-col cols="3">{{ result.set_name }}</b-col>
         </b-row>
       </draggable>
-    </b-container>
+    </div>
   </div>
 </template>
 
