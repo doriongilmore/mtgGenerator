@@ -42,7 +42,6 @@
     "build": "webpack --config webpack.prod.js",
     "pretty": "prettier --write \"assets/index.html\" \"src/**/*.js\" \"src/**/*.vue\"",
     "precommit": "prettier --write \"assets/index.html\" \"src/**/*.js\" \"src/**/*.vue\"",
-    "webpack_stats": "webpack --json > stats.json",
     "test": "echo 'no test implemented'"
   },
   "husky": {
