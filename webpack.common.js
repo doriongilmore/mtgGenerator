@@ -7,14 +7,8 @@ const CopyPlugin = require('copy-webpack-plugin');
 const config = require('config');
 
 module.exports = {
-  mode: 'production',
   resolve: { alias: { src: path.resolve(__dirname, 'src') } },
   entry: ['./src/index.js'],
-  output: {
-    filename: '[name].js',
-    chunkFilename: '[name].bundle.js',
-    path: path.resolve(__dirname, 'dist'),
-  },
   module: {
     rules: [
       {
@@ -33,7 +27,11 @@ module.exports = {
   },
   plugins: [
     new VueLoaderPlugin(),
-    new CopyPlugin([{ from: './assets', to: './' }]),
+    new CopyPlugin({ patterns: [{ from: './assets', to: './' }] }),
     new webpack.DefinePlugin({ CONFIG: JSON.stringify(config) }),
   ],
+  output: {
+    filename: '[name].js',
+    chunkFilename: '[name].bundle.js',
+  },
 };
