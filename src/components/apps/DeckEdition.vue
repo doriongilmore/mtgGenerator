@@ -63,7 +63,7 @@
           :list="deckList.list"
           group="deck"
           :move="onMove"
-          @change="onChange"
+          @change="onChange(true)"
         >
           <div v-for="card in deckList.list" :key="card.id" class="row mt-1">
             <!-- list body -->
@@ -148,6 +148,7 @@
 
 <script>
 import draggable from 'vuedraggable';
+import { createNewList, addCardToDeck, onDragAndMove } from 'src/utils/dragDrop';
 import CONST from 'src/utils/CONST';
 import DeckFactory from 'src/utils/DeckFactory';
 import Mana from '../uiElements/Mana.vue';
@@ -208,14 +209,33 @@ export default {
         this.$store.commit('decks/setTmpDeck', newDeck); // update creation time
         return false;
       }
+      this.onChange(true); // sort lists
       this.$store.commit('decks/setDecks', [this.deck]);
       this._deck = this.deck;
       this.$store.commit('decks/setTmpDeck', newDeck);
       this.tmpDeck = newDeck;
       this.updateDone = false;
     },
-    onChange() {
+    /**
+     * {Event|Boolean|null} sortLists
+     */
+    onChange(sortLists = false) {
       this.updateDone = true;
+      if (sortLists === true) {
+        const priority = CONST.sorting.defaultPriority;
+        for (let i = 0, l = this.deck.lists.length; i < l; i++) {
+          const List = this.deck.lists[i];
+          List.list = List.list.sort((cardA, cardB) => {
+            for (let j = 0, k = priority.length; j < k; j++) {
+              const res = priority[j].fn(cardA, cardB);
+              if (res) {
+                return res;
+              }
+            }
+            return 0;
+          });
+        }
+      }
     },
     onImport() {
       this.importModal().then(listOrDeck => {
@@ -226,7 +246,7 @@ export default {
         } else {
           this.deck.lists = listOrDeck;
         }
-        this.onChange();
+        this.onChange(true);
       });
     },
     /**
@@ -271,18 +291,8 @@ export default {
      * @param {Object} event (automatic)
      * @return {boolean}
      */
-    onMove({ from, to, relatedContext, draggedContext }) {
-      const list = relatedContext.list;
-      const draggedElement = draggedContext.element;
-      const sameList = from === to;
-      const isPresent = !!list.find(el => el.id === draggedElement.id);
-      const allowMove = sameList || !isPresent;
-
-      if (!allowMove) {
-        console.warn('object already present in this list.');
-      }
-
-      return allowMove;
+    onMove(event) {
+      return onDragAndMove(event);
     },
     /**
      * Fires automatically when a dragdrop succeeds, clones a card
@@ -292,28 +302,14 @@ export default {
      * @return {Object}
      */
     addCardToDeck(card) {
-      if (!card.deckQte) {
-        card.deckQte = 4;
-      }
-      if (!card.printConfig) {
-        const printConfig = card.type_line.includes('Basic Land')
-          ? this.printConfig.DONT_PRINT.key
-          : this.printConfig.BORDER_3.key;
-        card.printConfig = printConfig;
-      }
-      return card;
+      return addCardToDeck(card);
     },
     /**
      * Fires automatically when a dragdrop succeeds in new list area
      * creates a new list with default name and reset tmp list
      */
     createNewList() {
-      this.deck.lists.push({
-        name: 'Choose a name',
-        ignoreStat: false,
-        list: [...this.tmpList],
-      });
-      this.tmpList = [];
+      createNewList(this);
     },
     getCardCount(list, getString = false) {
       const count = list.reduce(DeckFactory.countCardByList, 0);
