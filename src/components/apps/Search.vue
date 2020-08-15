@@ -16,8 +16,8 @@
           </div>
         </div>
         <div class="col col-3 d-inline-flex">
-          <button class="btn-sm btn-light" @click="previousPage()"><b-icon-arrow-left></b-icon-arrow-left></button>
-          <button class="btn-sm btn-light" @click="nextPage()"><b-icon-arrow-right></b-icon-arrow-right></button>
+          <div class="btn-sm btn-light" @click="previousPage()"><b-icon-arrow-left></b-icon-arrow-left></div>
+          <div class="btn-sm btn-light" @click="nextPage()"><b-icon-arrow-right></b-icon-arrow-right></div>
           <span class="badge-light badge-pill pt-1"
             >{{ searchParams.pageIndex + 1 }} / {{ searchParams.pageCount }}</span
           >
