@@ -56,9 +56,9 @@
 
 <script>
 import draggable from 'vuedraggable';
+import { addCardToDeck, onDragAndMove } from 'src/utils/dragDrop';
 import modalHandler from '../../mixins/modalHandler';
 import { mapState } from 'vuex';
-import CONST from '../../utils/CONST';
 import Mana from '../uiElements/Mana.vue';
 
 export default {
@@ -98,39 +98,25 @@ export default {
     /**
      * Fires when user click on Enter key or search button
      */
-    handleSearch(event) {
+    async handleSearch(event) {
       event && event.preventDefault();
       this.isSearching = true;
-      this.$store
-        .dispatch('mtg/search', this.searchParams)
-        .then(results => {
-          this.isSearching = false;
-          this.$store.commit('search/setResults', results);
-        })
-        .catch(error => {
-          this.isSearching = false;
-          console.error('error during search', { args: this.searchParams, error });
-          this.$store.commit('search/setResults', []);
-        });
+      let results = [];
+      try {
+        results = await this.$store.dispatch('mtg/search', this.searchParams);
+      } catch (error) {
+        console.error('error during search', { args: this.searchParams, error });
+      }
+      this.isSearching = false;
+      this.$store.commit('search/setResults', results);
     },
     /**
      * Fires automatically when dragdrop detected, checks if allowed
      * @param {Object} event (automatic)
      * @return {boolean}
      */
-    onMove({ from, to, relatedContext, draggedContext }) {
-      const list = relatedContext.list;
-      const draggedElement = draggedContext.element;
-      const sameList = from === to;
-      const isPresent = !!list.find(el => el.id === draggedElement.id);
-      const allowMove = sameList || !isPresent;
-
-      if (!allowMove) {
-        // todo toast message
-        console.warn('object already present in this list.');
-      }
-
-      return allowMove;
+    onMove(event) {
+      return onDragAndMove(event);
     },
     /**
      * Fires automatically when a dragdrop succeeds, clones a card
@@ -140,11 +126,7 @@ export default {
      * @return {Object}
      */
     addCardToDeck(card) {
-      card.deckQte = 4;
-      card.printConfig = card.type_line.includes('Basic Land')
-        ? CONST.printConfig.DONT_PRINT.key
-        : CONST.printConfig.BORDER_3.key;
-      return card;
+      return addCardToDeck(card);
     },
   },
 };

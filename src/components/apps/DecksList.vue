@@ -68,7 +68,7 @@ export default {
       this.isLoading = false;
     },
     editDeck(deck = DeckFactory.getDeckToCreate()) {
-      this.$router.push({ name: 'edition', params: { deckToEdit: deck } });
+      this.$router.push({ name: 'edition', props: { deckToEdit: deck } });
     },
     async deleteDeck(deck) {
       try {
