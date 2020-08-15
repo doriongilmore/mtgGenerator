@@ -3,22 +3,21 @@ import CONST from '../utils/CONST.js';
 export const search = {
   namespaced: true,
   state: CONST.search.getDefaultState(),
+  getters: {
+    resultPage(state) {
+      const startIndex = state.pageIndex * state.resultByPage;
+      return state.results.slice(startIndex, startIndex + state.resultByPage);
+    },
+  },
   mutations: {
+    previousPage(state) {
+      state.pageIndex = Math.max(0, state.pageIndex - 1);
+    },
+    nextPage(state) {
+      state.pageIndex = Math.min(state.pageIndex + 1);
+    },
     clearSearch(state) {
-      const newState = CONST.search.getDefaultState();
-      state.exact = newState.exact;
-      state.name = newState.name;
-      state.lang = newState.lang;
-      state.texts = newState.texts;
-      state.colorInclusion = newState.colorInclusion;
-      state.colors = newState.colors;
-      state.cmcInclusion = newState.cmcInclusion;
-      state.cmc = newState.cmc;
-      state.rarityInclusion = newState.rarityInclusion;
-      state.rarity = newState.rarity;
-      state.typeInclusion = newState.typeInclusion;
-      state.types = newState.types;
-      state.results = newState.results;
+      Object.assign(state, CONST.search.getDefaultState());
     },
     removeText(state, index) {
       const newTexts = [...state.texts];
@@ -45,6 +44,8 @@ export const search = {
       state.types = [...state.types, type];
     },
     setResults(state, results) {
+      state.pageIndex = 0;
+      state.pageCount = Math.round(results.length / state.resultByPage);
       state.results = [...results];
     },
   },

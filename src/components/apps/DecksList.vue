@@ -1,43 +1,37 @@
 <template>
   <div id="decksList">
-    <b-container class="bv-example-row">
-      <b-row>
-        <b-col cols="6">
-          <b-button variant="primary" href="#/deck" class="mb-3 ml-2">
+    <div class="container">
+      <div class="row row-cols-2">
+        <div class="col">
+          <div class="mb-3 ml-2 btn btn-primary" @click="editDeck()">
             <b-icon-plus-circle-fill></b-icon-plus-circle-fill><span> Create a deck</span>
-          </b-button>
-        </b-col>
-        <b-col cols="6">
-          <b-button variant="danger" @click="resetAll()" class="mb-3 ml-2">
+          </div>
+        </div>
+        <div class="col">
+          <div @click="resetAll()" class="mb-3 ml-2 btn btn-danger">
             <b-icon-trash></b-icon-trash><span> Reset to default list</span>
-          </b-button>
-        </b-col>
-      </b-row>
-      <b-row>
-        <b-col v-for="deck in decks" :key="deck.id" cols="12" cols-md="6" cols-lg="4" cols-xl="3">
+          </div>
+        </div>
+      </div>
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
+        <div class="col" v-for="deck in decks" :key="deck.id">
           <!--        todo get card covers   -->
           <!--           img-src="https://picsum.photos/600/300/?image=25"-->
           <b-card :title="deck.name" img-top class="mb-3">
             <b-card-text>
-              <b-badge class="colors" variant="light" v-if="deck.colors">
-                <Mana :mana-cost="deck.colors"></Mana>
-              </b-badge>
-              <b-badge class="cardCount" variant="secondary">{{ deck.cardCount }}</b-badge>
-              <div class="dateCreation">created: {{ moment(deck.dateCreation).format('YY-MM-DD HH:mm') }}</div>
-              <div class="dateEdition">updated: {{ moment(deck.dateEdition).format('YY-MM-DD HH:mm') }}</div>
+              <div class="badge badge-light" v-if="deck.colors"><Mana :mana-cost="deck.colors"></Mana></div>
+              <div class="badge badge-secondary">{{ deck.cardCount }}</div>
+              <div class="">created: {{ moment(deck.dateCreation).format('YY-MM-DD HH:mm') }}</div>
+              <div class="">updated: {{ moment(deck.dateEdition).format('YY-MM-DD HH:mm') }}</div>
             </b-card-text>
-            <b-button class="listExport" variant="primary" @click="editDeck(deck)">
-              <b-icon-pen></b-icon-pen><span> Edit</span>
-            </b-button>
-            <b-button class="listExport" variant="danger" @click="deleteDeck(deck)">
+            <div class="btn btn-primary" @click="editDeck(deck)"><b-icon-pen></b-icon-pen><span> Edit</span></div>
+            <div class="btn btn-danger" @click="deleteDeck(deck)">
               <b-icon-trash></b-icon-trash><span> Delete</span>
-            </b-button>
-            <!--            <b-button variant="primary" @click="editDeck(deck)">Edit</b-button>-->
-            <!--            <b-button variant="danger" @click="deleteDeck(deck)">Delete</b-button>-->
+            </div>
           </b-card>
-        </b-col>
-      </b-row>
-    </b-container>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -73,7 +67,7 @@ export default {
       await DeckFactory.print(deck);
       this.isLoading = false;
     },
-    editDeck(deck) {
+    editDeck(deck = DeckFactory.getDeckToCreate()) {
       this.$router.push({ name: 'edition', params: { deckToEdit: deck } });
     },
     async deleteDeck(deck) {

@@ -52,4 +52,10 @@ export default {
     border-left: 1px solid black;
   }
 }
+.pointer {
+  cursor: pointer;
+}
+.btn-drag {
+  cursor: grab;
+}
 </style>

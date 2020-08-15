@@ -43,6 +43,9 @@ const search = {
       typeInclusion: EXACT_KEY,
       types: [...BLANK_ARRAY],
       results: [...BLANK_ARRAY],
+      resultByPage: 25,
+      pageIndex: 0,
+      pageCount: 0,
     };
   },
   inclusion: [

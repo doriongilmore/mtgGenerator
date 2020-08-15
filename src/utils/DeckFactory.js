@@ -1,7 +1,6 @@
 import jsPDF from 'jspdf';
 import CONST from 'src/utils/CONST';
 
-const defaultLists = [{ name: 'Main List', list: [] }];
 function getDefaultList() {
   return [{ name: 'Main List', list: [] }];
 }
