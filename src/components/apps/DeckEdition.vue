@@ -147,6 +147,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import draggable from 'vuedraggable';
 import { createNewList, addCardToDeck, onDragAndMove } from 'src/utils/dragDrop';
 import CONST from 'src/utils/CONST';
@@ -173,6 +174,9 @@ export default {
     };
   },
   computed: {
+    ...mapState({
+      settings: state => state.settings,
+    }),
     deck() {
       return this._deck || this.deckToEdit || this.tmpDeck || {};
     },
@@ -222,7 +226,7 @@ export default {
     onChange(sortLists = false) {
       this.updateDone = true;
       if (sortLists === true) {
-        const priority = CONST.sorting.defaultPriority;
+        const priority = this.settings.sorting;
         for (let i = 0, l = this.deck.lists.length; i < l; i++) {
           const List = this.deck.lists[i];
           List.list = List.list.sort((cardA, cardB) => {
