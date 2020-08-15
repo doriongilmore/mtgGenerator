@@ -1,35 +1,38 @@
 <template>
   <div id="search" class="h-100">
-    <form v-on:submit="handleSearch" id="form">
-      <b-container>
-        <b-row>
-          <b-col cols="1"><b-spinner v-if="isSearching"></b-spinner></b-col>
-          <b-col cols="7" md="5">
+    <div class="container">
+      <div class="flex-row">
+        <div class="col col-1"><div v-if="isSearching" class="spinner-border"></div></div>
+        <div class="col col-5 d-inline-flex">
+          <form v-on:submit="handleSearch" id="form" class="w-100">
+            <input type="submit" class="d-none" />
             <b-input type="text" v-model="searchParams.name" placeholder="Enter a name"></b-input>
-          </b-col>
-          <b-col cols="2" md="3">
-            <b-button variant="light" @click="handleSearch()">
-              <b-icon-search></b-icon-search><span class="d-none d-md-inline"> Search</span>
-            </b-button>
-          </b-col>
-          <b-col cols="2" md="3">
-            <b-button variant="light" @click="openSearch()">
-              <b-icon-tools></b-icon-tools><span class="d-none d-md-inline"> Filters</span>
-            </b-button>
-          </b-col>
-        </b-row>
-      </b-container>
-      <input type="submit" class="d-none" />
-    </form>
+          </form>
+        </div>
+        <div class="col col-3 d-inline-flex">
+          <div @click="handleSearch()" class="btn btn-light"><b-icon-search></b-icon-search></div>
+          <div @click="openSearch()" class="btn btn-light">
+            <b-icon-tools></b-icon-tools><span class="d-none d-md-inline"> Filters</span>
+          </div>
+        </div>
+        <div class="col col-3 d-inline-flex">
+          <button class="btn-sm btn-light" @click="previousPage()"><b-icon-arrow-left></b-icon-arrow-left></button>
+          <button class="btn-sm btn-light" @click="nextPage()"><b-icon-arrow-right></b-icon-arrow-right></button>
+          <span class="badge-light badge-pill pt-1"
+            >{{ searchParams.pageIndex + 1 }} / {{ searchParams.pageCount }}</span
+          >
+        </div>
+      </div>
+    </div>
     <div class="container h-75">
-      <div class="row mt-2">
-        <b-col cols="4">Name</b-col>
-        <b-col cols="2" class="text-left">Cost</b-col>
-        <b-col cols="3">Type</b-col>
-        <b-col cols="3">Set</b-col>
+      <div class="row flex-nowrap mt-2">
+        <div class="col col-4">Name</div>
+        <div class="col col-2 text-left">Cost</div>
+        <div class="col col-3">Type</div>
+        <div class="col col-3">Set</div>
       </div>
       <draggable
-        class="dragArea list-group pre-scrollable h-100"
+        class="dragArea list-group h-100"
         handle=".btn-drag"
         :list="results"
         :group="{ name: 'deck', pull: 'clone', put: false }"
@@ -37,15 +40,15 @@
         :move="onMove"
         id="resultsBody"
       >
-        <b-row v-for="result in results" :key="result.id" class="mt-1 text-center h-75">
-          <b-col cols="1" class="btn-drag">
+        <div class="row flex-nowrap mt-1 text-center" v-for="result in results" :key="result.id">
+          <div class="col col-1 btn-drag">
             <b-icon-filter-circle-fill variant="secondary" scale="1.5"></b-icon-filter-circle-fill>
-          </b-col>
-          <b-col cols="3" @click="openCard(result)">{{ result.name }}</b-col>
-          <b-col cols="2"><Mana :mana-cost="result.mana_cost"></Mana></b-col>
-          <b-col cols="3">{{ result.type_line }}</b-col>
-          <b-col cols="3">{{ result.set_name }}</b-col>
-        </b-row>
+          </div>
+          <div class="col col-3 pointer" @click="openCard(result)">{{ result.name }}</div>
+          <div class="col col-2"><Mana :mana-cost="result.mana_cost"></Mana></div>
+          <div class="col col-3">{{ result.type_line }}</div>
+          <div class="col col-3">{{ result.set_name }}</div>
+        </div>
       </draggable>
     </div>
   </div>
@@ -70,10 +73,22 @@ export default {
   computed: {
     ...mapState({
       searchParams: state => state.search,
-      results: state => state.search.results,
     }),
+    results() {
+      return this.$store.getters['search/resultPage'];
+    },
   },
   methods: {
+    previousPage() {
+      if (this.searchParams.pageIndex) {
+        this.$store.commit('search/previousPage');
+      }
+    },
+    nextPage() {
+      if (this.searchParams.pageIndex < this.searchParams.pageCount - 1) {
+        this.$store.commit('search/nextPage');
+      }
+    },
     openSearch() {
       this.searchModal().then(this.handleSearch);
     },
@@ -139,8 +154,6 @@ export default {
 #resultsBody {
   overflow-x: hidden;
   overflow-y: auto;
-  .btn-drag {
-    cursor: grab;
-  }
+  max-height: 200px;
 }
 </style>

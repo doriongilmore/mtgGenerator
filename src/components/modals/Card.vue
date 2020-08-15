@@ -9,34 +9,36 @@
     hide-footer
     centered
   >
-    <b-container class="bv-example-row" v-if="card">
-      <b-row cols="1" cols-lg="2">
-        <b-col class=""><img class="cardImage mh-100 mw-100" v-for="uri in card.image_uris" :src="uri"/></b-col>
-        <b-col class="">
-          <b-container class="bv-example-row">
-            <b-row cols="2" class="mt-2">
-              <b-col>{{ card.name }}</b-col>
-              <b-col><Mana class="manaCost" :mana-cost="card.mana_cost"/></b-col>
-            </b-row>
-            <b-row cols="2" class="mt-2">
-              <b-col>{{ card.type_line }}</b-col>
-              <b-col>{{ card.rarity }}</b-col>
-            </b-row>
-            <b-row v-if="card.oracle_text" cols="1" class="mt-2 p-1 border border-dark">
-              <b-col><MtgText :text="card.oracle_text"></MtgText></b-col>
-            </b-row>
-            <b-row id="legalities" cols="3" cols-sm="4" cols-xl="6" class="mt-2">
-              <b-col v-for="el in legalities" :key="el.format" :class="el.legal + ' m-1'" :title="el.legal">{{
-                el.format
-              }}</b-col>
-            </b-row>
-            <b-row class="rule mt-2" v-for="rule in rulings" :key="rule">
-              <b-col><MtgText :text="rule"></MtgText></b-col>
-            </b-row>
-          </b-container>
-        </b-col>
-      </b-row>
-    </b-container>
+    <div class="container" v-if="card">
+      <div class="row">
+        <div class="col-12 col-lg-6">
+          <img class="card mh-100 mw-100" v-for="uri in card.image_uris" :alt="card.name" :src="uri" />
+        </div>
+        <div class="col-12 col-lg-6">
+          <div class="container">
+            <div class="mt-2 row row-cols-2">
+              <div class="col">{{ card.name }}</div>
+              <div class="col"><Mana class="manaCost" :mana-cost="card.mana_cost" /></div>
+            </div>
+            <div class="mt-2 row row-cols-2">
+              <div class="col">{{ card.type_line }}</div>
+              <div class="col">{{ card.rarity }}</div>
+            </div>
+            <div v-if="card.oracle_text" class="mt-2 p-1 border border-dark row row-cols-1">
+              <div class="col"><MtgText :text="card.oracle_text"></MtgText></div>
+            </div>
+            <div id="legalities" class="mt-2 row row-cols-3 row-cols-sm-4 row-cols-xl-6">
+              <div v-for="el in legalities" :key="el.format" :class="el.legal + ' m-1 col'" :title="el.legal">
+                {{ el.format }}
+              </div>
+            </div>
+            <div class="rule mt-2 row row-cols-1" v-for="rule in rulings" :key="rule">
+              <div class="col"><MtgText :text="rule"></MtgText></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </b-modal>
 </template>
 

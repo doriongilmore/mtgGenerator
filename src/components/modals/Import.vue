@@ -1,16 +1,16 @@
 <template>
   <b-modal class="import" :id="modalId" size="md" title="Import" ref="modal" lazy hide-footer>
-    <div class="text-center w-100"><b-label for="importArea">Copy-Paste</b-label></div>
+    <div class="text-center w-100"><label for="importArea">Copy-Paste</label></div>
     <b-textarea class="mb-3" no-resize id="importArea" v-model="importText"></b-textarea>
     <input type="file" class="d-none" ref="fileInput" @change="updateFile" accept="text/plain,application/json" />
-    <b-btn-group class="text-center w-100">
-      <b-button variant="info" @click="chooseFile()">
+    <div class="text-center w-100 btn-group">
+      <div class="btn btn-info" @click="chooseFile()">
         <b-icon-file-text></b-icon-file-text><span> Or choose a file</span>
-      </b-button>
-      <b-button variant="primary" @click="doImport()">
+      </div>
+      <div class="btn btn-primary" @click="doImport()">
         <b-icon-download></b-icon-download><span> Then Import</span>
-      </b-button>
-    </b-btn-group>
+      </div>
+    </div>
     <b-progress
       class="mt-3"
       :value="progressValue"

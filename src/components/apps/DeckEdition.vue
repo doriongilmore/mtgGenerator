@@ -4,16 +4,16 @@
       <div id="deckHeader">
         <b-navbar toggleable="sm" fixed="sm" class="w-100">
           <b-navbar-brand><b-input type="text" v-model="deck.name" trim @change="onChange()"/></b-navbar-brand>
-          <b-nav-item :class="`btn rounded-pill ${updateDone ? 'btn-primary' : 'btn-light'}`" @click="saveDeck()">
-            <b-icon-clipboard-check :variant="!updateDone ? 'secondary' : 'light'"></b-icon-clipboard-check>
-            <span :class="`d-sm-none d-lg-inline ${updateDone ? 'btn-primary' : 'btn-light'}`"> Save</span>
-          </b-nav-item>
           <b-navbar-toggle class="deckButtons" target="nav-collapse-deck"></b-navbar-toggle>
           <b-collapse id="nav-collapse-deck" is-nav>
             <b-navbar-nav class="deckButtons">
+              <b-nav-item :class="`btn rounded-pill ${updateDone ? 'btn-primary' : 'btn-light'}`" @click="saveDeck()">
+                <b-icon-clipboard-check :variant="!updateDone ? 'secondary' : 'light'"></b-icon-clipboard-check>
+                <span :class="`d-sm-none d-lg-inline ${updateDone ? 'btn-primary' : 'btn-light'}`"> Save</span>
+              </b-nav-item>
               <b-nav-item class="btn btn-light rounded-pill" @click="onPrint()">
                 <b-icon-printer></b-icon-printer><span class="d-sm-none d-lg-inline btn-light"> Print</span>
-                <b-spinner v-if="isPrinting" small></b-spinner>
+                <div v-if="isPrinting" class="spinner-border-sm"></div>
               </b-nav-item>
               <b-nav-item class="btn btn-light rounded-pill" @click="onImport()">
                 <b-icon-download></b-icon-download><span class="d-sm-none d-lg-inline btn-light"> Import</span>
@@ -30,15 +30,15 @@
         </b-navbar>
       </div>
       <!--    TOP    -->
-      <b-container class="lists mt-3" v-for="(deckList, listIndex) in deck.lists" :key="`deckList-${listIndex}`">
-        <b-row class="listHeader">
-          <b-col cols="5" md="4" lg="6"><b-input type="text" v-model="deckList.name" @change="onChange"/></b-col>
-          <b-col cols="3">{{ getCardCount(deckList.list, true) }}</b-col>
-          <b-col
-            cols="2"
-            lg="1"
+      <div class="container lists mt-3" v-for="(deckList, listIndex) in deck.lists" :key="`deckList-${listIndex}`">
+        <div class="row listHeader">
+          <div class="col col-5 col-md-4 col-lg-6">
+            <b-input type="text" v-model="deckList.name" @change="onChange" />
+          </div>
+          <div class="col col-3">{{ getCardCount(deckList.list, true) }}</div>
+          <div
+            class="col col-2 col-lg-1 form-control btn"
             :title="`${deckList.ignoreStat ? 'ignored' : 'used'} in stats`"
-            class="form-control btn"
             @click="deckList.ignoreStat = !deckList.ignoreStat"
           >
             <b-icon-graph-down font-scale="1.2" v-if="deckList.ignoreStat"></b-icon-graph-down>
@@ -50,13 +50,13 @@
               v-model="deckList.ignoreStat"
               @change="onChange"
             />
-          </b-col>
-          <b-col cols="2" md="3" lg="2">
-            <b-button variant="light" @click="onExport(deckList)">
+          </div>
+          <div class="col col-2 col-md-3 col-lg-2">
+            <div class="btn btn-light" @click="onExport(deckList)">
               <b-icon-upload></b-icon-upload><span class="d-none d-md-inline"> Export</span>
-            </b-button>
-          </b-col>
-        </b-row>
+            </div>
+          </div>
+        </div>
         <draggable
           class="w-100"
           handle=".btn-drag"
@@ -65,12 +65,12 @@
           :move="onMove"
           @change="onChange"
         >
-          <b-row v-for="card in deckList.list" :key="card.id" class="mt-1">
+          <div v-for="card in deckList.list" :key="card.id" class="row mt-1">
             <!-- list body -->
-            <b-col cols="1" class="btn-drag">
+            <div class="col col-1 btn-drag">
               <b-icon-filter-circle-fill variant="light" scale="1.5" class="mt-2"></b-icon-filter-circle-fill>
-            </b-col>
-            <b-col cols="3" class="deckQte d-inline-flex">
+            </div>
+            <div class="col col-3 deckQte d-inline-flex">
               <b-icon-dash-circle-fill
                 class="mt-1 ml-0 mr-2 btn"
                 variant="light"
@@ -91,44 +91,44 @@
                 scale="1.5"
                 @click="increment(card, true)"
               ></b-icon-plus-circle-fill>
-            </b-col>
-            <b-col cols="3" v-on:click="openCard(card)">{{ card.name }}</b-col>
-            <b-col cols="3"><Mana :mana-cost="card.mana_cost"></Mana></b-col>
-            <b-col cols="2">
+            </div>
+            <div class="col col-3 pointer" v-on:click="openCard(card)">{{ card.name }}</div>
+            <div class="col col-3"><Mana :mana-cost="card.mana_cost"></Mana></div>
+            <div class="col col-2">
               <select v-model="card.printConfig" @change="onChange">
                 <option v-for="conf in printConfig.list" :key="conf.key" :value="conf.key">{{ conf.text }}</option>
               </select>
-            </b-col>
-          </b-row>
+            </div>
+          </div>
         </draggable>
-      </b-container>
-      <b-container class="mt-3 mb-2">
-        <b-row class="listHeader">
-          <b-col cols="12">
-            <b-button variant="light" @click="createNewList()">
+      </div>
+      <div class="container mt-3 mb-2">
+        <div class="row row-cols-1">
+          <div class="col">
+            <div class="btn btn-light" @click="createNewList()">
               <b-icon-plus-circle-fill></b-icon-plus-circle-fill><span class="d-inline"> Add a new list</span>
-            </b-button>
-          </b-col>
-        </b-row>
+            </div>
+          </div>
+        </div>
         <draggable class="dragArea list-group" :list="tmpList" group="deck" @change="createNewList">
-          <b-row v-for="card in tmpList" :key="card.id">
-            <b-col cols="2" class="deckQte">
+          <div class="row" v-for="card in tmpList" :key="card.id">
+            <div class="col col-2 deckQte">
               <b-input type="number" min="0" max="99" v-model="card.deckQte" @change="onChange" />
-            </b-col>
-            <b-col cols="5" class="name" v-on:click="openCard(card)">{{ card.name }}</b-col>
-            <b-col cols="2"><Mana class="manaCost" :mana-cost="card.mana_cost"></Mana></b-col>
-            <b-col cols="3" class="printConfig">
+            </div>
+            <div class=" col col-5 name" v-on:click="openCard(card)">{{ card.name }}</div>
+            <div class="col col-2"><Mana class="manaCost" :mana-cost="card.mana_cost"></Mana></div>
+            <div class="col col-3 printConfig">
               <select v-model="card.printConfig" @change="onChange">
                 <option v-for="conf in printConfig.list" :key="conf.key" :value="conf.key">{{ conf.text }}</option>
               </select>
-            </b-col>
-          </b-row>
+            </div>
+          </div>
         </draggable>
-      </b-container>
+      </div>
     </div>
 
     <!--    BOTTOM    -->
-    <b-card title="Card Title" no-body id="footer" class="h-50">
+    <b-card title="Card Title" no-body id="footer">
       <b-card-body class="text-center h-100" v-if="sectionToDisplay === 'search'">
         <Search></Search>
       </b-card-body>
@@ -332,9 +332,6 @@ export default {
   height: 100%;
   padding-top: 0;
 
-  .btn-drag {
-    cursor: grab;
-  }
   #deckEdition {
     height: 90%;
     max-height: inherit;
@@ -361,6 +358,7 @@ export default {
   #footer {
     position: absolute;
     width: 100%;
+    max-height: 60%;
     left: 0;
     bottom: 0;
 
