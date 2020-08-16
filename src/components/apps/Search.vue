@@ -18,9 +18,7 @@
         <div class="col col-3 d-inline-flex">
           <div class="btn-sm btn-light" @click="previousPage()"><b-icon-arrow-left></b-icon-arrow-left></div>
           <div class="btn-sm btn-light" @click="nextPage()"><b-icon-arrow-right></b-icon-arrow-right></div>
-          <span class="badge-light badge-pill pt-1"
-            >{{ searchParams.pageIndex + 1 }} / {{ searchParams.pageCount + 1 }}</span
-          >
+          <span class="badge-light badge-pill pt-1">{{ pageIndex + 1 }} / {{ pageCount }}</span>
         </div>
       </div>
     </div>
@@ -47,7 +45,7 @@
 <script>
 import draggable from 'vuedraggable';
 import modalHandler from '../../mixins/modalHandler';
-import { mapState } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
 import Mana from '../uiElements/Mana.vue';
 import AddToListButton from '../uiElements/AddToListButton.vue';
 
@@ -63,8 +61,13 @@ export default {
   },
   computed: {
     ...mapState({
-      searchParams: state => state.search,
+      pageIndex: state => state.search.pageIndex,
       decks: state => Object.values(state.decks.decksByIds),
+    }),
+    ...mapGetters({
+      pageCount: 'search/pageCount',
+      searchParams: 'search/searchParams',
+      results: 'search/resultPage',
     }),
     addList() {
       const list = this.decks.sort((deckA, deckB) => {
@@ -80,18 +83,15 @@ export default {
       }
       return list;
     },
-    results() {
-      return this.$store.getters['search/resultPage'];
-    },
   },
   methods: {
     previousPage() {
-      if (this.searchParams.pageIndex) {
+      if (this.pageIndex) {
         this.$store.commit('search/previousPage');
       }
     },
     nextPage() {
-      if (this.searchParams.pageIndex < this.searchParams.pageCount - 1) {
+      if (this.pageIndex < this.pageCount - 1) {
         this.$store.commit('search/nextPage');
       }
     },
@@ -107,14 +107,13 @@ export default {
     async handleSearch(event) {
       event && event.preventDefault();
       this.isSearching = true;
-      let results = [];
       try {
-        results = await this.$store.dispatch('mtg/search', this.searchParams);
+        await this.$store.dispatch('mtg/search', this.searchParams);
+        this.$store.commit('search/setResults', { results: [], searchParams: this.searchParams, finished: true });
       } catch (error) {
         console.error('error during search', { args: this.searchParams, error });
       }
       this.isSearching = false;
-      this.$store.commit('search/setResults', results);
     },
   },
   mounted() {

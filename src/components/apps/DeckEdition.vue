@@ -231,7 +231,9 @@ export default {
           const List = this.deck.lists[i];
           List.list = List.list.sort((cardA, cardB) => {
             for (let j = 0, k = priority.length; j < k; j++) {
-              const res = priority[j].fn(cardA, cardB);
+              const key = priority[j].key;
+              // fn lost when storing in localStorage
+              const res = CONST.sorting[key].fn(cardA, cardB);
               if (res) {
                 return res;
               }
@@ -334,9 +336,19 @@ export default {
   },
 };
 function getTypeKey(priority, typeLine) {
+  const cardType = typeLine
+    .split('—')[0]
+    .split('//')[0]
+    .replace(/Snow/g, '')
+    .replace(/Basic/g, '')
+    .replace(/Legendary/g, '')
+    .replace(/Legend/g, '')
+    .replace(/Tribal/g, '')
+    .replace(/Token/g, '')
+    .trim();
   for (let i = 0, l = priority.length; i < l; i++) {
     const type = priority[i].value;
-    if (typeLine.includes(type)) {
+    if (cardType === type) {
       return type;
     }
   }

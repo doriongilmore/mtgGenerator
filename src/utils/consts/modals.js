@@ -33,6 +33,7 @@ const modals = {
   confirmationMessage: {
     deckLost: 'The deck will be lost permanently!',
     allDecksLost: 'All you decks will be lost permanently and the "Classic List" will return to it\'s default state.',
+    settingLost: 'This setting will return to its default state.',
     allSettingsLost: 'All your settings will return to their default state.',
   },
   events: {

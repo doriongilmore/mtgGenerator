@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" id="settings">
     <!--    <div class="row mt-2 h2">Global Settings</div>-->
     <!--    <div class="row mt-1"></div>-->
     <div class="row mt-3 h2">Deck Settings</div>
@@ -21,9 +21,16 @@
       <div class="col col-8">{{ sort.label }}</div>
     </div>
 
-    <div class="row mt-2 h4">
-      Type Grouping
-      <input type="checkbox" v-model="settings.deck.typeGrouping" class="m-2 custom-checkbox" />
+    <div class="row mt-2">
+      <div class="col col-6 h4">Type Grouping</div>
+      <div class="col col-3">
+        <div @click="changeTypeGrouping()" :class="`btn btn-${settings.deck.typeGrouping ? 'light' : 'secondary'}`">
+          {{ settings.deck.typeGrouping ? 'Enabled' : 'Disabled' }}
+        </div>
+      </div>
+      <div class="col col-3">
+        <div @click="reset(settingKeys.typeGrouping)" class="btn btn-danger">Reset</div>
+      </div>
     </div>
     <div class="row mt-1" v-for="(type, index) in settings.deck.typePriority">
       <div class="col col-2 col-md-1">
@@ -44,7 +51,7 @@
     <div class="row mt-3 h2">
       <div class="col col-3" />
       <div class="col col-6">
-        <div @click="resetAll()" class="btn btn-danger">
+        <div @click="reset()" class="btn btn-danger">
           <b-icon-trash></b-icon-trash><span> Reset to default settings</span>
         </div>
       </div>
@@ -65,6 +72,7 @@ export default {
   data() {
     return {
       typeList: CONST.sorting.typeList,
+      settingKeys: CONST.settings.keys,
     };
   },
   computed: {
@@ -73,6 +81,9 @@ export default {
     }),
   },
   methods: {
+    changeTypeGrouping() {
+      this.$store.commit('settings/setTypeGrouping', !this.settings.deck.typeGrouping);
+    },
     changeTypeOrder(index, up) {
       try {
         const newList = changeListOrder(this.settings.deck.typePriority, index, up);
@@ -89,10 +100,16 @@ export default {
         console.warn('sorting order change blocked', e);
       }
     },
-    async resetAll() {
+    async reset(setting = null) {
       try {
-        await this.confirmModal(CONST.modals.confirmationMessage.allSettingsLost);
-        this.$store.commit('settings/reset');
+        const message = setting
+          ? CONST.modals.confirmationMessage.settingLost
+          : CONST.modals.confirmationMessage.allSettingsLost;
+        await this.confirmModal(message);
+        this.$store.commit('settings/reset', setting);
+        if (setting.key === CONST.settings.keys.typeGrouping.key) {
+          this.$store.commit('settings/reset', CONST.settings.keys.typePriority);
+        }
         // todo toast message
       } catch (e) {
         // todo toast message
@@ -103,4 +120,10 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="less" scoped>
+#settings {
+  height: 95%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+</style>
