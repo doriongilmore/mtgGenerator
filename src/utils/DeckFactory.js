@@ -1,8 +1,16 @@
 import jsPDF from 'jspdf';
 import CONST from 'src/utils/CONST';
 
+function createNewList(list = [], name = 'Choose a name') {
+  return {
+    name,
+    ignoreStat: false,
+    list: [...list],
+  };
+}
+
 function getDefaultList() {
-  return [{ name: 'Main List', list: [] }];
+  return [createNewList([], 'Main List')];
 }
 
 function simplifyCard(c) {
@@ -176,6 +184,26 @@ class DeckFactory {
    */
   static simplifyCard(card) {
     return simplifyCard(card);
+  }
+  /**
+   * @param {Array<Card>} list
+   * @param {String} name
+   * @returns {DeckList}
+   */
+  static createNewList(list = [], name = 'Choose a name') {
+    return createNewList(list, name);
+  }
+  static cloneCardForDeck(card) {
+    const newCard = { ...card };
+    if (!newCard.deckQte) {
+      newCard.deckQte = 4;
+    }
+    if (!newCard.printConfig) {
+      newCard.printConfig = newCard.type_line.includes('Basic Land')
+        ? CONST.printConfig.DONT_PRINT.key
+        : CONST.printConfig.BORDER_3.key;
+    }
+    return newCard;
   }
   /**
    * @param {Deck} deck

@@ -22,8 +22,7 @@ import DeckFactory from 'src/utils/DeckFactory';
 export const decks = {
   namespaced: true,
   state: {
-    decksByIds: {},
-    tmpDeck: {},
+    decksByIds: JSON.parse(window.localStorage.getItem(CONST.storageKeys.deckList) || mockList),
   },
   mutations: {
     deleteDeck(state, deck) {
@@ -46,39 +45,33 @@ export const decks = {
       state.decksByIds = newDecksByIds;
       window.localStorage.setItem(CONST.storageKeys.deckList, JSON.stringify(newDecksByIds));
     },
-    setTmpDeck(state, deck) {
-      state.tmpDeck = deck;
-      window.localStorage.setItem(CONST.storageKeys.tmpDeck, JSON.stringify(deck));
-    },
     reset(state) {
       const deckList = JSON.parse(mockList);
       const newDecksByIds = { ...deckList };
       state.decksByIds = newDecksByIds;
-      state.tmpDeck = null;
       window.localStorage.setItem(CONST.storageKeys.deckList, JSON.stringify(newDecksByIds));
       window.localStorage.removeItem(CONST.storageKeys.tmpDeck);
     },
-  },
-  actions: {
-    getDecks({ commit, state }) {
-      if (!Object.keys(state.decksByIds).length) {
-        const deckList = JSON.parse(window.localStorage.getItem(CONST.storageKeys.deckList) || mockList);
-        const cards = DeckFactory.getCards(deckList);
-        commit('mtg/setCards', cards, { root: true });
-        commit('setDecks', Object.values(deckList));
-        return deckList;
+    addCardToList(state, { card, deck, listIndex }) {
+      const _deck = deck || DeckFactory.getDeckToCreate();
+      let _listIndex = 0;
+      if (listIndex || listIndex === 0) {
+        _listIndex = listIndex;
+      } else if (deck) {
+        _listIndex = deck.lists.length;
       }
-      return Object.values(state.decksByIds);
-    },
-    getTmpDeck({ dispatch, commit, state }) {
-      const storageTmpDeck = JSON.parse(window.localStorage.getItem(CONST.storageKeys.tmpDeck));
-      const newTmpDeck = DeckFactory.getDeckToCreate();
-      const tmpDeck =
-        !storageTmpDeck || DeckFactory.areSameDeck(storageTmpDeck, newTmpDeck) ? newTmpDeck : storageTmpDeck;
-      const cards = DeckFactory.getCards([tmpDeck]);
-      commit('mtg/setCards', cards, { root: true });
-      commit('setTmpDeck', tmpDeck);
-      return tmpDeck;
+      const newDecksByIds = { ...state.decksByIds };
+      if (!_deck.lists[_listIndex]) {
+        _deck.lists.push(DeckFactory.createNewList());
+      }
+      if (!_deck.lists[_listIndex].list.find(c => c.id === card.id)) {
+        _deck.lists[_listIndex].list.push(DeckFactory.cloneCardForDeck(card));
+        DeckFactory.update(_deck);
+        newDecksByIds[_deck.id] = _deck;
+        state.decksByIds = newDecksByIds;
+        window.localStorage.setItem(CONST.storageKeys.deckList, JSON.stringify(newDecksByIds));
+      }
     },
   },
+  actions: {},
 };

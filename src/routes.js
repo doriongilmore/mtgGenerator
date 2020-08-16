@@ -6,7 +6,7 @@ import Settings from 'src/components/apps/Settings.vue';
 export const routeOpts = {
   routes: [
     { path: '/', name: 'home', component: Home },
-    { path: '/settings', name: 'home', component: Settings },
+    { path: '/settings', name: 'settings', component: Settings },
     { path: '/decks', name: 'deckList', component: DecksList },
     { path: '/deck', name: 'edition', component: DeckEdition, props: true },
   ],

@@ -19,7 +19,7 @@
           <div class="btn-sm btn-light" @click="previousPage()"><b-icon-arrow-left></b-icon-arrow-left></div>
           <div class="btn-sm btn-light" @click="nextPage()"><b-icon-arrow-right></b-icon-arrow-right></div>
           <span class="badge-light badge-pill pt-1"
-            >{{ searchParams.pageIndex + 1 }} / {{ searchParams.pageCount }}</span
+            >{{ searchParams.pageIndex + 1 }} / {{ searchParams.pageCount + 1 }}</span
           >
         </div>
       </div>
@@ -31,39 +31,30 @@
         <div class="col col-3">Type</div>
         <div class="col col-3">Set</div>
       </div>
-      <draggable
-        class="dragArea list-group h-100"
-        handle=".btn-drag"
-        :list="results"
-        :group="{ name: 'deck', pull: 'clone', put: false }"
-        :clone="addCardToDeck"
-        :move="onMove"
-        id="resultsBody"
-      >
+      <div class="list-group h-100" id="resultsBody">
         <div class="row flex-nowrap mt-1 text-center" v-for="result in results" :key="result.id">
-          <div class="col col-1 btn-drag">
-            <b-icon-filter-circle-fill variant="secondary" scale="1.5"></b-icon-filter-circle-fill>
-          </div>
+          <AddToListButton class="col col-1" :add-list="addList" :card="result" variant="secondary"></AddToListButton>
           <div class="col col-3 pointer" @click="openCard(result)">{{ result.name }}</div>
           <div class="col col-2"><Mana :mana-cost="result.mana_cost"></Mana></div>
           <div class="col col-3">{{ result.type_line }}</div>
           <div class="col col-3">{{ result.set_name }}</div>
         </div>
-      </draggable>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import draggable from 'vuedraggable';
-import { addCardToDeck, onDragAndMove } from 'src/utils/dragDrop';
 import modalHandler from '../../mixins/modalHandler';
 import { mapState } from 'vuex';
 import Mana from '../uiElements/Mana.vue';
+import AddToListButton from '../uiElements/AddToListButton.vue';
 
 export default {
   name: 'Search',
-  components: { draggable, Mana },
+  components: { draggable, Mana, AddToListButton },
+  props: ['deck'],
   mixins: [modalHandler],
   data() {
     return {
@@ -73,7 +64,22 @@ export default {
   computed: {
     ...mapState({
       searchParams: state => state.search,
+      decks: state => Object.values(state.decks.decksByIds),
     }),
+    addList() {
+      const list = this.decks.sort((deckA, deckB) => {
+        if (this.deck && deckA.id === this.deck.id) {
+          return -1;
+        } else if (this.deck && deckB.id === this.deck.id) {
+          return 1;
+        }
+        return 0;
+      });
+      if (this.deck && !list.find(e => e.id === this.deck.id)) {
+        list.unshift(this.deck);
+      }
+      return list;
+    },
     results() {
       return this.$store.getters['search/resultPage'];
     },
@@ -110,29 +116,17 @@ export default {
       this.isSearching = false;
       this.$store.commit('search/setResults', results);
     },
-    /**
-     * Fires automatically when dragdrop detected, checks if allowed
-     * @param {Object} event (automatic)
-     * @return {boolean}
-     */
-    onMove(event) {
-      return onDragAndMove(event);
-    },
-    /**
-     * Fires automatically when a dragdrop succeeds, clones a card
-     * add deck properties to a card from search result
-     * doesn't change cards from other lists
-     * @param {Card} card
-     * @return {Object}
-     */
-    addCardToDeck(card) {
-      return addCardToDeck(card);
-    },
+  },
+  mounted() {
+    this.$root.$on('bv::dropdown::show', bvEvent => {
+      bvEvent.target.style['max-height'] = '100px';
+      bvEvent.target.style['overflow-y'] = 'auto';
+    });
   },
 };
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 #resultsBody {
   overflow-x: hidden;
   overflow-y: auto;

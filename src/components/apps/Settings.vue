@@ -1,40 +1,82 @@
 <template>
   <div class="container">
-    <div class="row mt-2 h2">Global Settings</div>
-    <div class="row mt-1"></div>
+    <!--    <div class="row mt-2 h2">Global Settings</div>-->
+    <!--    <div class="row mt-1"></div>-->
     <div class="row mt-3 h2">Deck Settings</div>
-    <div class="row mt-1">
-      <div class="col col-12 h4">Card Sorting</div>
-      <div class="w-25 d-inline-flex" v-for="(sort, index) in settings.sorting">
-        <div class="col">{{ sort.label }}</div>
-        <div class="col" v-if="index !== settings.sorting.length - 1">
-          <div class="btn-sm btn-light text-center" @click="changeSortingOrder(index)">
-            <b-icon-arrow-left scale="1.4"></b-icon-arrow-left>
-            <b-icon-arrow-right scale="1.4"></b-icon-arrow-right>
-          </div>
+    <div class="row mt-2 h4">Card Sorting</div>
+    <div class="row mt-1" v-for="(sort, index) in settings.deck.sorting">
+      <div class="col col-2 col-md-1">
+        <div :class="`btn  btn-light text-center${!index ? ' disabled' : ''}`" @click="changeSortingOrder(index, true)">
+          <b-icon-arrow-up scale="1.2"></b-icon-arrow-up>
         </div>
       </div>
+      <div class="col col-2 col-md-1">
+        <div
+          :class="`btn btn-light text-center${index === settings.deck.sorting.length - 1 ? ' disabled' : ''}`"
+          @click="changeSortingOrder(index, false)"
+        >
+          <b-icon-arrow-down scale="1.2"></b-icon-arrow-down>
+        </div>
+      </div>
+      <div class="col col-8">{{ sort.label }}</div>
+    </div>
+
+    <div class="row mt-2 h4">
+      Type Grouping
+      <input type="checkbox" v-model="settings.deck.typeGrouping" class="m-2 custom-checkbox" />
+    </div>
+    <div class="row mt-1" v-for="(type, index) in settings.deck.typePriority">
+      <div class="col col-2 col-md-1">
+        <div :class="`btn  btn-light text-center${!index ? ' disabled' : ''}`" @click="changeTypeOrder(index, true)">
+          <b-icon-arrow-up scale="1.2"></b-icon-arrow-up>
+        </div>
+      </div>
+      <div class="col col-2 col-md-1">
+        <div
+          :class="`btn btn-light text-center${index === settings.deck.typePriority.length - 1 ? ' disabled' : ''}`"
+          @click="changeTypeOrder(index, false)"
+        >
+          <b-icon-arrow-down scale="1.2"></b-icon-arrow-down>
+        </div>
+      </div>
+      <div class="col col-8">{{ type.value }}</div>
     </div>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
+import CONST from '../../utils/CONST';
+import { changeListOrder } from '../../utils/dragDrop';
 
 export default {
   name: 'Settings',
+  data() {
+    return {
+      typeList: CONST.sorting.typeList,
+    };
+  },
   computed: {
     ...mapState({
       settings: state => state.settings,
     }),
   },
   methods: {
-    changeSortingOrder(startIndex) {
-      const first = this.settings.sorting[startIndex];
-      const second = this.settings.sorting[startIndex + 1];
-      this.settings.sorting[startIndex] = second;
-      this.settings.sorting[startIndex + 1] = first;
-      this.$store.commit('settings/setSorting', this.settings.sorting);
+    changeTypeOrder(index, up) {
+      try {
+        const newList = changeListOrder(this.settings.deck.typePriority, index, up);
+        this.$store.commit('settings/setTypePriority', newList);
+      } catch (e) {
+        console.warn('type order change blocked', e);
+      }
+    },
+    changeSortingOrder(index, up) {
+      try {
+        const newList = changeListOrder(this.settings.deck.sorting, index, up);
+        this.$store.commit('settings/setSorting', newList);
+      } catch (e) {
+        console.warn('sorting order change blocked', e);
+      }
     },
   },
 };
