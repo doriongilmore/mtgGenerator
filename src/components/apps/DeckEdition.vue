@@ -86,7 +86,7 @@
               ></AddToListButton>
               <div class="col col-4 col-sm-3 deckQte d-inline-flex">
                 <div class="btn btn-sm btn-outline-light" @click="increment(card, false)">
-                  <b-icon-dash-circle-fill></b-icon-dash-circle-fill>
+                  <b-icon-dash-circle-fill class="mt-1"></b-icon-dash-circle-fill>
                 </div>
                 <b-input
                   type="text"
@@ -97,7 +97,7 @@
                   @change="onChange()"
                 />
                 <div class="btn btn-sm btn-outline-light" @click="increment(card, true)">
-                  <b-icon-plus-circle-fill></b-icon-plus-circle-fill>
+                  <b-icon-plus-circle-fill class="mt-1"></b-icon-plus-circle-fill>
                 </div>
               </div>
               <div class="col col-4 col-sm-3 pointer" v-on:click="openCard(card)">{{ card.name }}</div>
@@ -395,6 +395,7 @@ function getTypeKey(priority, typeLine) {
     height: 85%;
     max-height: inherit;
     #deckContent {
+      overflow-x: hidden;
       overflow-y: auto;
       .deckQte {
         .input {

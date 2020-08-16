@@ -41,6 +41,15 @@
       </div>
       <div class="col col-8">{{ type.value }}</div>
     </div>
+    <div class="row mt-3 h2">
+      <div class="col col-3" />
+      <div class="col col-6">
+        <div @click="resetAll()" class="btn btn-danger">
+          <b-icon-trash></b-icon-trash><span> Reset to default settings</span>
+        </div>
+      </div>
+      <div class="col col-3" />
+    </div>
   </div>
 </template>
 
@@ -48,9 +57,11 @@
 import { mapState } from 'vuex';
 import CONST from '../../utils/CONST';
 import { changeListOrder } from '../../utils/dragDrop';
+import modalHandler from '../../mixins/modalHandler';
 
 export default {
   name: 'Settings',
+  mixins: [modalHandler],
   data() {
     return {
       typeList: CONST.sorting.typeList,
@@ -76,6 +87,16 @@ export default {
         this.$store.commit('settings/setSorting', newList);
       } catch (e) {
         console.warn('sorting order change blocked', e);
+      }
+    },
+    async resetAll() {
+      try {
+        await this.confirmModal(CONST.modals.confirmationMessage.allSettingsLost);
+        this.$store.commit('settings/reset');
+        // todo toast message
+      } catch (e) {
+        // todo toast message
+        console.info('delete canceled');
       }
     },
   },
