@@ -224,7 +224,7 @@ export default {
      */
     onChange(sortLists = false) {
       this.updateDone = true;
-      DeckFactory.update(this.deck);
+      DeckFactory.update(this.deck, false);
       if (sortLists === true) {
         const priority = this.settings.deck.sorting;
         for (let i = 0, l = this.deck.lists.length; i < l; i++) {

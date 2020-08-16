@@ -131,8 +131,8 @@ class DeckFactory {
   /**
    * @param {Deck} deck
    */
-  static update(deck) {
-    cleanDeck(deck);
+  static update(deck, clean = true) {
+    clean && cleanDeck(deck);
     updateDeckCardCount(deck);
     updateDeckColors(deck);
     deck.dateEdition = new Date();
