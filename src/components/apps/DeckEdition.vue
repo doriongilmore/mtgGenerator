@@ -38,19 +38,13 @@
             </div>
             <div class="d-none d-md-block col col-3">{{ getCardCount(deckList.list, true) }}</div>
             <div
-              class="col col-2 d-inline-flex"
+              class="col col-1 d-inline-flex"
               :title="`${deckList.ignoreStat ? 'ignored' : 'used'} in stats`"
               @click="deckList.ignoreStat = !deckList.ignoreStat"
             >
               <b-icon-graph-down font-scale="1.2" v-if="deckList.ignoreStat"></b-icon-graph-down>
               <b-icon-graph-up font-scale="1.2" v-else></b-icon-graph-up>
-              <input
-                :id="'ignoreStat' + listIndex"
-                class="w-50"
-                type="checkbox"
-                v-model="deckList.ignoreStat"
-                @change="onChange"
-              />
+              <input type="checkbox" v-model="deckList.ignoreStat" @change="onChange" />
             </div>
             <div class="col col-4 d-inline-flex">
               <div class="btn btn-sm btn-light" @click="onExport(deckList)">
@@ -90,12 +84,9 @@
                 :ignore-index="listIndex"
               ></AddToListButton>
               <div class="col col-4 col-sm-3 deckQte d-inline-flex">
-                <b-icon-dash-circle-fill
-                  class="mt-1 ml-0 mr-2 btn minus"
-                  variant="light"
-                  scale="1.5"
-                  @click="increment(card, false)"
-                ></b-icon-dash-circle-fill>
+                <div class="btn btn-sm btn-outline-light" @click="increment(card, false)">
+                  <b-icon-dash-circle-fill></b-icon-dash-circle-fill>
+                </div>
                 <b-input
                   type="text"
                   class="form-control input-number input text-center"
@@ -104,12 +95,9 @@
                   v-model="card.deckQte"
                   @change="onChange"
                 />
-                <b-icon-plus-circle-fill
-                  class="mt-1 ml-0 mr-0 btn plus"
-                  variant="light"
-                  scale="1.5"
-                  @click="increment(card, true)"
-                ></b-icon-plus-circle-fill>
+                <div class="btn btn-sm btn-outline-light" @click="increment(card, true)">
+                  <b-icon-plus-circle-fill></b-icon-plus-circle-fill>
+                </div>
               </div>
               <div class="col col-4 col-sm-3 pointer" v-on:click="openCard(card)">{{ card.name }}</div>
               <div class="d-none d-sm-block col col-3"><Mana :mana-cost="card.mana_cost"></Mana></div>
