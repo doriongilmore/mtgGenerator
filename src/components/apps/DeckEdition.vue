@@ -37,14 +37,15 @@
               <b-input type="text" v-model="deckList.name" @change="onChange" />
             </div>
             <div class="d-none d-md-block col col-3">{{ getCardCount(deckList.list, true) }}</div>
-            <div
-              class="col col-1 d-inline-flex"
-              :title="`${deckList.ignoreStat ? 'ignored' : 'used'} in stats`"
-              @click="deckList.ignoreStat = !deckList.ignoreStat"
-            >
-              <b-icon-graph-down font-scale="1.2" v-if="deckList.ignoreStat"></b-icon-graph-down>
-              <b-icon-graph-up font-scale="1.2" v-else></b-icon-graph-up>
-              <input type="checkbox" v-model="deckList.ignoreStat" @change="onChange" />
+            <div class="col col-1 d-inline-flex">
+              <div
+                :class="`btn btn-${deckList.ignoreStat ? 'secondary' : 'light'}`"
+                :title="`${deckList.ignoreStat ? 'ignored' : 'used'} in stats`"
+                @click="deckList.ignoreStat = !deckList.ignoreStat"
+              >
+                <b-icon-graph-down font-scale="1.2" v-if="deckList.ignoreStat"></b-icon-graph-down>
+                <b-icon-graph-up font-scale="1.2" v-else></b-icon-graph-up>
+              </div>
             </div>
             <div class="col col-4 d-inline-flex">
               <div class="btn btn-sm btn-light" @click="onExport(deckList)">
@@ -93,7 +94,7 @@
                   min="1"
                   max="99"
                   v-model="card.deckQte"
-                  @change="onChange"
+                  @change="onChange()"
                 />
                 <div class="btn btn-sm btn-outline-light" @click="increment(card, true)">
                   <b-icon-plus-circle-fill></b-icon-plus-circle-fill>
@@ -223,6 +224,7 @@ export default {
      */
     onChange(sortLists = false) {
       this.updateDone = true;
+      DeckFactory.update(this.deck);
       if (sortLists === true) {
         const priority = this.settings.deck.sorting;
         for (let i = 0, l = this.deck.lists.length; i < l; i++) {
