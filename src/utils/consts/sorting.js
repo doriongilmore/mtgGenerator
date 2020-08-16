@@ -49,12 +49,20 @@ const QteSort = { label: 'By quantity', fn: sortByQte };
 const NameSort = { label: 'By name', fn: sortByName };
 const CmcSort = { label: 'By cmc', fn: sortByCmc };
 
+const typeList = [
+  { key: 'Planeswalker', value: 'Planeswalker' },
+  { key: 'Artifact', value: 'Artifact' },
+  { key: 'Creature', value: 'Creature' },
+  { key: 'Enchantment', value: 'Enchantment' },
+  { key: 'Instant', value: 'Instant' },
+  { key: 'Sorcery', value: 'Sorcery' },
+  { key: 'Land', value: 'Land' },
+  { key: 'Token', value: 'Token' },
+];
+
 const sorting = {
-  CmcSort,
-  NameSort,
-  ColorSort,
-  QteSort,
-  defaultPriority: [CmcSort, ColorSort, QteSort, NameSort],
+  defaultTypePriority: typeList,
+  defaultSortPriority: [CmcSort, ColorSort, QteSort, NameSort],
 };
 
 export default sorting;

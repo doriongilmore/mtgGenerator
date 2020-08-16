@@ -3,11 +3,22 @@ import CONST from '../utils/CONST.js';
 export const settings = {
   namespaced: true,
   state: {
-    sorting: [...CONST.sorting.defaultPriority],
+    global: {},
+    deck: {
+      typeGrouping: true,
+      typePriority: [...CONST.sorting.defaultTypePriority],
+      sorting: [...CONST.sorting.defaultSortPriority],
+    },
   },
   mutations: {
+    setTypeGrouping(state, bool) {
+      state.deck.typeGrouping = bool;
+    },
+    setTypePriority(state, list) {
+      state.deck.typePriority = [...list];
+    },
     setSorting(state, list) {
-      state.sorting = [...list];
+      state.deck.sorting = [...list];
     },
   },
 };

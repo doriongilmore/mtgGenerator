@@ -21,7 +21,7 @@
               <b-nav-item class="btn btn-light rounded-pill" @click="onExport(deck)">
                 <b-icon-upload></b-icon-upload><span class="d-sm-none d-lg-inline btn-light"> Export</span>
               </b-nav-item>
-              <b-nav-item class="btn btn-light rounded-pill" @click="deleteDeck(deck)">
+              <b-nav-item class="btn btn-light rounded-pill" @click="deleteDeck()">
                 <b-icon-trash variant="danger"></b-icon-trash>
                 <span class="d-sm-none d-lg-inline btn-outline-danger"> Delete</span>
               </b-nav-item>
@@ -30,107 +30,115 @@
         </b-navbar>
       </div>
       <!--    TOP    -->
-      <div class="container lists mt-3" v-for="(deckList, listIndex) in deck.lists" :key="`deckList-${listIndex}`">
-        <div class="row listHeader">
-          <div class="col col-5 col-md-4 col-lg-6">
-            <b-input type="text" v-model="deckList.name" @change="onChange" />
-          </div>
-          <div class="col col-3">{{ getCardCount(deckList.list, true) }}</div>
-          <div
-            class="col col-2 col-lg-1 form-control btn"
-            :title="`${deckList.ignoreStat ? 'ignored' : 'used'} in stats`"
-            @click="deckList.ignoreStat = !deckList.ignoreStat"
-          >
-            <b-icon-graph-down font-scale="1.2" v-if="deckList.ignoreStat"></b-icon-graph-down>
-            <b-icon-graph-up font-scale="1.2" v-else></b-icon-graph-up>
-            <input
-              :id="'ignoreStat' + listIndex"
-              class="w-50"
-              type="checkbox"
-              v-model="deckList.ignoreStat"
-              @change="onChange"
-            />
-          </div>
-          <div class="col col-2 col-md-3 col-lg-2">
-            <div class="btn btn-light" @click="onExport(deckList)">
-              <b-icon-upload></b-icon-upload><span class="d-none d-md-inline"> Export</span>
+      <div id="deckContent">
+        <div class="container lists mt-3" v-for="(deckList, listIndex) in deck.lists" :key="`deckList-${listIndex}`">
+          <div class="row listHeader">
+            <div class="col col-6 col-md-3">
+              <b-input type="text" v-model="deckList.name" @change="onChange" />
             </div>
-          </div>
-        </div>
-        <draggable
-          class="w-100"
-          handle=".btn-drag"
-          :list="deckList.list"
-          group="deck"
-          :move="onMove"
-          @change="onChange(true)"
-        >
-          <div v-for="card in deckList.list" :key="card.id" class="row mt-1">
-            <!-- list body -->
-            <div class="col col-1 btn-drag">
-              <b-icon-filter-circle-fill variant="light" scale="1.5" class="mt-2"></b-icon-filter-circle-fill>
-            </div>
-            <div class="col col-3 deckQte d-inline-flex">
-              <b-icon-dash-circle-fill
-                class="mt-1 ml-0 mr-2 btn"
-                variant="light"
-                scale="1.5"
-                @click="increment(card, false)"
-              ></b-icon-dash-circle-fill>
-              <b-input
-                type="text"
-                class="form-control input-number"
-                min="1"
-                max="99"
-                v-model="card.deckQte"
+            <div class="d-none d-md-block col col-3">{{ getCardCount(deckList.list, true) }}</div>
+            <div
+              class="col col-2 d-inline-flex"
+              :title="`${deckList.ignoreStat ? 'ignored' : 'used'} in stats`"
+              @click="deckList.ignoreStat = !deckList.ignoreStat"
+            >
+              <b-icon-graph-down font-scale="1.2" v-if="deckList.ignoreStat"></b-icon-graph-down>
+              <b-icon-graph-up font-scale="1.2" v-else></b-icon-graph-up>
+              <input
+                :id="'ignoreStat' + listIndex"
+                class="w-50"
+                type="checkbox"
+                v-model="deckList.ignoreStat"
                 @change="onChange"
               />
-              <b-icon-plus-circle-fill
-                class="mt-1 ml-0 mr-0 btn"
-                variant="light"
-                scale="1.5"
-                @click="increment(card, true)"
-              ></b-icon-plus-circle-fill>
             </div>
-            <div class="col col-3 pointer" v-on:click="openCard(card)">{{ card.name }}</div>
-            <div class="col col-3"><Mana :mana-cost="card.mana_cost"></Mana></div>
-            <div class="col col-2">
-              <select v-model="card.printConfig" @change="onChange">
-                <option v-for="conf in printConfig.list" :key="conf.key" :value="conf.key">{{ conf.text }}</option>
-              </select>
+            <div class="col col-4 d-inline-flex">
+              <div class="btn btn-sm btn-light" @click="onExport(deckList)">
+                <b-icon-upload></b-icon-upload><span class="d-none d-md-inline"> Export</span>
+              </div>
+              <div
+                :class="`btn btn-sm btn-light text-center${!listIndex ? ' disabled' : ''}`"
+                @click="changeListOrder(listIndex, true)"
+              >
+                <b-icon-arrow-up scale="1.2"></b-icon-arrow-up>
+              </div>
+              <div
+                :class="`btn btn-sm btn-light text-center${listIndex === deck.lists.length - 1 ? ' disabled' : ''}`"
+                @click="changeListOrder(listIndex, false)"
+              >
+                <b-icon-arrow-down scale="1.2"></b-icon-arrow-down>
+              </div>
             </div>
           </div>
-        </draggable>
-      </div>
-      <div class="container mt-3 mb-2">
-        <div class="row row-cols-1">
-          <div class="col">
-            <div class="btn btn-light" @click="createNewList()">
-              <b-icon-plus-circle-fill></b-icon-plus-circle-fill><span class="d-inline"> Add a new list</span>
+          <div
+            v-for="cardList in groupedList(deckList.list)"
+            :class="`row mt-1 ${cardList.list.length ? '' : 'd-none'}`"
+            :key="`deckList-${listIndex}-${cardList.value}`"
+          >
+            <div class="col col-12" v-if="cardList.value && cardList.list.length">{{ cardList.value }}</div>
+            <div
+              v-for="card in cardList.list"
+              class="row col-12 mt-1 flex-nowrap"
+              v-if="cardList.list.length"
+              :key="`deckList-${listIndex}-${cardList.value}-${card.id}`"
+            >
+              <!-- list body -->
+              <AddToListButton
+                class="col col-1"
+                :card="card"
+                :add-list="addList"
+                :ignore-index="listIndex"
+              ></AddToListButton>
+              <div class="col col-4 col-sm-3 deckQte d-inline-flex">
+                <b-icon-dash-circle-fill
+                  class="mt-1 ml-0 mr-2 btn minus"
+                  variant="light"
+                  scale="1.5"
+                  @click="increment(card, false)"
+                ></b-icon-dash-circle-fill>
+                <b-input
+                  type="text"
+                  class="form-control input-number input text-center"
+                  min="1"
+                  max="99"
+                  v-model="card.deckQte"
+                  @change="onChange"
+                />
+                <b-icon-plus-circle-fill
+                  class="mt-1 ml-0 mr-0 btn plus"
+                  variant="light"
+                  scale="1.5"
+                  @click="increment(card, true)"
+                ></b-icon-plus-circle-fill>
+              </div>
+              <div class="col col-4 col-sm-3 pointer" v-on:click="openCard(card)">{{ card.name }}</div>
+              <div class="d-none d-sm-block col col-3"><Mana :mana-cost="card.mana_cost"></Mana></div>
+              <div class="col col-3">
+                <select v-model="card.printConfig" @change="onChange">
+                  <option v-for="conf in printConfig.list" :key="conf.key" :value="conf.key">{{ conf.text }}</option>
+                </select>
+              </div>
             </div>
           </div>
         </div>
-        <draggable class="dragArea list-group" :list="tmpList" group="deck" @change="createNewList">
-          <div class="row" v-for="card in tmpList" :key="card.id">
-            <div class="col col-2 deckQte">
-              <b-input type="number" min="0" max="99" v-model="card.deckQte" @change="onChange" />
+        <div class="container mt-3 mb-2">
+          <div class="row row-cols-1">
+            <div class="col-3"></div>
+            <div class="col-6">
+              <div class="btn btn-light w-100" @click="createNewList()">
+                <b-icon-plus-circle-fill></b-icon-plus-circle-fill><span class="d-inline"> Add a new list</span>
+              </div>
             </div>
-            <div class=" col col-5 name" v-on:click="openCard(card)">{{ card.name }}</div>
-            <div class="col col-2"><Mana class="manaCost" :mana-cost="card.mana_cost"></Mana></div>
-            <div class="col col-3 printConfig">
-              <select v-model="card.printConfig" @change="onChange">
-                <option v-for="conf in printConfig.list" :key="conf.key" :value="conf.key">{{ conf.text }}</option>
-              </select>
-            </div>
+            <div class="col-3"></div>
           </div>
-        </draggable>
+        </div>
       </div>
     </div>
 
     <!--    BOTTOM    -->
     <b-card title="Card Title" no-body id="footer">
       <b-card-body class="text-center h-100" v-if="sectionToDisplay === 'search'">
-        <Search></Search>
+        <Search :deck="deck"></Search>
       </b-card-body>
       <b-card-body class="text-center h-100" v-if="sectionToDisplay === 'stats'">
         <Stats :deck="deck"></Stats>
@@ -148,27 +156,25 @@
 
 <script>
 import { mapState } from 'vuex';
-import draggable from 'vuedraggable';
-import { createNewList, addCardToDeck, onDragAndMove } from 'src/utils/dragDrop';
+import { changeListOrder } from 'src/utils/dragDrop';
 import CONST from 'src/utils/CONST';
 import DeckFactory from 'src/utils/DeckFactory';
 import Mana from '../uiElements/Mana.vue';
+import AddToListButton from '../uiElements/AddToListButton.vue';
 import modalHandler from '../../mixins/modalHandler';
 import Search from './Search.vue';
 import Stats from './Stats.vue';
 
 export default {
   name: 'DeckEdition',
-  props: ['deckToEdit'],
-  components: { draggable, Mana, Search, Stats },
+  props: ['deck'],
+  components: { Mana, Search, Stats, AddToListButton },
   mixins: [modalHandler],
   data() {
     return {
       isPrinting: false,
       sectionToDisplay: 'none',
       tmpList: [],
-      tmpDeck: null,
-      _deck: null,
       updateDone: false,
       printConfig: CONST.printConfig,
     };
@@ -176,21 +182,29 @@ export default {
   computed: {
     ...mapState({
       settings: state => state.settings,
+      decks: state => Object.values(state.decks.decksByIds),
     }),
-    deck() {
-      return this._deck || this.deckToEdit || this.tmpDeck || {};
+    addList() {
+      const list = this.decks.sort((deckA, deckB) => {
+        if (this.deck && deckA.id === this.deck.id) {
+          return -1;
+        } else if (this.deck && deckB.id === this.deck.id) {
+          return 1;
+        }
+        return 0;
+      });
+      if (this.deck && !list.find(e => e.id === this.deck.id)) {
+        list.unshift(this.deck);
+      }
+      return list;
     },
   },
   beforeDestroy() {
-    if (this.updateDone) {
-      this.saveDeck();
-    }
+    this.saveDeck();
   },
   async mounted() {
     try {
-      this.tmpDeck = await this.$store.dispatch('decks/getTmpDeck');
-      this._deck = this.deckToEdit || this.tmpDeck;
-      window.onbeforeunload = () => this.beforeDestroy();
+      window.onbeforeunload = () => this.saveDeck();
     } catch (e) {
       console.error('error when loading from storage', e);
     }
@@ -210,14 +224,10 @@ export default {
       const newDeck = DeckFactory.getDeckToCreate();
       if (DeckFactory.areSameDeck(this.deck, newDeck)) {
         console.warn('dont save this deck ...', { deck: this.deck, newDeck });
-        this.$store.commit('decks/setTmpDeck', newDeck); // update creation time
         return false;
       }
       this.onChange(true); // sort lists
       this.$store.commit('decks/setDecks', [this.deck]);
-      this._deck = this.deck;
-      this.$store.commit('decks/setTmpDeck', newDeck);
-      this.tmpDeck = newDeck;
       this.updateDone = false;
     },
     /**
@@ -226,7 +236,7 @@ export default {
     onChange(sortLists = false) {
       this.updateDone = true;
       if (sortLists === true) {
-        const priority = this.settings.sorting;
+        const priority = this.settings.deck.sorting;
         for (let i = 0, l = this.deck.lists.length; i < l; i++) {
           const List = this.deck.lists[i];
           List.list = List.list.sort((cardA, cardB) => {
@@ -279,11 +289,12 @@ export default {
     /**
      * Fires when user click on delete button
      */
-    async deleteDeck(deck) {
+    async deleteDeck() {
       try {
         await this.confirmModal(CONST.modals.confirmationMessage.deckLost);
-        this.$store.commit('decks/deleteDeck', deck);
+        // return to list before deleting because deck will be saved when leaving this page.
         await this.$router.push({ name: 'deckList' });
+        this.$store.commit('decks/deleteDeck', this.deck);
         // todo toast message
       } catch (e) {
         // todo toast message
@@ -291,29 +302,12 @@ export default {
       }
     },
     /**
-     * Fires automatically when dragdrop detected, checks if allowed
-     * @param {Object} event (automatic)
-     * @return {boolean}
-     */
-    onMove(event) {
-      return onDragAndMove(event);
-    },
-    /**
-     * Fires automatically when a dragdrop succeeds, clones a card
-     * add deck properties to a card from search result
-     * doesn't change cards from other lists
-     * @param {Card} card
-     * @return {Object}
-     */
-    addCardToDeck(card) {
-      return addCardToDeck(card);
-    },
-    /**
      * Fires automatically when a dragdrop succeeds in new list area
      * creates a new list with default name and reset tmp list
      */
     createNewList() {
-      createNewList(this);
+      this.deck.lists.push(DeckFactory.createNewList(this.tmpList));
+      this.tmpList = [];
     },
     getCardCount(list, getString = false) {
       const count = list.reduce(DeckFactory.countCardByList, 0);
@@ -323,26 +317,103 @@ export default {
       const lib = `card${count > 1 ? 's' : ''}`;
       return `${count} ${lib}`;
     },
+    /**
+     *
+     * @param {Array<Card>} list
+     */
+    groupedList(list) {
+      if (!this.settings.deck.typeGrouping) {
+        return [{ list }];
+      }
+      const typePriority = this.settings.deck.typePriority.map(type => ({ value: type.value, list: [] }));
+      for (let i = 0, l = list.length; i < l; i++) {
+        const card = list[i];
+        const key = getTypeKey(typePriority, card.type_line);
+        typePriority.find(t => t.value === key).list.push(card);
+      }
+      return typePriority;
+    },
+    changeListOrder(index, up) {
+      try {
+        const newList = changeListOrder(this.deck.lists, index, up);
+        this.deck.lists = newList;
+      } catch (e) {
+        console.warn('card list order change blocked', e);
+      }
+    },
   },
 };
+function getTypeKey(priority, typeLine) {
+  for (let i = 0, l = priority.length; i < l; i++) {
+    const type = priority[i].value;
+    if (typeLine.includes(type)) {
+      return type;
+    }
+  }
+}
 </script>
 
 <style lang="less" scoped>
+#deckContent {
+  max-height: 150px;
+}
+@media screen and (min-height: 430px) {
+  #deckContent {
+    max-height: 250px;
+  }
+}
+@media screen and (min-height: 530px) {
+  #deckContent {
+    max-height: 350px;
+  }
+}
+@media screen and (min-height: 630px) {
+  #deckContent {
+    max-height: 450px;
+  }
+}
+@media screen and (min-height: 730px) {
+  #deckContent {
+    max-height: 550px;
+  }
+}
+@media screen and (min-height: 830px) {
+  #deckContent {
+    max-height: 650px;
+  }
+}
+@media screen and (min-height: 930px) {
+  #deckContent {
+    max-height: 750px;
+  }
+}
+@media screen and (min-height: 1030px) {
+  #deckContent {
+    max-height: 850px;
+  }
+}
+@media screen and (min-height: 1130px) {
+  #deckContent {
+    max-height: 950px;
+  }
+}
 #container {
   height: 100%;
   padding-top: 0;
 
   #deckEdition {
-    height: 90%;
+    height: 85%;
     max-height: inherit;
-    .deckQte {
-      .btn-sm {
-        padding: 0.4rem;
-        background-color: transparent;
-      }
-      input {
-        background-color: transparent;
-        width: 45px;
+    #deckContent {
+      overflow-y: auto;
+      .deckQte {
+        .input {
+          background-color: transparent;
+          width: 45px;
+        }
+        .plus {
+          margin-left: -10px !important;
+        }
       }
     }
   }

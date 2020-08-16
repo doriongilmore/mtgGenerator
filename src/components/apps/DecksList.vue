@@ -41,6 +41,7 @@ import moment from 'moment';
 import DeckFactory from 'src/utils/DeckFactory';
 import CONST from '../../utils/CONST';
 import modalHandler from '../../mixins/modalHandler';
+import { mapState } from 'vuex';
 
 export default {
   name: 'DecksList',
@@ -48,33 +49,22 @@ export default {
   mixins: [modalHandler],
   data() {
     return {
-      isLoading: false,
-      decks: [],
       moment,
     };
   },
-  computed: {},
-  async created() {
-    try {
-      this.decks = await this.$store.dispatch('decks/getDecks');
-    } catch (e) {
-      console.error('error when loading from storage', e);
-    }
+  computed: {
+    ...mapState({
+      decks: state => Object.values(state.decks.decksByIds),
+    }),
   },
   methods: {
-    async onPrint(deck) {
-      this.isLoading = true;
-      await DeckFactory.print(deck);
-      this.isLoading = false;
-    },
     editDeck(deck = DeckFactory.getDeckToCreate()) {
-      this.$router.push({ name: 'edition', params: { deckToEdit: deck } });
+      this.$router.push({ name: 'edition', params: { deck: deck } });
     },
     async deleteDeck(deck) {
       try {
         await this.confirmModal(CONST.modals.confirmationMessage.deckLost);
         this.$store.commit('decks/deleteDeck', deck);
-        this.decks = await this.$store.dispatch('decks/getDecks');
         // todo toast message
       } catch (e) {
         // todo toast message
@@ -85,7 +75,6 @@ export default {
       try {
         await this.confirmModal(CONST.modals.confirmationMessage.allDecksLost);
         this.$store.commit('decks/reset');
-        this.decks = await this.$store.dispatch('decks/getDecks');
         // todo toast message
       } catch (e) {
         // todo toast message
