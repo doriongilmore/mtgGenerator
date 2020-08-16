@@ -100,24 +100,32 @@ export const mtg = {
         return res.data;
       });
     },
-    async search({ dispatch, commit, state }, args) {
-      console.info('launch search', args);
+    search(context, searchParams) {
+      console.info('launch search', searchParams, context);
       const options = { unique: 'prints', page: 1 };
-      const query = isCorrectQuery(args) ? getQuery(args) : '';
+      const query = isCorrectQuery(searchParams) ? getQuery(searchParams) : '';
       const results = [];
       return new Promise((resolve, reject) => {
+        context.commit('search/resetPageIndex', null, { root: true });
+        const hash = JSON.stringify(searchParams);
+        if (context.rootState.search.resultsByHash[hash]) {
+          return resolve(context.rootState.search.resultsByHash[hash].results);
+        }
         if (!query) {
-          resolve([]);
+          return resolve([]);
         }
         Cards.search(query, options)
           .on('data', c => {
-            results.push(DeckFactory.simplifyCard(c));
+            const card = DeckFactory.simplifyCard(c);
+            context.commit('search/setResults', { results: [card], searchParams, finished: false }, { root: true });
+            results.push(card);
           })
           .on('end', () => {
+            context.commit('search/setResults', { results: [], searchParams, finished: true }, { root: true });
             resolve(results);
           });
       }).then(res => {
-        console.info('results for search', { args, res });
+        console.info('results for search', { searchParams, res });
         return res;
       });
     },

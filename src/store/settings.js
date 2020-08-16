@@ -28,8 +28,14 @@ export const settings = {
       window.localStorage.setItem(CONST.storageKeys.settings, JSON.stringify(state));
     },
 
-    reset(state) {
-      Object.assign(state, getDefaultState());
+    reset(state, payload) {
+      const defaultState = getDefaultState();
+      if (payload && payload.key) {
+        const parent = payload.global ? CONST.settings.keys.global : CONST.settings.keys.deck;
+        state[parent][payload.key] = defaultState[parent][payload.key];
+      } else {
+        Object.assign(state, defaultState);
+      }
       window.localStorage.setItem(CONST.storageKeys.settings, JSON.stringify(state));
     },
   },

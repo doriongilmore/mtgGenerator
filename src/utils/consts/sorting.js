@@ -44,24 +44,33 @@ const sortByCmc = (cardA, cardB) => {
   return 0;
 };
 
-const ColorSort = { label: 'By color', fn: sortByColor };
-const QteSort = { label: 'By quantity', fn: sortByQte };
-const NameSort = { label: 'By name', fn: sortByName };
-const CmcSort = { label: 'By cmc', fn: sortByCmc };
+const ColorSort = { key: 'ColorSort', label: 'By color', fn: sortByColor };
+const QteSort = { key: 'QteSort', label: 'By quantity', fn: sortByQte };
+const NameSort = { key: 'NameSort', label: 'By name', fn: sortByName };
+const CmcSort = { key: 'CmcSort', label: 'By cmc', fn: sortByCmc };
 
 const typeList = [
   { key: 'Planeswalker', value: 'Planeswalker' },
   { key: 'Artifact', value: 'Artifact' },
+  { key: 'Land Creature', value: 'Land Creature' },
+  { key: 'Artifact Creature', value: 'Artifact Creature' },
+  { key: 'Enchantment Artifact', value: 'Enchantment Artifact' },
+  { key: 'Enchantment Creature', value: 'Enchantment Creature' },
+  { key: 'Enchantment Artifact Creature', value: 'Enchantment Artifact Creature' },
   { key: 'Creature', value: 'Creature' },
   { key: 'Enchantment', value: 'Enchantment' },
   { key: 'Instant', value: 'Instant' },
   { key: 'Sorcery', value: 'Sorcery' },
   { key: 'Land', value: 'Land' },
-  { key: 'Token', value: 'Token' },
+  { key: 'Artifact Land', value: 'Artifact Land' },
 ];
 
 const sorting = {
   defaultTypePriority: typeList,
+  CmcSort,
+  ColorSort,
+  QteSort,
+  NameSort,
   defaultSortPriority: [CmcSort, ColorSort, QteSort, NameSort],
 };
 
