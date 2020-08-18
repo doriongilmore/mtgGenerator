@@ -66,9 +66,9 @@
             </div>
           </div>
           <div
-            v-for="cardList in groupedList(deckList.list)"
+            v-for="(cardList, groupIndex) in groupedList(deckList.list)"
             :class="`row mt-1 ${cardList.list.length ? '' : 'd-none'}`"
-            :key="`deckList-${listIndex}-${cardList.value}`"
+            :key="`deckList-${listIndex}-${cardList.value || groupIndex}`"
           >
             <div class="col col-12" v-if="cardList.value && cardList.list.length">{{ cardList.value }}</div>
             <div
@@ -132,11 +132,17 @@
       <b-card-body class="text-center h-100" v-if="sectionToDisplay === 'stats'">
         <Stats :deck="deck"></Stats>
       </b-card-body>
+      <b-card-body class="text-center h-100" v-if="sectionToDisplay === 'settings'">
+        <Settings :deck="deck"></Settings>
+      </b-card-body>
       <b-card-footer footer-tag="nav">
         <b-nav card-footer tabs>
           <b-nav-item :active="sectionToDisplay === 'none'" @click="sectionToDisplay = 'none'">Hide</b-nav-item>
           <b-nav-item :active="sectionToDisplay === 'search'" @click="sectionToDisplay = 'search'">Search</b-nav-item>
           <b-nav-item :active="sectionToDisplay === 'stats'" @click="sectionToDisplay = 'stats'">Stats</b-nav-item>
+          <b-nav-item :active="sectionToDisplay === 'settings'" @click="sectionToDisplay = 'settings'"
+            >Settings</b-nav-item
+          >
         </b-nav>
       </b-card-footer>
     </b-card>
@@ -153,11 +159,12 @@ import AddToListButton from '../uiElements/AddToListButton.vue';
 import modalHandler from '../../mixins/modalHandler';
 import Search from './Search.vue';
 import Stats from './Stats.vue';
+import Settings from './Settings.vue';
 
 export default {
   name: 'DeckEdition',
   props: ['deck'],
-  components: { Mana, Search, Stats, AddToListButton },
+  components: { Settings, Mana, Search, Stats, AddToListButton },
   mixins: [modalHandler],
   data() {
     return {
@@ -173,6 +180,11 @@ export default {
       settings: state => state.settings,
       decks: state => Object.values(state.decks.decksByIds),
     }),
+    settingsDeck() {
+      const globalSettings = this.settings.deck;
+      const deckSettings = this.settings.byDeck[this.deck.id] || {};
+      return Object.assign({}, globalSettings, deckSettings);
+    },
     addList() {
       const list = this.decks.sort((deckA, deckB) => {
         if (this.deck && deckA.id === this.deck.id) {
@@ -226,7 +238,7 @@ export default {
       this.updateDone = true;
       DeckFactory.update(this.deck, false);
       if (sortLists === true) {
-        const priority = this.settings.deck.sorting;
+        const priority = this.settingsDeck.sorting;
         for (let i = 0, l = this.deck.lists.length; i < l; i++) {
           const List = this.deck.lists[i];
           List.list = List.list.sort((cardA, cardB) => {
@@ -314,10 +326,10 @@ export default {
      * @param {Array<Card>} list
      */
     groupedList(list) {
-      if (!this.settings.deck.typeGrouping) {
-        return [{ list }];
+      if (!this.settingsDeck.typeGrouping) {
+        return [{ list, value: '' }];
       }
-      const typePriority = this.settings.deck.typePriority.map(type => ({ value: type.value, list: [] }));
+      const typePriority = this.settingsDeck.typePriority.map(type => ({ value: type.value, list: [] }));
       for (let i = 0, l = list.length; i < l; i++) {
         const card = list[i];
         const key = getTypeKey(typePriority, card.type_line);
@@ -337,8 +349,8 @@ export default {
 };
 function getTypeKey(priority, typeLine) {
   const cardType = typeLine
-    .split('—')[0]
-    .split('//')[0]
+    .split('—')[0] // remove subtype
+    .split('//')[0] // remove second face card (in case no subtype)
     .replace(/Snow/g, '')
     .replace(/Basic/g, '')
     .replace(/Legendary/g, '')

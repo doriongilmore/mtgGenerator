@@ -35,6 +35,8 @@ const modals = {
     allDecksLost: 'All you decks will be lost permanently and the "Classic List" will return to it\'s default state.',
     settingLost: 'This setting will return to its default state.',
     allSettingsLost: 'All your settings will return to their default state.',
+    deckSetting: ' (check your global config)',
+    globalSetting: ' (app default)',
   },
   events: {
     vue: {

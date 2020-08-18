@@ -1,10 +1,17 @@
 <template>
-  <div class="container" id="settings">
-    <!--    <div class="row mt-2 h2">Global Settings</div>-->
-    <!--    <div class="row mt-1"></div>-->
+  <div :class="`container ${deck ? 'deck' : ''}`" id="settings">
+    <!--    <div class="row mt-2 h2" v-if="!deck">Global Settings</div>-->
+    <!--    <div class="row mt-1" v-if="!deck"></div>-->
     <div class="row mt-3 h2">Deck Settings</div>
-    <div class="row mt-2 h4">Card Sorting</div>
-    <div class="row mt-1" v-for="(sort, index) in settings.deck.sorting">
+    <div class="row mt-2">
+      <div class="col col-6 h4">Card Sorting</div>
+      <div class="col col-3" />
+      <div class="col col-3">
+        <div @click="reset(settingKeys.sorting)" class="btn btn-danger">Reset</div>
+      </div>
+    </div>
+
+    <div class="row mt-1" v-for="(sort, index) in settingsDeck.sorting">
       <div class="col col-2 col-md-1">
         <div :class="`btn  btn-light text-center${!index ? ' disabled' : ''}`" @click="changeSortingOrder(index, true)">
           <b-icon-arrow-up scale="1.2"></b-icon-arrow-up>
@@ -12,7 +19,7 @@
       </div>
       <div class="col col-2 col-md-1">
         <div
-          :class="`btn btn-light text-center${index === settings.deck.sorting.length - 1 ? ' disabled' : ''}`"
+          :class="`btn btn-light text-center${index === settingsDeck.sorting.length - 1 ? ' disabled' : ''}`"
           @click="changeSortingOrder(index, false)"
         >
           <b-icon-arrow-down scale="1.2"></b-icon-arrow-down>
@@ -24,15 +31,15 @@
     <div class="row mt-2">
       <div class="col col-6 h4">Type Grouping</div>
       <div class="col col-3">
-        <div @click="changeTypeGrouping()" :class="`btn btn-${settings.deck.typeGrouping ? 'light' : 'secondary'}`">
-          {{ settings.deck.typeGrouping ? 'Enabled' : 'Disabled' }}
+        <div @click="changeTypeGrouping()" :class="`btn btn-${settingsDeck.typeGrouping ? 'light' : 'secondary'}`">
+          {{ settingsDeck.typeGrouping ? 'Enabled' : 'Disabled' }}
         </div>
       </div>
       <div class="col col-3">
         <div @click="reset(settingKeys.typeGrouping)" class="btn btn-danger">Reset</div>
       </div>
     </div>
-    <div class="row mt-1" v-for="(type, index) in settings.deck.typePriority">
+    <div class="row mt-1" v-for="(type, index) in settingsDeck.typePriority" v-if="settingsDeck.typeGrouping || !deck">
       <div class="col col-2 col-md-1">
         <div :class="`btn  btn-light text-center${!index ? ' disabled' : ''}`" @click="changeTypeOrder(index, true)">
           <b-icon-arrow-up scale="1.2"></b-icon-arrow-up>
@@ -40,7 +47,7 @@
       </div>
       <div class="col col-2 col-md-1">
         <div
-          :class="`btn btn-light text-center${index === settings.deck.typePriority.length - 1 ? ' disabled' : ''}`"
+          :class="`btn btn-light text-center${index === settingsDeck.typePriority.length - 1 ? ' disabled' : ''}`"
           @click="changeTypeOrder(index, false)"
         >
           <b-icon-arrow-down scale="1.2"></b-icon-arrow-down>
@@ -68,6 +75,7 @@ import modalHandler from '../../mixins/modalHandler';
 
 export default {
   name: 'Settings',
+  props: ['deck'],
   mixins: [modalHandler],
   data() {
     return {
@@ -79,23 +87,31 @@ export default {
     ...mapState({
       settings: state => state.settings,
     }),
+    settingsDeck() {
+      const globalSettings = this.settings.deck;
+      const deckSettings = (this.deck && this.settings.byDeck[this.deck.id]) || {};
+      return Object.assign({}, globalSettings, deckSettings);
+    },
   },
   methods: {
     changeTypeGrouping() {
-      this.$store.commit('settings/setTypeGrouping', !this.settings.deck.typeGrouping);
+      const oldValue = this.settingsDeck.typeGrouping;
+      this.$store.commit('settings/setTypeGrouping', { value: !oldValue, deck: this.deck });
     },
     changeTypeOrder(index, up) {
       try {
-        const newList = changeListOrder(this.settings.deck.typePriority, index, up);
-        this.$store.commit('settings/setTypePriority', newList);
+        const oldList = this.settingsDeck.typePriority;
+        const newList = changeListOrder(oldList, index, up);
+        this.$store.commit('settings/setTypePriority', { value: newList, deck: this.deck });
       } catch (e) {
         console.warn('type order change blocked', e);
       }
     },
     changeSortingOrder(index, up) {
       try {
-        const newList = changeListOrder(this.settings.deck.sorting, index, up);
-        this.$store.commit('settings/setSorting', newList);
+        const oldList = this.settingsDeck.sorting;
+        const newList = changeListOrder(oldList, index, up);
+        this.$store.commit('settings/setSorting', { value: newList, deck: this.deck });
       } catch (e) {
         console.warn('sorting order change blocked', e);
       }
@@ -105,15 +121,18 @@ export default {
         const message = setting
           ? CONST.modals.confirmationMessage.settingLost
           : CONST.modals.confirmationMessage.allSettingsLost;
-        await this.confirmModal(message);
-        this.$store.commit('settings/reset', setting);
-        if (setting.key === CONST.settings.keys.typeGrouping.key) {
-          this.$store.commit('settings/reset', CONST.settings.keys.typePriority);
+        const precision = this.deck
+          ? CONST.modals.confirmationMessage.deckSetting
+          : CONST.modals.confirmationMessage.globalSetting;
+        await this.confirmModal(message + precision);
+        this.$store.commit('settings/reset', { setting, deck: this.deck });
+        if (setting && setting.key === CONST.settings.keys.typeGrouping.key) {
+          this.$store.commit('settings/reset', { setting: CONST.settings.keys.typePriority, deck: this.deck });
         }
         // todo toast message
       } catch (e) {
         // todo toast message
-        console.info('delete canceled');
+        console.info('reset setting canceled', e);
       }
     },
   },
@@ -121,6 +140,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
+#settings.deck {
+  max-height: 250px;
+}
 #settings {
   height: 95%;
   overflow-x: hidden;
