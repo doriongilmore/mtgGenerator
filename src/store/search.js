@@ -59,8 +59,14 @@ export const search = {
     nextPage(state) {
       state.pageIndex = Math.min(state.pageIndex + 1);
     },
-    clearSearch(state) {
-      Object.assign(state, CONST.search.getDefaultState());
+    defaultLanguageChanged(state, { oldLang, newLang }) {
+      // don't break current search
+      if (state.lang === oldLang) {
+        state.lang = newLang;
+      }
+    },
+    clearSearch(state, language) {
+      Object.assign(state, CONST.search.getDefaultState(language));
     },
     removeText(state, index) {
       const newTexts = [...state.texts];

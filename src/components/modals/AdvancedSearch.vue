@@ -117,6 +117,7 @@ export default {
   },
   computed: {
     ...mapState({
+      defaultLang: state => state.settings.global.favoriteLanguage,
       searchParams: state => state.search,
     }),
     inclusionList() {
@@ -134,7 +135,7 @@ export default {
   },
   methods: {
     clearSearch() {
-      this.$store.commit('search/clearSearch');
+      this.$store.commit('search/clearSearch', CONST.search.lang[this.defaultLang]);
       this.tmpText = '';
     },
     removeText(index) {
