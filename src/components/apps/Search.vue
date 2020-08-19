@@ -6,7 +6,7 @@
         <div class="col col-5 d-inline-flex">
           <form v-on:submit="handleSearch" id="form" class="w-100">
             <input type="submit" class="d-none" />
-            <b-input type="text" v-model="searchParams.name" placeholder="Enter a name"></b-input>
+            <b-input type="text" v-model="search.name" placeholder="Enter a name"></b-input>
           </form>
         </div>
         <div class="col col-3 d-inline-flex">
@@ -61,6 +61,7 @@ export default {
   },
   computed: {
     ...mapState({
+      search: state => state.search,
       pageIndex: state => state.search.pageIndex,
       decks: state => Object.values(state.decks.decksByIds),
     }),

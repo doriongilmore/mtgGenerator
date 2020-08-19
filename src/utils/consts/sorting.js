@@ -51,16 +51,16 @@ const CmcSort = { key: 'CmcSort', label: 'By cmc', fn: sortByCmc };
 
 const typeList = [
   { key: 'Planeswalker', value: 'Planeswalker' },
+  { key: 'Instant', value: 'Instant' },
+  { key: 'Sorcery', value: 'Sorcery' },
   { key: 'Artifact', value: 'Artifact' },
-  { key: 'Land Creature', value: 'Land Creature' },
+  { key: 'Creature', value: 'Creature' },
+  { key: 'Enchantment', value: 'Enchantment' },
   { key: 'Artifact Creature', value: 'Artifact Creature' },
   { key: 'Enchantment Artifact', value: 'Enchantment Artifact' },
   { key: 'Enchantment Creature', value: 'Enchantment Creature' },
   { key: 'Enchantment Artifact Creature', value: 'Enchantment Artifact Creature' },
-  { key: 'Creature', value: 'Creature' },
-  { key: 'Enchantment', value: 'Enchantment' },
-  { key: 'Instant', value: 'Instant' },
-  { key: 'Sorcery', value: 'Sorcery' },
+  { key: 'Land Creature', value: 'Land Creature' },
   { key: 'Land', value: 'Land' },
   { key: 'Artifact Land', value: 'Artifact Land' },
 ];

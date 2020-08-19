@@ -1,6 +1,6 @@
 <template>
   <div ref="container" id="container">
-    <div id="deckEdition" ref="deckEdition">
+    <div id="deckEdition" ref="deckEdition" v-if="deck">
       <div id="deckHeader">
         <b-navbar toggleable="sm" fixed="sm" class="w-100">
           <b-navbar-brand><b-input type="text" v-model="deck.name" trim @change="onChange()"/></b-navbar-brand>
@@ -123,9 +123,8 @@
         </div>
       </div>
     </div>
-
     <!--    BOTTOM    -->
-    <b-card title="Card Title" no-body id="footer">
+    <b-card title="Card Title" no-body id="footer" v-if="deck">
       <b-card-body class="text-center h-100" v-if="sectionToDisplay === 'search'">
         <Search :deck="deck"></Search>
       </b-card-body>
@@ -205,9 +204,13 @@ export default {
   },
   async mounted() {
     try {
-      window.onbeforeunload = () => this.saveDeck();
+      if (!this.deck) {
+        await this.$router.push({ name: 'deckList' });
+      } else {
+        window.onbeforeunload = () => this.saveDeck();
+      }
     } catch (e) {
-      console.error('error when loading from storage', e);
+      console.error('back to deck list impossible ', e);
     }
   },
   methods: {
@@ -221,6 +224,9 @@ export default {
       this.cardModal(card);
     },
     saveDeck() {
+      if (!this.deck) {
+        return;
+      }
       DeckFactory.update(this.deck);
       const newDeck = DeckFactory.getDeckToCreate();
       if (DeckFactory.areSameDeck(this.deck, newDeck)) {

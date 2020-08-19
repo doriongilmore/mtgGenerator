@@ -132,6 +132,9 @@ class DeckFactory {
    * @param {Deck} deck
    */
   static update(deck, clean = true) {
+    if (!deck) {
+      return;
+    }
     clean && cleanDeck(deck);
     updateDeckCardCount(deck);
     updateDeckColors(deck);
