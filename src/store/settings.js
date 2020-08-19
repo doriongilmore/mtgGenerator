@@ -2,7 +2,9 @@ import CONST from '../utils/CONST.js';
 
 function getDefaultState() {
   return {
-    global: {},
+    global: {
+      favoriteLanguage: CONST.search.lang.en.key,
+    },
     deck: {
       typeGrouping: true,
       typePriority: [...CONST.sorting.defaultTypePriority],

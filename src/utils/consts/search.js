@@ -28,11 +28,11 @@ const EXACT_KEY = ':';
 const BLANK_ARRAY = [];
 
 const search = {
-  getDefaultState() {
+  getDefaultState(language = en) {
     return {
       exact: false,
       name: BLANK_STRING,
-      lang: en.key,
+      lang: language.key,
       texts: [...BLANK_ARRAY],
       colorInclusion: EXACT_KEY,
       colors: [...BLANK_ARRAY],
