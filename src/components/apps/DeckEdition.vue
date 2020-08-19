@@ -41,7 +41,7 @@
               <div
                 :class="`btn btn-${deckList.ignoreStat ? 'secondary' : 'light'}`"
                 :title="`${deckList.ignoreStat ? 'ignored' : 'used'} in stats`"
-                @click="deckList.ignoreStat = !deckList.ignoreStat"
+                @click="toggleIgnoreStat(deckList)"
               >
                 <b-icon-graph-down font-scale="1.2" v-if="deckList.ignoreStat"></b-icon-graph-down>
                 <b-icon-graph-up font-scale="1.2" v-else></b-icon-graph-up>
@@ -312,6 +312,10 @@ export default {
     createNewList() {
       this.deck.lists.push(DeckFactory.createNewList(this.tmpList));
       this.tmpList = [];
+    },
+    toggleIgnoreStat(deckList) {
+      deckList.ignoreStat = !deckList.ignoreStat;
+      this.onChange();
     },
     getCardCount(list, getString = false) {
       const count = list.reduce(DeckFactory.countCardByList, 0);
