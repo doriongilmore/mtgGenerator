@@ -32,6 +32,9 @@ export const settings = {
   namespaced: true,
   state: JSON.parse(window.localStorage.getItem(CONST.storageKeys.settings)) || getDefaultState(),
   mutations: {
+    setFavoriteLanguage(state, { value }) {
+      state.global.favoriteLanguage = String(value);
+    },
     setTypeGrouping(state, { value, deck = null }) {
       updateDeckSetting(state, deck, CONST.settings.keys.typeGrouping.key, !!value);
     },

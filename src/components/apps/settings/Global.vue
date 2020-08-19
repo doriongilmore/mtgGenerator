@@ -42,9 +42,13 @@ export default {
         newLang: this.settings.favoriteLanguage,
       });
       this.actualLanguage = this.settings.favoriteLanguage;
+      this.update(CONST.settings.keys.favoriteLanguage, null, null, this.actualLanguage);
     },
     async reset(setting = null) {
       this.$emit('resetKey', setting);
+    },
+    update(setting, index = null, up = null, value = null) {
+      this.$emit('updateKey', { setting, index, up, value });
     },
   },
   mounted() {
