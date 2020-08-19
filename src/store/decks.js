@@ -53,6 +53,7 @@ export const decks = {
       window.localStorage.removeItem(CONST.storageKeys.tmpDeck);
     },
     addCardToList(state, { card, deck, listIndex }) {
+      const _card = DeckFactory.cloneCardForDeck(card);
       const _deck = deck || DeckFactory.getDeckToCreate();
       let _listIndex = 0;
       if (listIndex || listIndex === 0) {
@@ -64,8 +65,8 @@ export const decks = {
       if (!_deck.lists[_listIndex]) {
         _deck.lists.push(DeckFactory.createNewList());
       }
-      if (!_deck.lists[_listIndex].list.find(c => c.id === card.id)) {
-        _deck.lists[_listIndex].list.push(DeckFactory.cloneCardForDeck(card));
+      if (!_deck.lists[_listIndex].list.find(c => c.id === _card.id)) {
+        _deck.lists[_listIndex].list.push(_card);
         DeckFactory.update(_deck);
         newDecksByIds[_deck.id] = _deck;
         state.decksByIds = newDecksByIds;

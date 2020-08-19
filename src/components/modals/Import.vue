@@ -127,7 +127,7 @@ export default {
       }
       return new Promise(resolve => {
         this.$store.dispatch('mtg/search', args).then(results => {
-          resolve(results.length ? results[0] : {});
+          resolve(results.length ? DeckFactory.cloneCardForDeck(results[0]) : {});
           // todo reject if no result ?
         });
       });
