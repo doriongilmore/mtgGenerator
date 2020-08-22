@@ -39,11 +39,11 @@ export default {
       return openModal(this, CONST.modals.events.import);
     },
     /**
-     * @param {Card} card
+     * @param {String} cardId
      * @returns {Promise<void>}
      */
-    cardModal(card) {
-      return openModal(this, CONST.modals.events.card, card);
+    cardModal(cardId) {
+      return openModal(this, CONST.modals.events.card, cardId);
     },
     searchModal() {
       return openModal(this, CONST.modals.events.search);

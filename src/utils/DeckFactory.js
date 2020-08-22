@@ -18,18 +18,21 @@ function simplifyCard(c) {
   const image_uris = c.image_uris
     ? [c.image_uris.large || c.image_uris.normal]
     : c.card_faces.map(face => face.image_uris.large || face.image_uris.normal);
+  const art_crop = c.image_uris ? [c.image_uris.art_crop] : c.card_faces.map(face => face.image_uris.art_crop);
   return {
     // cards from search
     id: c.id,
     name: c.name,
     cmc: c.cmc,
-    legalities: c.legalities,
+    legalities: Object.entries(c.legalities).map(([format, legal]) => ({ format, legal })),
     oracle_id: c.oracle_id,
     oracle_text,
     rarity: c.rarity,
-    rulings_uri: c.rulings_uri,
+    rulings: c.rulings,
     mana_cost: c.mana_cost,
     color_identity: c.color_identity,
+    artist: c.artist,
+    art_crop,
     image_uris,
     set: c.set,
     set_name: c.set_name,
@@ -197,15 +200,11 @@ class DeckFactory {
     return createNewList(list, name);
   }
   static cloneCardForDeck(card) {
-    const newCard = { ...card };
-    if (!newCard.deckQte) {
-      newCard.deckQte = 4;
-    }
-    if (!newCard.printConfig) {
-      newCard.printConfig = newCard.type_line.includes('Basic Land')
-        ? CONST.printConfig.DONT_PRINT.key
-        : CONST.printConfig.BORDER_3.key;
-    }
+    const newCard = { id: card.id };
+    newCard.deckQte = 4;
+    newCard.printConfig = card.type_line.includes('Basic Land')
+      ? CONST.printConfig.DONT_PRINT.key
+      : CONST.printConfig.BORDER_3.key;
     return newCard;
   }
   /**

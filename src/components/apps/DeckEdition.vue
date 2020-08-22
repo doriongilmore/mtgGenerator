@@ -100,8 +100,12 @@
                   <b-icon-plus-circle-fill class="mt-1"></b-icon-plus-circle-fill>
                 </div>
               </div>
-              <div class="col col-4 col-sm-3 pointer" v-on:click="openCard(card)">{{ card.name }}</div>
-              <div class="d-none d-sm-block col col-3"><Mana :mana-cost="card.mana_cost"></Mana></div>
+              <div class="col col-4 col-sm-3 pointer" v-on:click="openCard(card.id)">
+                {{ cardsInfo[card.id] && cardsInfo[card.id].name }}
+              </div>
+              <div class="d-none d-sm-block col col-3">
+                <Mana :mana-cost="cardsInfo[card.id] && cardsInfo[card.id].mana_cost"></Mana>
+              </div>
               <div class="col col-3">
                 <select v-model="card.printConfig" @change="onChange">
                   <option v-for="conf in printConfig.list" :key="conf.key" :value="conf.key">{{ conf.text }}</option>
@@ -172,6 +176,7 @@ export default {
       tmpList: [],
       updateDone: false,
       printConfig: CONST.printConfig,
+      cardsInfo: {},
     };
   },
   computed: {
@@ -198,6 +203,27 @@ export default {
       }
       return list;
     },
+    allCardIds() {
+      const all = DeckFactory.getCards([this.deck]);
+      const ids = all.map(c => c.id);
+      // console.info('allCardIds computed ', this.deck, ids, all);
+      return ids;
+    },
+  },
+  watch: {
+    async allCardIds(newIds, oldIds) {
+      console.info('allCardIds', oldIds, newIds);
+      for (let i = 0, l = newIds.length; i < l; i++) {
+        const cardId = newIds[i];
+        if (!this.cardsInfo[cardId]) {
+          try {
+            this.cardsInfo[cardId] = await this.$store.dispatch('mtg/getCardById', { cardId });
+          } catch (e) {
+            console.error('fetching card ', cardId, e);
+          }
+        }
+      }
+    },
   },
   beforeDestroy() {
     this.saveDeck();
@@ -220,8 +246,8 @@ export default {
         this.onChange();
       }
     },
-    openCard(card) {
-      this.cardModal(card);
+    openCard(cardId) {
+      this.cardModal(cardId);
     },
     saveDeck() {
       if (!this.deck) {
