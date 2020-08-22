@@ -28,11 +28,11 @@
               <div class="col"><MtgText :text="card.oracle_text"></MtgText></div>
             </div>
             <div id="legalities" class="mt-2 row row-cols-3 row-cols-sm-4 row-cols-xl-6">
-              <div v-for="el in legalities" :key="el.format" :class="el.legal + ' m-1 col'" :title="el.legal">
+              <div v-for="el in card.legalities" :key="el.format" :class="el.legal + ' m-1 col'" :title="el.legal">
                 {{ el.format }}
               </div>
             </div>
-            <div class="rule mt-2 row row-cols-1" v-for="rule in rulings" :key="rule">
+            <div class="rule mt-2 row row-cols-1" v-for="rule in card.rulings" :key="rule">
               <div class="col"><MtgText :text="rule"></MtgText></div>
             </div>
           </div>
@@ -53,19 +53,14 @@ export default {
   components: { Mana, MtgText },
   mixins: [modalFactory],
   mounted() {
-    this.listenEvents(card => {
-      if (!this.card || this.card.id !== card.id) {
-        this.rulings = []; // modal will be opened before we fetch rulings for new card
-        this.card = card;
-        this.$store
-          .dispatch('mtg/fetch', this.card.rulings_uri)
-          .then(rulings => {
-            this.rulings = rulings.map(r => `[${r.published_at}] ${r.comment}`);
-          })
-          .catch(e => {
-            console.error('error fetching rules', e);
-            this.rulings = [];
-          });
+    this.listenEvents(async cardId => {
+      if (!this.cardId || this.cardId !== cardId) {
+        try {
+          this.card = null;
+          this.card = await this.$store.dispatch('mtg/getCardById', { cardId });
+        } catch (e) {
+          console.error('fetching card', cardId, e);
+        }
       }
     });
   },
@@ -74,14 +69,9 @@ export default {
       eventConfig: CONST.modals.events.card,
       modalId: 'modal-card',
       /** @returns {Card} */
+      cardId: null,
       card: null,
-      rulings: [],
     };
-  },
-  computed: {
-    legalities() {
-      return Object.entries(this.card.legalities).map(([format, legal]) => ({ format, legal }));
-    },
   },
 };
 </script>

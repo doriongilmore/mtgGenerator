@@ -86,9 +86,7 @@ export const mtg = {
       const newCardsByIds = { ...state.cardsByIds };
       for (let i = 0, l = cards.length; i < l; i++) {
         const card = cards[i];
-        if (!newCardsByIds[card.id]) {
-          newCardsByIds[card.id] = card;
-        }
+        newCardsByIds[card.id] = card;
       }
       state.cardsByIds = newCardsByIds;
     },
@@ -96,9 +94,7 @@ export const mtg = {
   actions: {
     async fetch({ dispatch, commit, state }, uri) {
       const path = uri.replace('https://api.scryfall.com/', '');
-      return Cards.query(path).then(res => {
-        return res.data;
-      });
+      return (await Cards.query(path)).data;
     },
     search(context, searchParams) {
       console.info('launch search', searchParams, context);
@@ -116,9 +112,9 @@ export const mtg = {
         }
         Cards.search(query, options)
           .on('data', c => {
-            const card = DeckFactory.simplifyCard(c);
-            context.commit('search/setResults', { results: [card], searchParams, finished: false }, { root: true });
-            results.push(card);
+            context.commit('setCards', [c]);
+            context.commit('search/setResults', { results: [c.id], searchParams, finished: false }, { root: true });
+            results.push(c.id);
           })
           .on('end', () => {
             context.commit('search/setResults', { results: [], searchParams, finished: true }, { root: true });
@@ -128,6 +124,32 @@ export const mtg = {
         console.info('results for search', { searchParams, res });
         return res;
       });
+    },
+    async getCardById(context, { cardId, forceRefresh = false }) {
+      let card;
+      if (context.state.cardsByIds[cardId] && !forceRefresh) {
+        card = context.state.cardsByIds[cardId];
+        console.info(`card ${cardId} found in storage`, card);
+      } else {
+        try {
+          card = await Cards.byId(cardId);
+        } catch (e) {
+          console.error('error fetching card', cardId, e);
+          throw e;
+        }
+
+        try {
+          const rulings = await context.dispatch('fetch', card.rulings_uri);
+          card.rulings = rulings.map(r => `[${r.published_at}] ${r.comment}`);
+        } catch (e) {
+          console.error('error fetching rules for ', card.id, e);
+          card.rulings = [];
+        }
+
+        context.commit('setCards', [card]);
+        console.info(`card ${cardId} found with scryfall`, card);
+      }
+      return DeckFactory.simplifyCard(card);
     },
   },
 };
