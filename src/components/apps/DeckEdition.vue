@@ -212,17 +212,19 @@ export default {
   },
   watch: {
     async allCardIds(newIds, oldIds) {
+      const cardsInfo = { ...this.cardsInfo };
       console.info('allCardIds', oldIds, newIds);
       for (let i = 0, l = newIds.length; i < l; i++) {
         const cardId = newIds[i];
-        if (!this.cardsInfo[cardId]) {
+        if (!cardsInfo[cardId]) {
           try {
-            this.cardsInfo[cardId] = await this.$store.dispatch('mtg/getCardById', { cardId });
+            cardsInfo[cardId] = await this.$store.dispatch('mtg/getCardById', { cardId });
           } catch (e) {
             console.error('fetching card ', cardId, e);
           }
         }
       }
+      this.cardsInfo = cardsInfo;
     },
   },
   beforeDestroy() {
