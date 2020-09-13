@@ -25,7 +25,7 @@ import { mapState } from 'vuex';
 export default {
   name: 'Settings',
   components: { Global, Deck },
-  props: ['deck'],
+  props: ['deck', 'cardsInfo'],
   mixins: [modalHandler],
   computed: {
     ...mapState({

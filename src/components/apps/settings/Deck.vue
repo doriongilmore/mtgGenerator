@@ -1,6 +1,21 @@
 <template>
   <div>
     <div class="row mt-3 h2" v-if="!deck">Deck Settings</div>
+
+    <div class="row mt-1">
+      <div class="col col-5 h4">Default Deck Background</div>
+      <div class="col col-4">
+        <b-form-select
+          :options="backgroundDefaultList"
+          v-model="settingsDeck.backgroundDefault"
+          @change="update(settingKeys.backgroundDefault, null, null, settingsDeck.backgroundDefault)"
+        ></b-form-select>
+      </div>
+      <div class="col col-3">
+        <div @click="reset(settingKeys.backgroundDefault)" class="btn btn-danger">Reset</div>
+      </div>
+    </div>
+
     <div class="row mt-2">
       <div class="col col-6 h4">Card Sorting</div>
       <div class="col col-3" />
@@ -76,6 +91,7 @@ export default {
   data() {
     return {
       typeList: CONST.sorting.typeList,
+      backgroundDefaultList: CONST.settings.backgroundDefault.map(e => ({ text: e.value, value: e.key })),
       settingKeys: CONST.settings.keys,
     };
   },
@@ -95,6 +111,9 @@ export default {
     },
     update(setting, index = null, up = null, value = null) {
       this.$emit('updateKey', { setting, index, up, value });
+    },
+    async changeDefaultBackground() {
+      this.update(CONST.settings.keys.backgroundDefault, null, null, this.backgroundDefault);
     },
   },
 };

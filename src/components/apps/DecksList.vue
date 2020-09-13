@@ -19,8 +19,7 @@
           <!--           img-src="https://picsum.photos/600/300/?image=25"-->
           <b-card img-top :img-src="deck.background ? deck.background.art_crop : ''">
             <div class="badge badge-secondary badge-pill float-right" v-if="deck.background">
-              <b-icon-pencil></b-icon-pencil>
-              {{ deck.background.artist }}
+              <b-icon-pencil></b-icon-pencil> {{ deck.background.artist }}
             </div>
             <b-card-title>{{ deck.name }}</b-card-title>
             <b-card-text>
