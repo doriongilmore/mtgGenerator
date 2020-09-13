@@ -1,13 +1,16 @@
 <template>
   <div ref="container" id="container">
-    <div id="deckEdition" ref="deckEdition" v-if="deck">
+    <div id="deckEdition" ref="deckEdition" v-if="tmpDeck">
       <div id="deckHeader">
         <b-navbar toggleable="sm" fixed="sm" class="w-100">
-          <b-navbar-brand><b-input type="text" v-model="deck.name" trim @change="onChange()"/></b-navbar-brand>
+          <b-navbar-brand><b-input type="text" v-model="tmpDeck.name" trim @change="onChange()"/></b-navbar-brand>
           <b-navbar-toggle class="deckButtons" target="nav-collapse-deck"></b-navbar-toggle>
           <b-collapse id="nav-collapse-deck" is-nav>
             <b-navbar-nav class="deckButtons">
-              <b-nav-item :class="`btn rounded-pill ${updateDone ? 'btn-primary' : 'btn-light'}`" @click="saveDeck()">
+              <b-nav-item
+                :class="`btn rounded-pill ${updateDone ? 'btn-primary' : 'btn-light'}`"
+                @click="saveDeck(true)"
+              >
                 <b-icon-clipboard-check :variant="!updateDone ? 'secondary' : 'light'"></b-icon-clipboard-check>
                 <span :class="`d-sm-none d-lg-inline ${updateDone ? 'btn-primary' : 'btn-light'}`"> Save</span>
               </b-nav-item>
@@ -18,7 +21,7 @@
               <b-nav-item class="btn btn-light rounded-pill" @click="onImport()">
                 <b-icon-download></b-icon-download><span class="d-sm-none d-lg-inline btn-light"> Import</span>
               </b-nav-item>
-              <b-nav-item class="btn btn-light rounded-pill" @click="onExport(deck)">
+              <b-nav-item class="btn btn-light rounded-pill" @click="onExport(tmpDeck)">
                 <b-icon-upload></b-icon-upload><span class="d-sm-none d-lg-inline btn-light"> Export</span>
               </b-nav-item>
               <b-nav-item class="btn btn-light rounded-pill" @click="deleteDeck()">
@@ -31,7 +34,7 @@
       </div>
       <!--    TOP    -->
       <div id="deckContent">
-        <div class="container lists mt-3" v-for="(deckList, listIndex) in deck.lists" :key="`deckList-${listIndex}`">
+        <div class="container lists mt-3" v-for="(deckList, listIndex) in tmpDeck.lists" :key="`deckList-${listIndex}`">
           <div class="row listHeader">
             <div class="col col-6 col-md-3">
               <b-input type="text" v-model="deckList.name" @change="onChange" />
@@ -58,7 +61,7 @@
                 <b-icon-arrow-up scale="1.2"></b-icon-arrow-up>
               </div>
               <div
-                :class="`btn btn-sm btn-light text-center${listIndex === deck.lists.length - 1 ? ' disabled' : ''}`"
+                :class="`btn btn-sm btn-light text-center${listIndex === tmpDeck.lists.length - 1 ? ' disabled' : ''}`"
                 @click="changeListOrder(listIndex, false)"
               >
                 <b-icon-arrow-down scale="1.2"></b-icon-arrow-down>
@@ -128,15 +131,15 @@
       </div>
     </div>
     <!--    BOTTOM    -->
-    <b-card title="Card Title" no-body id="footer" v-if="deck">
+    <b-card title="Card Title" no-body id="footer" v-if="tmpDeck">
       <b-card-body class="text-center h-100" v-if="sectionToDisplay === 'search'">
-        <Search :deck="deck"></Search>
+        <Search :deck="tmpDeck"></Search>
       </b-card-body>
       <b-card-body class="text-center h-100" v-if="sectionToDisplay === 'stats'">
-        <Stats :deck="deck"></Stats>
+        <Stats :deck="tmpDeck" :cardsInfo="cardsInfo"></Stats>
       </b-card-body>
       <b-card-body class="text-center h-100" v-if="sectionToDisplay === 'settings'">
-        <Settings :deck="deck"></Settings>
+        <Settings :deck="tmpDeck"></Settings>
       </b-card-body>
       <b-card-footer footer-tag="nav">
         <b-nav card-footer tabs>
@@ -177,6 +180,7 @@ export default {
       updateDone: false,
       printConfig: CONST.printConfig,
       cardsInfo: {},
+      tmpDeck: DeckFactory.cloneDeck(this.deck),
     };
   },
   computed: {
@@ -186,43 +190,34 @@ export default {
     }),
     settingsDeck() {
       const globalSettings = this.settings.deck;
-      const deckSettings = this.settings.byDeck[this.deck.id] || {};
+      const deckSettings = this.settings.byDeck[this.tmpDeck.id] || {};
       return Object.assign({}, globalSettings, deckSettings);
     },
     addList() {
       const list = this.decks.sort((deckA, deckB) => {
-        if (this.deck && deckA.id === this.deck.id) {
+        if (this.tmpDeck && deckA.id === this.tmpDeck.id) {
           return -1;
-        } else if (this.deck && deckB.id === this.deck.id) {
+        } else if (this.tmpDeck && deckB.id === this.tmpDeck.id) {
           return 1;
         }
         return 0;
       });
-      if (this.deck && !list.find(e => e.id === this.deck.id)) {
-        list.unshift(this.deck);
+      if (this.tmpDeck && !list.find(e => e.id === this.tmpDeck.id)) {
+        list.unshift(this.tmpDeck);
       }
       return list;
     },
     allCardIds() {
-      const all = DeckFactory.getCards([this.deck]);
+      const all = DeckFactory.getCardsFromDecks([this.tmpDeck]);
       const ids = all.map(c => c.id);
-      // console.info('allCardIds computed ', this.deck, ids, all);
+      // console.info('allCardIds computed ', this.tmpDeck, ids, all);
       return ids;
     },
   },
   watch: {
     async allCardIds(newIds, oldIds) {
-      console.info('allCardIds', oldIds, newIds);
-      for (let i = 0, l = newIds.length; i < l; i++) {
-        const cardId = newIds[i];
-        if (!this.cardsInfo[cardId]) {
-          try {
-            this.cardsInfo[cardId] = await this.$store.dispatch('mtg/getCardById', { cardId });
-          } catch (e) {
-            console.error('fetching card ', cardId, e);
-          }
-        }
-      }
+      // console.info('allCardIds', oldIds, newIds);
+      this.cardsInfo = await this.getCardsInfo(newIds);
     },
   },
   beforeDestroy() {
@@ -230,13 +225,17 @@ export default {
   },
   async mounted() {
     try {
-      if (!this.deck) {
+      if (!this.tmpDeck) {
         await this.$router.push({ name: 'deckList' });
       } else {
-        window.onbeforeunload = () => this.saveDeck();
+        window.onbeforeunload = () => {
+          this.saveDeck();
+          window.onbeforeunload = () => {};
+        };
+        this.cardsInfo = await this.getCardsInfo(this.allCardIds);
       }
     } catch (e) {
-      console.error('back to deck list impossible ', e);
+      console.error('Error when opening DeckEdition ', e);
     }
   },
   methods: {
@@ -249,18 +248,22 @@ export default {
     openCard(cardId) {
       this.cardModal(cardId);
     },
-    saveDeck() {
-      if (!this.deck) {
-        return;
+    saveDeck(forceUpdate = false) {
+      if (!this.tmpDeck) {
+        return false;
       }
-      DeckFactory.update(this.deck);
+      if (!forceUpdate && DeckFactory.areSameDeck(this.tmpDeck, this.deck)) {
+        console.warn('no modification detected, dont save', { newDeck: this.tmpDeck, oldDeck: this.deck });
+        return false;
+      }
+      DeckFactory.update(this.tmpDeck, this.cardsInfo);
       const newDeck = DeckFactory.getDeckToCreate();
-      if (DeckFactory.areSameDeck(this.deck, newDeck)) {
-        console.warn('dont save this deck ...', { deck: this.deck, newDeck });
+      if (DeckFactory.areSameDeck(this.tmpDeck, newDeck)) {
+        console.warn('dont save this deck ...', { deck: this.tmpDeck, newDeck });
         return false;
       }
       this.onChange(true); // sort lists
-      this.$store.commit('decks/setDecks', [this.deck]);
+      this.$store.commit('decks/setDecks', [this.tmpDeck]);
       this.updateDone = false;
     },
     /**
@@ -268,16 +271,18 @@ export default {
      */
     onChange(sortLists = false) {
       this.updateDone = true;
-      DeckFactory.update(this.deck, false);
+      DeckFactory.update(this.tmpDeck, this.cardsInfo, false);
       if (sortLists === true) {
         const priority = this.settingsDeck.sorting;
-        for (let i = 0, l = this.deck.lists.length; i < l; i++) {
-          const List = this.deck.lists[i];
+        for (let i = 0, l = this.tmpDeck.lists.length; i < l; i++) {
+          const List = this.tmpDeck.lists[i];
           List.list = List.list.sort((cardA, cardB) => {
+            const infoA = this.cardsInfo[cardA.id];
+            const infoB = this.cardsInfo[cardB.id];
             for (let j = 0, k = priority.length; j < k; j++) {
               const key = priority[j].key;
               // fn lost when storing in localStorage
-              const res = CONST.sorting[key].fn(cardA, cardB);
+              const res = CONST.sorting[key].fn(infoA, infoB);
               if (res) {
                 return res;
               }
@@ -287,17 +292,39 @@ export default {
         }
       }
     },
-    onImport() {
-      this.importModal().then(listOrDeck => {
-        // todo param replace/append to do = or push
-        if (listOrDeck.lists) {
-          this.deck.lists = listOrDeck.lists;
-          this.deck.name = listOrDeck.name;
-        } else {
-          this.deck.lists = listOrDeck;
+    async onImport() {
+      let listOrDeck, notFound;
+      try {
+        const res = await this.importModal();
+        listOrDeck = res.listOrDeck;
+        notFound = res.notFound;
+      } catch (e) {
+        console.info('import canceled', e);
+        return;
+      }
+
+      const len = notFound.length;
+      if (!!len) {
+        const message = 'Some cards have not been imported';
+        console.info(message);
+        for (let i = 0; i < len; i++) {
+          const row = notFound[i];
+          console.info(row);
         }
-        this.onChange(true);
-      });
+        // todo toast message
+        return;
+      }
+      const newDeck = { ...this.tmpDeck };
+      // todo param replace/append to do = or push
+      if (listOrDeck.lists) {
+        newDeck.lists = listOrDeck.lists;
+        newDeck.name = listOrDeck.name;
+      } else {
+        newDeck.lists = listOrDeck;
+      }
+      this.tmpDeck = newDeck;
+      this.cardsInfo = await this.getCardsInfo(this.allCardIds);
+      this.onChange(true);
     },
     /**
      * Fires when user click on export button
@@ -306,7 +333,7 @@ export default {
     onExport(listOrDeck) {
       if (listOrDeck.lists) {
         // update deck state for json export
-        DeckFactory.update(listOrDeck);
+        DeckFactory.update(listOrDeck, this.cardsInfo);
       }
       this.exportModal(listOrDeck);
     },
@@ -316,7 +343,7 @@ export default {
     async onPrint() {
       this.isPrinting = true;
       try {
-        await DeckFactory.print(this.deck);
+        await DeckFactory.print(this.tmpDeck);
       } catch (e) {
         alert('only works on Firefox at the moment, will be fixed soon.');
       }
@@ -330,7 +357,7 @@ export default {
         await this.confirmModal(CONST.modals.confirmationMessage.deckLost);
         // return to list before deleting because deck will be saved when leaving this page.
         await this.$router.push({ name: 'deckList' });
-        this.$store.commit('decks/deleteDeck', this.deck);
+        this.$store.commit('decks/deleteDeck', this.tmpDeck);
         // todo toast message
       } catch (e) {
         // todo toast message
@@ -342,7 +369,7 @@ export default {
      * creates a new list with default name and reset tmp list
      */
     createNewList() {
-      this.deck.lists.push(DeckFactory.createNewList(this.tmpList));
+      this.tmpDeck.lists.push(DeckFactory.createNewList(this.tmpList));
       this.tmpList = [];
     },
     toggleIgnoreStat(deckList) {
@@ -357,6 +384,20 @@ export default {
       const lib = `card${count > 1 ? 's' : ''}`;
       return `${count} ${lib}`;
     },
+    async getCardsInfo(newIds) {
+      const cardsInfo = { ...this.cardsInfo };
+      for (let i = 0, l = newIds.length; i < l; i++) {
+        const cardId = newIds[i];
+        if (!cardsInfo[cardId]) {
+          try {
+            cardsInfo[cardId] = await this.$store.dispatch('mtg/getCardById', { cardId });
+          } catch (e) {
+            console.error('fetching card ', cardId, e);
+          }
+        }
+      }
+      return cardsInfo;
+    },
     /**
      *
      * @param {Array<Card>} list
@@ -366,17 +407,25 @@ export default {
         return [{ list, value: '' }];
       }
       const typePriority = this.settingsDeck.typePriority.map(type => ({ value: type.value, list: [] }));
+      const unknown = [];
       for (let i = 0, l = list.length; i < l; i++) {
         const card = list[i];
-        const key = getTypeKey(typePriority, card.type_line);
-        typePriority.find(t => t.value === key).list.push(card);
+        const cardInfo = this.cardsInfo[card.id];
+        if (cardInfo) {
+          const key = getTypeKey(typePriority, cardInfo.type_line);
+          typePriority.find(t => t.value === key).list.push(card);
+        } else {
+          unknown.push(card);
+        }
+      }
+      if (unknown.length) {
+        typePriority.push({ value: '', list: unknown });
       }
       return typePriority;
     },
     changeListOrder(index, up) {
       try {
-        const newList = changeListOrder(this.deck.lists, index, up);
-        this.deck.lists = newList;
+        this.tmpDeck.lists = changeListOrder(this.tmpDeck.lists, index, up);
       } catch (e) {
         console.warn('card list order change blocked', e);
       }

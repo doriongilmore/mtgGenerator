@@ -54,7 +54,11 @@ export default {
   },
   computed: {
     ...mapState({
-      decks: state => Object.values(state.decks.decksByIds),
+      decks: state => {
+        const time = date => moment(date).unix();
+        const decks = Object.values(state.decks.decksByIds);
+        return decks.sort((deckA, deckB) => time(deckB.dateEdition) - time(deckA.dateEdition));
+      },
     }),
   },
   methods: {

@@ -77,11 +77,12 @@ function updateDeckCardCount(deck) {
   const otherCardCount = (otherLists || []).reduce(DeckFactory.countCardByLists, 0);
   deck.cardCount = `${mainCardCount} (+${otherCardCount})`;
 }
-function updateDeckColors(deck) {
-  const cards = DeckFactory.getCards([deck]);
+function updateDeckColors(deck, cardsInfo) {
+  const cards = DeckFactory.getCardsFromDecks([deck]);
   const colors = cards.reduce((col, card) => {
-    for (let i = 0, l = card.color_identity.length; i < l; i++) {
-      const color = `{${card.color_identity[i]}}`;
+    const info = cardsInfo[card.id];
+    for (let i = 0, l = info.color_identity.length; i < l; i++) {
+      const color = `{${info.color_identity[i]}}`;
       if (!col.includes(color)) {
         col.push(color);
       }
@@ -94,22 +95,33 @@ function updateDeckColors(deck) {
 class DeckFactory {
   /**
    *
+   * @param {[DeckList]} lists
+   * @returns {[Card]}
+   */
+  static getCardsFromLists(lists) {
+    const allCards = [];
+    for (let j = 0, m = lists.length; j < m; j++) {
+      const cards = lists[j].list;
+      for (let k = 0, n = cards.length; k < n; k++) {
+        const card = cards[k];
+        if (!allCards.find(c => c.id === card.id)) {
+          allCards.push(card);
+        }
+      }
+    }
+    return allCards;
+  }
+  /**
+   *
    * @param {[Deck]} decks
    * @returns {[Card]}
    */
-  static getCards(decks) {
+  static getCardsFromDecks(decks) {
     const allCards = [];
     for (let i = 0, l = decks.length; i < l; i++) {
       const deck = decks[i];
-      for (let j = 0, m = deck.lists.length; j < m; j++) {
-        const cards = deck.lists[j].list;
-        for (let k = 0, n = cards.length; k < n; k++) {
-          const card = cards[k];
-          if (!allCards.find(c => c.id === card.id)) {
-            allCards.push(card);
-          }
-        }
-      }
+      const deckCards = DeckFactory.getCardsFromLists(deck.lists);
+      allCards.push(...deckCards);
     }
     return allCards;
   }
@@ -133,14 +145,16 @@ class DeckFactory {
   }
   /**
    * @param {Deck} deck
+   * @param {Object} cardsInfo
+   * @param {boolean} clean
    */
-  static update(deck, clean = true) {
+  static update(deck, cardsInfo, clean = true) {
     if (!deck) {
       return;
     }
     clean && cleanDeck(deck);
     updateDeckCardCount(deck);
-    updateDeckColors(deck);
+    updateDeckColors(deck, cardsInfo);
     deck.dateEdition = new Date();
     return deck;
   }
@@ -172,8 +186,7 @@ class DeckFactory {
     const sameCardCount = deckA.cardCount === deckB.cardCount;
     const sameColors = deckA.colors === deckB.colors;
     const sameListCount = deckA.lists.length === deckB.lists.length;
-    const sameLists =
-      sameListCount && deckA.lists.map(stringifyList).join('') === deckB.lists.map(stringifyList).join('');
+    const sameLists = sameListCount && JSON.stringify(deckA.lists) === JSON.stringify(deckB.lists);
 
     return sameName && sameCardCount && sameColors && sameLists;
   }
@@ -209,11 +222,26 @@ class DeckFactory {
   }
   /**
    * @param {Deck} deck
+   * @returns {Deck}
+   */
+  static cloneDeck(deck) {
+    const newDeck = { ...deck };
+    newDeck.lists = newDeck.lists.map(l => {
+      return {
+        name: l.name,
+        ignoreStat: l.ignoreStat,
+        list: l.list.map(c => ({ ...c })),
+      };
+    });
+    return newDeck;
+  }
+  /**
+   * @param {Deck} deck
    * @returns {Promise<void>}
    */
   static async print(deck) {
     const doc = new jsPDF({ unit: 'mm', format: 'a4' }); // 210 x 297
-    const cards = DeckFactory.getCards([deck]);
+    const cards = DeckFactory.getCardsFromDecks([deck]);
     for (let i = 0, printedCardCount = 0, l = cards.length; i < l; i++) {
       const card = cards[i];
       if (card.printConfig !== CONST.printConfig.DONT_PRINT.key) {

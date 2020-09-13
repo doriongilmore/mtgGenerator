@@ -1,7 +1,10 @@
+const CORE = 'mtgBuilder.';
+
 const storageKeys = {
-  deckList: 'deckList',
-  tmpDeck: 'tmpDeck',
-  settings: 'settings',
+  deckList: `${CORE}deckList`,
+  cards: `${CORE}cards`,
+  settings: `${CORE}settings`,
+  notSupported: ['deckList', 'tmpDeck', 'settings'],
 };
 
 export default storageKeys;

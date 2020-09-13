@@ -60,38 +60,51 @@ export default {
     },
     async doImport() {
       let listOrDeck;
+      const notFound = [];
       try {
         listOrDeck = JSON.parse(this.importText);
       } catch (e) {
         const lists = [];
         let actualList = { name: 'Main', list: [] };
         const sideboardList = { name: 'Sideboard', list: [] };
-        const list = this.importText
-          .split('\n')
-          .map(e => e.trim())
-          .filter(e => !!e);
+        const list = this.importText.split('\n').map(e => e.trim());
         this.progressValue = 0;
         this.progressMax = list.length;
         this.isLoading = true;
+        const addToList = async (list, row) => {
+          let card = await this.formatCardRow(row);
+          if (!card) {
+            notFound.push(row);
+            card = await this.formatCardRow(row, false);
+          }
+          if (card) {
+            list.list.push(card);
+          }
+        };
+        const createList = name => {
+          if (actualList.list.length) {
+            lists.push(actualList);
+          }
+          actualList = {
+            name,
+            list: [],
+          };
+        };
         for (let i = 0; i < this.progressMax; i++) {
           this.progressValue = i;
           const row = list[i];
-          if (row.startsWith('//')) {
-            // list name -> new list
-            if (actualList.list.length) {
-              lists.push(actualList);
-            }
-            actualList = {
-              name: row.replace('//', '').trim(),
-              list: [],
-            };
+          console.info('empty row', !row);
+          if (!row) {
+            createList('Default name');
+          } else if (row.startsWith('//')) {
+            createList(row.replace('//', '').trim());
           } else if (row.startsWith('SB:')) {
             // MC Sideboard
             const cardRow = row.replace('SB:', '').trim();
-            sideboardList.list.push(await this.formatCardRow(cardRow));
+            await addToList(sideboardList, cardRow);
           } else {
             // classic card row
-            actualList.list.push(await this.formatCardRow(row));
+            await addToList(actualList, row);
           }
         }
         if (actualList.list.length) {
@@ -104,32 +117,44 @@ export default {
         listOrDeck.lists = lists;
       }
       this.isLoading = false;
-      this.close(listOrDeck);
+      this.close({ listOrDeck, notFound });
     },
-    async formatCardRow(row) {
-      const [setPart = ''] = row.match(regexpSet) || [];
+    async formatCardRow(row, withSet = true) {
+      const noSet = '';
+      const [setPart = noSet] = row.match(regexpSet) || [];
       const set = setPart.replace(regexpCleanSet, '');
       let cardName = row.replace(setPart, '');
       const [deckQte = '1'] = row.match(regexpQte) || [];
       cardName = cardName.replace(deckQte, '').trim();
-      const realCard = await this.searchCard(cardName, set);
-      const printConfig = realCard.type_line.includes('Basic Land')
-        ? CONST.printConfig.DONT_PRINT.key
-        : CONST.printConfig.BORDER_3.key;
-      realCard.deckQte = +deckQte;
-      realCard.printConfig = printConfig;
-      return realCard;
+      try {
+        console.info('formatCardRow', { cardName, set, withSet });
+        const realCard = await this.searchCard(cardName, withSet ? set : noSet);
+        const clone = DeckFactory.cloneCardForDeck(realCard);
+        clone.deckQte = +deckQte;
+        return clone;
+      } catch (e) {
+        console.warn('[Import] card not found', row, e);
+      }
+      return null;
     },
     searchCard(cardName, set) {
       const args = { name: cardName, exact: true, lang: CONST.search.lang.any.key };
       if (set) {
         args.set = set;
       }
-      return new Promise(resolve => {
-        this.$store.dispatch('mtg/search', args).then(results => {
-          resolve(results.length ? DeckFactory.cloneCardForDeck(results[0]) : {});
-          // todo reject if no result ?
-        });
+      return new Promise(async (resolve, reject) => {
+        const results = await this.$store.dispatch('mtg/search', args);
+        console.info('[Import.searchCard] results length', results.length);
+        if (!results.length) {
+          return reject('not_found');
+        }
+        console.info('[Import.searchCard] results', results);
+        const card = await this.$store.dispatch('mtg/getCardById', { cardId: results[0] });
+        console.info('[Import.searchCard] card', card);
+        if (!card) {
+          return reject('not_found');
+        }
+        resolve(card);
       });
     },
     getTextFromFile(file) {

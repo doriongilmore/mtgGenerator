@@ -16,7 +16,7 @@ import { getStats, getEmptyStats } from 'src/utils/DeckStats';
 
 export default {
   name: 'Stats',
-  props: ['deck'],
+  props: ['deck', 'cardsInfo'],
   components: { BarChart, PieChart },
   data() {
     return {
@@ -25,7 +25,7 @@ export default {
   },
   computed: {
     stats() {
-      return getStats(this.deck);
+      return getStats(this.deck, this.cardsInfo);
     },
   },
 };

@@ -16,6 +16,12 @@ function openModal(mixinThis, event, data) {
   });
 }
 
+/**
+ * some modals don't need to handle unexpected closing
+ * @returns {Promise<void>}
+ */
+const ignoreError = () => {};
+
 export default {
   methods: {
     /**
@@ -30,7 +36,7 @@ export default {
      * @returns {Promise<void>}
      */
     exportModal(deckOrList) {
-      return openModal(this, CONST.modals.events.export, deckOrList);
+      return openModal(this, CONST.modals.events.export, deckOrList).catch(ignoreError);
     },
     /**
      * @returns {Promise<Deck|DeckList>}
@@ -43,10 +49,10 @@ export default {
      * @returns {Promise<void>}
      */
     cardModal(cardId) {
-      return openModal(this, CONST.modals.events.card, cardId);
+      return openModal(this, CONST.modals.events.card, cardId).catch(ignoreError);
     },
     searchModal() {
-      return openModal(this, CONST.modals.events.search);
+      return openModal(this, CONST.modals.events.search).catch(ignoreError);
     },
   },
 };

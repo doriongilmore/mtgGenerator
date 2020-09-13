@@ -1,4 +1,5 @@
 import CONST from 'src/utils/CONST.js';
+import cardsMock from 'src/utils/mock/mtg';
 import DeckFactory from 'src/utils/DeckFactory';
 import { Cards } from 'scryfall-sdk';
 
@@ -55,6 +56,13 @@ function isCorrectQuery(args) {
   );
 }
 
+function saveList(newCardsByIds) {
+  const list = JSON.stringify(newCardsByIds);
+  // console.info('save cards list in storage');
+  // console.info(list);
+  window.sessionStorage.setItem(CONST.storageKeys.cards, list);
+}
+
 /**
  *
  * @typedef Card
@@ -79,7 +87,7 @@ function isCorrectQuery(args) {
 export const mtg = {
   namespaced: true,
   state: {
-    cardsByIds: {},
+    cardsByIds: cardsMock.cardsByIds,
   },
   mutations: {
     setCards(state, cards) {
@@ -89,6 +97,7 @@ export const mtg = {
         newCardsByIds[card.id] = card;
       }
       state.cardsByIds = newCardsByIds;
+      saveList(newCardsByIds);
     },
   },
   actions: {
@@ -108,17 +117,35 @@ export const mtg = {
           return resolve(context.rootState.search.resultsByHash[hash].results);
         }
         if (!query) {
-          return resolve([]);
+          return reject('wrong query');
         }
         Cards.search(query, options)
+          .on('cancel', res => {
+            console.info('totoEL cancel', res);
+            reject('no result', res);
+          })
+          .on('not_found', res => {
+            console.info('totoEL not_found', res);
+            reject('no result', res);
+          })
+          .on('error', res => {
+            console.info('totoEL error', res);
+            reject('no result', res);
+          })
           .on('data', c => {
+            console.info('totoEL data', c);
             context.commit('setCards', [c]);
             context.commit('search/setResults', { results: [c.id], searchParams, finished: false }, { root: true });
             results.push(c.id);
           })
-          .on('end', () => {
+          .on('end', res => {
+            console.info('totoEL end', res);
             context.commit('search/setResults', { results: [], searchParams, finished: true }, { root: true });
             resolve(results);
+          })
+          .on('done', res => {
+            console.info('totoEL done', res);
+            reject('no result', res);
           });
       }).then(res => {
         console.info('results for search', { searchParams, res });
