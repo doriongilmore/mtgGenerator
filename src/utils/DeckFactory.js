@@ -171,6 +171,7 @@ class DeckFactory {
       lists: getDefaultList(),
       dateCreation: now,
       dateEdition: now,
+      background: null,
     };
   }
   /**
