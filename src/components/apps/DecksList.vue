@@ -17,7 +17,12 @@
         <div class="col" v-for="deck in decks" :key="deck.id">
           <!--        todo get card covers   -->
           <!--           img-src="https://picsum.photos/600/300/?image=25"-->
-          <b-card :title="deck.name" img-top class="mb-3">
+          <b-card img-top :img-src="deck.background ? deck.background.art_crop : ''">
+            <div class="badge badge-secondary badge-pill float-right" v-if="deck.background">
+              <b-icon-pencil></b-icon-pencil>
+              {{ deck.background.artist }}
+            </div>
+            <b-card-title>{{ deck.name }}</b-card-title>
             <b-card-text>
               <div class="badge badge-light" v-if="deck.colors"><Mana :mana-cost="deck.colors"></Mana></div>
               <div class="badge badge-secondary">{{ deck.cardCount }}</div>

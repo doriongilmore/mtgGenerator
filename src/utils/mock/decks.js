@@ -68,6 +68,11 @@ export default {
       ],
       dateCreation: '2020-07-01T21:06:11.341Z',
       dateEdition: '2020-09-12T20:09:21.848Z',
+      background: {
+        art_crop:
+          'https://c1.scryfall.com/file/scryfall-cards/art_crop/front/b/d/bd8fa327-dd41-4737-8f19-2cf5eb1f7cdd.jpg?1562933099',
+        artist: 'Chris Rahn',
+      },
     },
   },
 };
