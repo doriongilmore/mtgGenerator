@@ -1,9 +1,9 @@
 <template>
   <div ref="container" id="container">
-    <div id="deckEdition" ref="deckEdition" v-if="tmpDeck">
+    <div id="deckEdition" ref="deckEdition" v-if="deck">
       <div id="deckHeader">
         <b-navbar toggleable="sm" fixed="sm" class="w-100">
-          <b-navbar-brand><b-input type="text" v-model="tmpDeck.name" trim @change="onChange()"/></b-navbar-brand>
+          <b-navbar-brand><b-input type="text" v-model="deck.name" trim @change="onChange()"/></b-navbar-brand>
           <b-navbar-toggle class="deckButtons" target="nav-collapse-deck"></b-navbar-toggle>
           <b-collapse id="nav-collapse-deck" is-nav>
             <b-navbar-nav class="deckButtons">
@@ -21,7 +21,7 @@
               <b-nav-item class="btn btn-light rounded-pill" @click="onImport()">
                 <b-icon-download></b-icon-download><span class="d-sm-none d-lg-inline btn-light"> Import</span>
               </b-nav-item>
-              <b-nav-item class="btn btn-light rounded-pill" @click="onExport(tmpDeck)">
+              <b-nav-item class="btn btn-light rounded-pill" @click="onExport(deck)">
                 <b-icon-upload></b-icon-upload><span class="d-sm-none d-lg-inline btn-light"> Export</span>
               </b-nav-item>
               <b-nav-item class="btn btn-light rounded-pill" @click="deleteDeck()">
@@ -34,7 +34,7 @@
       </div>
       <!--    TOP    -->
       <div id="deckContent">
-        <div class="container lists mt-3" v-for="(deckList, listIndex) in tmpDeck.lists" :key="`deckList-${listIndex}`">
+        <div class="container lists mt-3" v-for="(deckList, listIndex) in deck.lists" :key="`deckList-${listIndex}`">
           <div class="row listHeader">
             <div class="col col-6 col-md-3">
               <b-input type="text" v-model="deckList.name" @change="onChange" />
@@ -61,7 +61,7 @@
                 <b-icon-arrow-up scale="1.2"></b-icon-arrow-up>
               </div>
               <div
-                :class="`btn btn-sm btn-light text-center${listIndex === tmpDeck.lists.length - 1 ? ' disabled' : ''}`"
+                :class="`btn btn-sm btn-light text-center${listIndex === deck.lists.length - 1 ? ' disabled' : ''}`"
                 @click="changeListOrder(listIndex, false)"
               >
                 <b-icon-arrow-down scale="1.2"></b-icon-arrow-down>
@@ -131,15 +131,15 @@
       </div>
     </div>
     <!--    BOTTOM    -->
-    <b-card title="Card Title" no-body id="footer" v-if="tmpDeck">
+    <b-card title="Card Title" no-body id="footer" v-if="deck">
       <b-card-body class="text-center h-100" v-if="sectionToDisplay === 'search'">
-        <Search :deck="tmpDeck"></Search>
+        <Search :deck="deck"></Search>
       </b-card-body>
       <b-card-body class="text-center h-100" v-if="sectionToDisplay === 'stats'">
-        <Stats :deck="tmpDeck" :cardsInfo="cardsInfo"></Stats>
+        <Stats :deck="deck" :cardsInfo="cardsInfo"></Stats>
       </b-card-body>
       <b-card-body class="text-center h-100" v-if="sectionToDisplay === 'settings'">
-        <Settings :deck="tmpDeck"></Settings>
+        <Settings :deck="deck"></Settings>
       </b-card-body>
       <b-card-footer footer-tag="nav">
         <b-nav card-footer tabs>
@@ -180,7 +180,6 @@ export default {
       updateDone: false,
       printConfig: CONST.printConfig,
       cardsInfo: {},
-      tmpDeck: DeckFactory.cloneDeck(this.deck),
     };
   },
   computed: {
@@ -190,27 +189,27 @@ export default {
     }),
     settingsDeck() {
       const globalSettings = this.settings.deck;
-      const deckSettings = this.settings.byDeck[this.tmpDeck.id] || {};
+      const deckSettings = this.settings.byDeck[this.deck.id] || {};
       return Object.assign({}, globalSettings, deckSettings);
     },
     addList() {
       const list = this.decks.sort((deckA, deckB) => {
-        if (this.tmpDeck && deckA.id === this.tmpDeck.id) {
+        if (this.deck && deckA.id === this.deck.id) {
           return -1;
-        } else if (this.tmpDeck && deckB.id === this.tmpDeck.id) {
+        } else if (this.deck && deckB.id === this.deck.id) {
           return 1;
         }
         return 0;
       });
-      if (this.tmpDeck && !list.find(e => e.id === this.tmpDeck.id)) {
-        list.unshift(this.tmpDeck);
+      if (this.deck && !list.find(e => e.id === this.deck.id)) {
+        list.unshift(this.deck);
       }
       return list;
     },
     allCardIds() {
-      const all = DeckFactory.getCardsFromDecks([this.tmpDeck]);
+      const all = DeckFactory.getCardsFromDecks([this.deck]);
       const ids = all.map(c => c.id);
-      // console.info('allCardIds computed ', this.tmpDeck, ids, all);
+      // console.info('allCardIds computed ', this.deck, ids, all);
       return ids;
     },
   },
@@ -225,7 +224,7 @@ export default {
   },
   async mounted() {
     try {
-      if (!this.tmpDeck) {
+      if (!this.deck) {
         await this.$router.push({ name: 'deckList' });
       } else {
         window.onbeforeunload = () => {
@@ -249,21 +248,17 @@ export default {
       this.cardModal(cardId);
     },
     saveDeck(forceUpdate = false) {
-      if (!this.tmpDeck) {
+      if (!this.deck) {
         return false;
       }
-      if (!forceUpdate && DeckFactory.areSameDeck(this.tmpDeck, this.deck)) {
-        console.warn('no modification detected, dont save', { newDeck: this.tmpDeck, oldDeck: this.deck });
-        return false;
-      }
-      DeckFactory.update(this.tmpDeck, this.cardsInfo);
+      DeckFactory.update(this.deck, this.cardsInfo);
       const newDeck = DeckFactory.getDeckToCreate();
-      if (DeckFactory.areSameDeck(this.tmpDeck, newDeck)) {
-        console.warn('dont save this deck ...', { deck: this.tmpDeck, newDeck });
+      if (DeckFactory.areSameDeck(this.deck, newDeck)) {
+        console.warn('dont save this deck ...', { deck: this.deck, newDeck });
         return false;
       }
       this.onChange(true); // sort lists
-      this.$store.commit('decks/setDecks', [this.tmpDeck]);
+      this.$store.commit('decks/setDecks', [this.deck]);
       this.updateDone = false;
     },
     /**
@@ -271,11 +266,11 @@ export default {
      */
     onChange(sortLists = false) {
       this.updateDone = true;
-      DeckFactory.update(this.tmpDeck, this.cardsInfo, false);
+      DeckFactory.update(this.deck, this.cardsInfo, false);
       if (sortLists === true) {
         const priority = this.settingsDeck.sorting;
-        for (let i = 0, l = this.tmpDeck.lists.length; i < l; i++) {
-          const List = this.tmpDeck.lists[i];
+        for (let i = 0, l = this.deck.lists.length; i < l; i++) {
+          const List = this.deck.lists[i];
           List.list = List.list.sort((cardA, cardB) => {
             const infoA = this.cardsInfo[cardA.id];
             const infoB = this.cardsInfo[cardB.id];
@@ -314,15 +309,13 @@ export default {
         // todo toast message
         return;
       }
-      const newDeck = { ...this.tmpDeck };
       // todo param replace/append to do = or push
       if (listOrDeck.lists) {
-        newDeck.lists = listOrDeck.lists;
-        newDeck.name = listOrDeck.name;
+        this.deck.lists = listOrDeck.lists;
+        this.deck.name = listOrDeck.name;
       } else {
-        newDeck.lists = listOrDeck;
+        this.deck.lists = listOrDeck;
       }
-      this.tmpDeck = newDeck;
       this.cardsInfo = await this.getCardsInfo(this.allCardIds);
       this.onChange(true);
     },
@@ -343,7 +336,7 @@ export default {
     async onPrint() {
       this.isPrinting = true;
       try {
-        await DeckFactory.print(this.tmpDeck);
+        await DeckFactory.print(this.deck);
       } catch (e) {
         alert('only works on Firefox at the moment, will be fixed soon.');
       }
@@ -357,7 +350,7 @@ export default {
         await this.confirmModal(CONST.modals.confirmationMessage.deckLost);
         // return to list before deleting because deck will be saved when leaving this page.
         await this.$router.push({ name: 'deckList' });
-        this.$store.commit('decks/deleteDeck', this.tmpDeck);
+        this.$store.commit('decks/deleteDeck', this.deck);
         // todo toast message
       } catch (e) {
         // todo toast message
@@ -369,7 +362,7 @@ export default {
      * creates a new list with default name and reset tmp list
      */
     createNewList() {
-      this.tmpDeck.lists.push(DeckFactory.createNewList(this.tmpList));
+      this.deck.lists.push(DeckFactory.createNewList(this.tmpList));
       this.tmpList = [];
     },
     toggleIgnoreStat(deckList) {
@@ -425,7 +418,7 @@ export default {
     },
     changeListOrder(index, up) {
       try {
-        this.tmpDeck.lists = changeListOrder(this.tmpDeck.lists, index, up);
+        this.deck.lists = changeListOrder(this.deck.lists, index, up);
       } catch (e) {
         console.warn('card list order change blocked', e);
       }

@@ -9,6 +9,9 @@ function getDefaultState() {
       typeGrouping: true,
       typePriority: [...CONST.sorting.defaultTypePriority],
       sorting: [...CONST.sorting.defaultSortPriority],
+      backgroundDefault: CONST.settings.backgroundDefault[1].key,
+      backgroundImage: null,
+      backgroundArtist: null,
     },
     byDeck: {},
   };
@@ -43,6 +46,15 @@ export const settings = {
     },
     setSorting(state, { value, deck = null }) {
       updateDeckSetting(state, deck, CONST.settings.keys.sorting.key, [...value]);
+    },
+    setBackgroundDefault(state, { value, deck = null }) {
+      updateDeckSetting(state, deck, CONST.settings.keys.backgroundDefault.key, String(value));
+    },
+    setBackgroundImage(state, { value, deck = null }) {
+      updateDeckSetting(state, deck, CONST.settings.keys.backgroundImage.key, String(value));
+    },
+    setBackgroundArtist(state, { value, deck = null }) {
+      updateDeckSetting(state, deck, CONST.settings.keys.backgroundArtist.key, String(value));
     },
 
     reset(state, { setting, deck = null }) {

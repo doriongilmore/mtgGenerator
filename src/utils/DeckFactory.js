@@ -15,6 +15,7 @@ function getDefaultList() {
 
 function simplifyCard(c) {
   const oracle_text = c.card_faces ? c.card_faces.map(face => face.oracle_text).join(' // ') : c.oracle_text;
+  const mana_cost = c.card_faces ? c.card_faces.map(face => face.mana_cost).join(' // ') : c.mana_cost;
   const image_uris = c.image_uris
     ? [c.image_uris.large || c.image_uris.normal]
     : c.card_faces.map(face => face.image_uris.large || face.image_uris.normal);
@@ -29,7 +30,7 @@ function simplifyCard(c) {
     oracle_text,
     rarity: c.rarity,
     rulings: c.rulings,
-    mana_cost: c.mana_cost,
+    mana_cost,
     color_identity: c.color_identity,
     artist: c.artist,
     art_crop,
