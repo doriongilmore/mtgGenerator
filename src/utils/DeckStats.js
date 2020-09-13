@@ -60,8 +60,9 @@ function getCmcKey(cmc) {
 
 /**
  * @param {Deck} deck
+ * @param {Object} cardsInfo
  */
-function getStats(deck) {
+function getStats(deck, cardsInfo) {
   const functionalityList = CONST.stats.functionalities;
   const byColor = {};
   const byCmc = { ...CONST.stats.byCmc.default };
@@ -75,9 +76,10 @@ function getStats(deck) {
     const cards = list.list;
     for (let i = 0, l = cards.length; i < l; i++) {
       const card = cards[i];
-      const colorKey = getColorKey(card.color_identity);
-      const cmcKey = getCmcKey(card.cmc);
-      const typeKey = getTypeKey(card.type_line);
+      const info = cardsInfo[card.id];
+      const colorKey = getColorKey(info.color_identity);
+      const cmcKey = getCmcKey(info.cmc);
+      const typeKey = getTypeKey(info.type_line);
       if (!byColor[colorKey]) {
         byColor[colorKey] = 0;
       }
@@ -87,7 +89,7 @@ function getStats(deck) {
       byColor[colorKey] += +card.deckQte;
       byType[typeKey] += +card.deckQte;
       byCmc[cmcKey] += +card.deckQte;
-      const oracle = (card.oracle_text || '').toLowerCase();
+      const oracle = (info.oracle_text || '').toLowerCase();
       for (let i = 0, l = functionalityList.length; i < l; i++) {
         const search = functionalityList[i].search;
         const match = typeof search === 'string' ? oracle.includes(search) : oracle.match(search);

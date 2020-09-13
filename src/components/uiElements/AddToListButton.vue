@@ -23,7 +23,7 @@ export default {
   props: ['card', 'addList', 'ignoreIndex', 'variant'],
   methods: {
     addCardToList(card, deck = null, listIndex = null) {
-      this.$store.commit('decks/addCardToList', { card, deck, listIndex });
+      this.$store.dispatch('decks/addCardToList', { card, deck, listIndex });
     },
   },
 };

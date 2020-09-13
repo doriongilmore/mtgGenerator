@@ -1,16 +1,16 @@
 <template>
   <b-modal class="export" :id="modalId" size="sm" title="Export" ref="modal" lazy hide-footer>
     <form>
-      <b-form-row class="mb-2">
+      <div class="mb-2 row">
         <div class="col col-4" v-for="f in exportFormats" :key="f.key">
           <b-radio :id="f.key" :value="f" v-model="format"> {{ f.short }}</b-radio>
         </div>
-      </b-form-row>
+      </div>
 
-      <b-form-row class="mb-2" v-if="format.key !== dorionKey">
+      <div class="mb-2 row" v-if="format.key !== dorionKey">
         <div class="col col-6"><b-radio value="withSets" v-model="setFormat"> With Sets</b-radio></div>
         <div class="col col-6"><b-radio value="withoutSets" v-model="setFormat"> Without Sets</b-radio></div>
-      </b-form-row>
+      </div>
 
       <div class="text-center w-100 mb-1">Copy-Paste</div>
 
@@ -45,9 +45,10 @@ export default {
   name: 'Export',
   mixins: [modalFactory],
   mounted() {
-    this.listenEvents(deckOrList => {
+    this.listenEvents(async deckOrList => {
       if (deckOrList) {
         this.deckOrList = deckOrList;
+        this.cardsInfo = await this.getCardsInfo(this.allCardIds);
       }
     });
   },
@@ -60,9 +61,21 @@ export default {
       exportFormats: CONST.exportFormats.list,
       setFormat: 'withSets',
       deckOrList: null,
+      cardsInfo: {},
     };
   },
   computed: {
+    allCardIds() {
+      let all;
+      if (this.deckOrList.list) {
+        all = DeckFactory.getCardsFromLists([this.deckOrList]);
+      } else {
+        all = DeckFactory.getCardsFromDecks([this.deckOrList]);
+      }
+      const ids = all.map(c => c.id);
+      // console.info('allCardIds computed ', this.tmpDeck, ids, all);
+      return ids;
+    },
     getExport() {
       if (this.format.key === CONST.exportFormats.DORION.key) {
         return JSON.stringify(this.deckOrList);
@@ -83,10 +96,12 @@ export default {
         }
         return `${sb ? 'SB: ' : ''}${prop[0]}${prop[1]}${prop[2]}`;
       };
-      const formatList = (list, sb = false) =>
-        DeckFactory.simplifyList(list)
+      const formatList = (list, sb = false) => {
+        const _list = list.list.map(deckCard => ({ ...this.cardsInfo[deckCard.id], ...deckCard }));
+        return _list // DeckFactory.simplifyList(_list)
           .map(formatCard.bind(this, sb))
           .join(newLine);
+      };
 
       if (this.deckOrList.list) {
         return formatList(this.deckOrList);
@@ -98,10 +113,25 @@ export default {
         const firstLine = isMagic ? '' : `// ${list.name}${newLine}`;
         text += `${firstLine}${formatList(list, sb)}${newLine}`;
       }
+      this.exportText = text;
       return text;
     },
   },
   methods: {
+    async getCardsInfo(newIds) {
+      const cardsInfo = { ...this.cardsInfo };
+      for (let i = 0, l = newIds.length; i < l; i++) {
+        const cardId = newIds[i];
+        if (!cardsInfo[cardId]) {
+          try {
+            cardsInfo[cardId] = await this.$store.dispatch('mtg/getCardById', { cardId });
+          } catch (e) {
+            console.error('fetching card ', cardId, e);
+          }
+        }
+      }
+      return cardsInfo;
+    },
     saveFile() {
       const format = this.format.key === CONST.exportFormats.DORION.key ? 'json' : 'txt';
       this.$refs.exportLink.download = `${this.deckOrList.name}[${this.format.value}].${format}`;

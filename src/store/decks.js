@@ -1,4 +1,5 @@
-import mockList from 'src/utils/mockList';
+import decksMock from 'src/utils/mock/decks';
+const mockList = JSON.stringify(decksMock.decksByIds);
 import CONST from 'src/utils/CONST';
 import DeckFactory from 'src/utils/DeckFactory';
 
@@ -19,6 +20,13 @@ import DeckFactory from 'src/utils/DeckFactory';
  * @property {Array<DeckList>} lists
  */
 
+function saveList(newDecksByIds) {
+  const list = JSON.stringify(newDecksByIds);
+  // console.info('save deck list in storage');
+  // console.info(list);
+  window.localStorage.setItem(CONST.storageKeys.deckList, list);
+}
+
 export const decks = {
   namespaced: true,
   state: {
@@ -32,28 +40,31 @@ export const decks = {
       }
       delete newDecksByIds[deck.id];
       state.decksByIds = newDecksByIds;
-      window.localStorage.setItem(CONST.storageKeys.deckList, JSON.stringify(newDecksByIds));
+      saveList(newDecksByIds);
     },
     setDecks(state, decks) {
       const newDecksByIds = { ...state.decksByIds };
       for (let i = 0, l = decks.length; i < l; i++) {
         const deck = decks[i];
-        // if (!newDecksByIds[deck.id]) {
         newDecksByIds[deck.id] = deck;
-        // }
       }
       state.decksByIds = newDecksByIds;
-      window.localStorage.setItem(CONST.storageKeys.deckList, JSON.stringify(newDecksByIds));
+      saveList(newDecksByIds);
     },
     reset(state) {
       const deckList = JSON.parse(mockList);
       const newDecksByIds = { ...deckList };
       state.decksByIds = newDecksByIds;
-      window.localStorage.setItem(CONST.storageKeys.deckList, JSON.stringify(newDecksByIds));
-      window.localStorage.removeItem(CONST.storageKeys.tmpDeck);
+      saveList(newDecksByIds);
+      for (let i = 0; i < CONST.storageKeys.notSupported.length; i++) {
+        window.localStorage.removeItem(CONST.storageKeys.notSupported[i]);
+      }
     },
-    addCardToList(state, { card, deck, listIndex }) {
-      const _card = DeckFactory.cloneCardForDeck(card);
+  },
+  actions: {
+    addCardToList(context, { card, deck, listIndex }) {
+      const cardsInfo = context.rootState.mtg.cardsByIds;
+      const _card = DeckFactory.cloneCardForDeck(cardsInfo[card.id]);
       const _deck = deck || DeckFactory.getDeckToCreate();
       let _listIndex = 0;
       if (listIndex || listIndex === 0) {
@@ -61,18 +72,14 @@ export const decks = {
       } else if (deck) {
         _listIndex = deck.lists.length;
       }
-      const newDecksByIds = { ...state.decksByIds };
       if (!_deck.lists[_listIndex]) {
         _deck.lists.push(DeckFactory.createNewList());
       }
       if (!_deck.lists[_listIndex].list.find(c => c.id === _card.id)) {
         _deck.lists[_listIndex].list.push(_card);
-        DeckFactory.update(_deck);
-        newDecksByIds[_deck.id] = _deck;
-        state.decksByIds = newDecksByIds;
-        window.localStorage.setItem(CONST.storageKeys.deckList, JSON.stringify(newDecksByIds));
+        DeckFactory.update(_deck, cardsInfo);
+        context.commit('setDecks', [_deck]);
       }
     },
   },
-  actions: {},
 };
