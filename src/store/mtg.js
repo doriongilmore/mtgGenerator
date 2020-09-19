@@ -58,8 +58,6 @@ function isCorrectQuery(args) {
 
 function saveList(newCardsByIds) {
   const list = JSON.stringify(newCardsByIds);
-  // console.info('save cards list in storage');
-  // console.info(list);
   window.sessionStorage.setItem(CONST.storageKeys.cards, list);
 }
 
@@ -121,31 +119,22 @@ export const mtg = {
         }
         Cards.search(query, options)
           .on('cancel', res => {
-            console.info('totoEL cancel', res);
             reject('no result', res);
           })
           .on('not_found', res => {
-            console.info('totoEL not_found', res);
             reject('no result', res);
           })
           .on('error', res => {
-            console.info('totoEL error', res);
             reject('no result', res);
           })
           .on('data', c => {
-            console.info('totoEL data', c);
             context.commit('setCards', [c]);
             context.commit('search/setResults', { results: [c.id], searchParams, finished: false }, { root: true });
             results.push(c.id);
           })
           .on('end', res => {
-            console.info('totoEL end', res);
             context.commit('search/setResults', { results: [], searchParams, finished: true }, { root: true });
             resolve(results);
-          })
-          .on('done', res => {
-            console.info('totoEL done', res);
-            reject('no result', res);
           });
       }).then(res => {
         console.info('results for search', { searchParams, res });

@@ -72,9 +72,7 @@ export default {
       } else {
         all = DeckFactory.getCardsFromDecks([this.deckOrList]);
       }
-      const ids = all.map(c => c.id);
-      // console.info('allCardIds computed ', this.tmpDeck, ids, all);
-      return ids;
+      return all.map(c => c.id);
     },
     getExport() {
       if (this.format.key === CONST.exportFormats.DORION.key) {
@@ -96,12 +94,8 @@ export default {
         }
         return `${sb ? 'SB: ' : ''}${prop[0]}${prop[1]}${prop[2]}`;
       };
-      const formatList = (list, sb = false) => {
-        const _list = list.list.map(deckCard => ({ ...this.cardsInfo[deckCard.id], ...deckCard }));
-        return _list // DeckFactory.simplifyList(_list)
-          .map(formatCard.bind(this, sb))
-          .join(newLine);
-      };
+      const formatList = (list, sb = false) =>
+        list.list.map(deckCard => formatCard(sb, { ...this.cardsInfo[deckCard.id], ...deckCard })).join(newLine);
 
       if (this.deckOrList.list) {
         return formatList(this.deckOrList);

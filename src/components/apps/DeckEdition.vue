@@ -7,10 +7,7 @@
           <b-navbar-toggle class="deckButtons" target="nav-collapse-deck"></b-navbar-toggle>
           <b-collapse id="nav-collapse-deck" is-nav>
             <b-navbar-nav class="deckButtons">
-              <b-nav-item
-                :class="`btn rounded-pill ${updateDone ? 'btn-primary' : 'btn-light'}`"
-                @click="saveDeck(true)"
-              >
+              <b-nav-item :class="`btn rounded-pill ${updateDone ? 'btn-primary' : 'btn-light'}`" @click="saveDeck()">
                 <b-icon-clipboard-check :variant="!updateDone ? 'secondary' : 'light'"></b-icon-clipboard-check>
                 <span :class="`d-sm-none d-lg-inline ${updateDone ? 'btn-primary' : 'btn-light'}`"> Save</span>
               </b-nav-item>
@@ -208,14 +205,11 @@ export default {
     },
     allCardIds() {
       const all = DeckFactory.getCardsFromDecks([this.deck]);
-      const ids = all.map(c => c.id);
-      // console.info('allCardIds computed ', this.deck, ids, all);
-      return ids;
+      return all.map(c => c.id);
     },
   },
   watch: {
     async allCardIds(newIds, oldIds) {
-      // console.info('allCardIds', oldIds, newIds);
       this.cardsInfo = await this.getCardsInfo(newIds);
     },
   },
@@ -247,15 +241,15 @@ export default {
     openCard(cardId) {
       this.cardModal(cardId);
     },
-    saveDeck(forceUpdate = false) {
+    saveDeck() {
       if (!this.deck) {
-        return false;
+        return;
       }
       DeckFactory.update(this.deck, this.cardsInfo);
       const newDeck = DeckFactory.getDeckToCreate();
       if (DeckFactory.areSameDeck(this.deck, newDeck)) {
         console.warn('dont save this deck ...', { deck: this.deck, newDeck });
-        return false;
+        return;
       }
       this.onChange(true); // sort lists
       this.$store.commit('decks/setDecks', [this.deck]);
