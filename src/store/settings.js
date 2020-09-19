@@ -4,6 +4,7 @@ function getDefaultState() {
   return {
     global: {
       favoriteLanguage: CONST.search.lang.en.key,
+      favoriteDisplay: CONST.settings.favoriteDisplay.basic.key,
     },
     deck: {
       typeGrouping: true,
@@ -37,6 +38,9 @@ export const settings = {
   mutations: {
     setFavoriteLanguage(state, { value }) {
       state.global.favoriteLanguage = String(value);
+    },
+    setFavoriteDisplay(state, { value }) {
+      state.global.favoriteDisplay = String(value);
     },
     setTypeGrouping(state, { value, deck = null }) {
       updateDeckSetting(state, deck, CONST.settings.keys.typeGrouping.key, !!value);

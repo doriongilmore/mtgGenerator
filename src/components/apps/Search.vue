@@ -1,62 +1,67 @@
 <template>
   <div id="search" class="h-100">
     <div class="container">
-      <div class="flex-row">
-        <div class="col col-1"><div v-if="isSearching" class="spinner-border"></div></div>
-        <div class="col col-5 d-inline-flex">
+      <div class="row">
+        <div class="col col-2 col-lg-1"><div v-if="isSearching" class="spinner-border"></div></div>
+        <div class="col col-10 col-lg-5 d-inline-flex">
           <form v-on:submit="handleSearch" id="form" class="w-100">
             <input type="submit" class="d-none" />
             <b-input type="text" v-model="search.name" placeholder="Enter a name"></b-input>
           </form>
-        </div>
-        <div class="col col-3 d-inline-flex">
           <div @click="handleSearch()" class="btn btn-light"><b-icon-search></b-icon-search></div>
-          <div @click="openSearch()" class="btn btn-light">
-            <b-icon-tools></b-icon-tools><span class="d-none d-md-inline"> Filters</span>
+          <div @click="openSearch()" class="btn btn-light d-inline-flex">
+            <b-icon-tools></b-icon-tools><span class="d-none d-xl-inline"> Filters</span>
           </div>
         </div>
-        <div class="col col-3 d-inline-flex">
+        <div class="col col-6 col-lg-3">
+          <div class="btn btn-light" @click="toggleDisplay">Toggle display</div>
+        </div>
+        <div class="col col-6 col-lg-3 d-inline-flex">
           <div class="btn-sm btn-light" @click="previousPage()"><b-icon-arrow-left></b-icon-arrow-left></div>
           <div class="btn-sm btn-light" @click="nextPage()"><b-icon-arrow-right></b-icon-arrow-right></div>
-          <span class="badge-light badge-pill pt-1">{{ pageIndex + 1 }} / {{ pageCount }}</span>
+          <span class="badge-light badge-pill pt-1"> {{ pageIndex + 1 }} / {{ pageCount }} </span>
         </div>
       </div>
     </div>
-    <div class="container h-75">
-      <div class="row flex-nowrap mt-2">
-        <div class="col col-4">Name</div>
-        <div class="col col-2 text-left">Cost</div>
-        <div class="col col-3">Type</div>
-        <div class="col col-3">Set</div>
-      </div>
-      <div class="list-group h-100" id="resultsBody">
-        <div class="row flex-nowrap mt-1 text-center" v-for="result in results" :key="result.id">
-          <AddToListButton class="col col-1" :add-list="addList" :card="result" variant="secondary"></AddToListButton>
-          <div class="col col-3 pointer" @click="openCard(result.id)">{{ result.name }}</div>
-          <div class="col col-2"><Mana :mana-cost="result.mana_cost"></Mana></div>
-          <div class="col col-3">{{ result.type_line }}</div>
-          <div class="col col-3">{{ result.set_name }}</div>
-        </div>
-      </div>
-    </div>
+    <basic
+      v-if="cardDisplay === settingsFavoriteDisplay.basic.key"
+      :results="results"
+      :add-list="addList"
+      :open-card="openCard"
+    />
+    <detailed
+      v-if="cardDisplay === settingsFavoriteDisplay.detailed.key"
+      :results="results"
+      :add-list="addList"
+      :open-card="openCard"
+    />
+    <complete
+      v-if="cardDisplay === settingsFavoriteDisplay.complete.key"
+      :results="results"
+      :add-list="addList"
+      :open-card="openCard"
+    />
   </div>
 </template>
 
 <script>
-import draggable from 'vuedraggable';
 import modalHandler from '../../mixins/modalHandler';
 import { mapState, mapGetters } from 'vuex';
-import Mana from '../uiElements/Mana.vue';
-import AddToListButton from '../uiElements/AddToListButton.vue';
+import basic from './resultsDisplay/basic.vue';
+import detailed from './resultsDisplay/detailed.vue';
+import complete from './resultsDisplay/complete.vue';
+import CONST from '../../utils/CONST';
 
 export default {
   name: 'Search',
-  components: { draggable, Mana, AddToListButton },
+  components: { basic, detailed, complete },
   props: ['deck'],
   mixins: [modalHandler],
   data() {
     return {
       isSearching: false,
+      chosenDisplay: null,
+      settingsFavoriteDisplay: CONST.settings.favoriteDisplay,
       results: [],
     };
   },
@@ -77,6 +82,7 @@ export default {
     ...mapState({
       search: state => state.search,
       pageIndex: state => state.search.pageIndex,
+      favoriteDisplay: state => state.settings.global.favoriteDisplay,
       decks: state => Object.values(state.decks.decksByIds),
     }),
     ...mapGetters({
@@ -97,6 +103,9 @@ export default {
         list.unshift(this.deck);
       }
       return list;
+    },
+    cardDisplay() {
+      return this.chosenDisplay ? this.chosenDisplay : this.favoriteDisplay;
     },
   },
   methods: {
@@ -130,6 +139,15 @@ export default {
       }
       this.isSearching = false;
     },
+    toggleDisplay() {
+      if (this.cardDisplay === CONST.settings.favoriteDisplay.basic.key) {
+        this.chosenDisplay = CONST.settings.favoriteDisplay.detailed.key;
+      } else if (this.cardDisplay === CONST.settings.favoriteDisplay.detailed.key) {
+        this.chosenDisplay = CONST.settings.favoriteDisplay.complete.key;
+      } else if (this.cardDisplay === CONST.settings.favoriteDisplay.complete.key) {
+        this.chosenDisplay = CONST.settings.favoriteDisplay.basic.key;
+      }
+    },
   },
   mounted() {
     this.$root.$on('bv::dropdown::show', bvEvent => {
@@ -140,10 +158,4 @@ export default {
 };
 </script>
 
-<style lang="less" scoped>
-#resultsBody {
-  overflow-x: hidden;
-  overflow-y: auto;
-  max-height: 200px;
-}
-</style>
+<style lang="less" scoped></style>

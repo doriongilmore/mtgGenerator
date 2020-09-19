@@ -39,6 +39,13 @@ function simplifyCard(c) {
     set: c.set,
     set_name: c.set_name,
     type_line: c.type_line,
+    power: c.power,
+    toughness: c.toughness,
+    flavor_text: c.flavor_text,
+    isCreature: c.type_line.includes('Creature'),
+    isToken: c.type_line.includes('Token'),
+    isLegend: c.type_line.includes('Legend'),
+    isSnow: c.type_line.includes('Snow'),
     // for deck cards
     deckQte: c.deckQte,
     printConfig: c.printConfig,
