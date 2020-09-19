@@ -93,7 +93,6 @@ export default {
         for (let i = 0; i < this.progressMax; i++) {
           this.progressValue = i;
           const row = list[i];
-          console.info('empty row', !row);
           if (!row) {
             createList('Default name');
           } else if (row.startsWith('//')) {
@@ -127,7 +126,6 @@ export default {
       const [deckQte = '1'] = row.match(regexpQte) || [];
       cardName = cardName.replace(deckQte, '').trim();
       try {
-        console.info('formatCardRow', { cardName, set, withSet });
         const realCard = await this.searchCard(cardName, withSet ? set : noSet);
         const clone = DeckFactory.cloneCardForDeck(realCard);
         clone.deckQte = +deckQte;
@@ -144,13 +142,10 @@ export default {
       }
       return new Promise(async (resolve, reject) => {
         const results = await this.$store.dispatch('mtg/search', args);
-        console.info('[Import.searchCard] results length', results.length);
         if (!results.length) {
           return reject('not_found');
         }
-        console.info('[Import.searchCard] results', results);
         const card = await this.$store.dispatch('mtg/getCardById', { cardId: results[0] });
-        console.info('[Import.searchCard] card', card);
         if (!card) {
           return reject('not_found');
         }

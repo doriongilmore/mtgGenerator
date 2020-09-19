@@ -22,8 +22,6 @@ import DeckFactory from 'src/utils/DeckFactory';
 
 function saveList(newDecksByIds) {
   const list = JSON.stringify(newDecksByIds);
-  // console.info('save deck list in storage');
-  // console.info(list);
   window.localStorage.setItem(CONST.storageKeys.deckList, list);
 }
 

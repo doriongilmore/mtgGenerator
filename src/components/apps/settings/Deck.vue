@@ -153,8 +153,7 @@ export default {
         index = 1;
       }
       const defaultBackground = this.backgroundList[index];
-      console.info('defaultBackground', { index, defaultBackground });
-      return defaultBackground && this.backgroundList[index].value;
+      return defaultBackground && defaultBackground.value;
     },
     isBackgroundDefault() {
       return this.defaultBackground && this.deck.background

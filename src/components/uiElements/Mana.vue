@@ -72,7 +72,6 @@ export default {
   },
   computed: {
     manaList() {
-      // console.info(this.manaCost);
       return ((this.manaCost || '').match(CONST.mana.generalRegexp) || []).map(this.formatSymbol);
     },
   },
