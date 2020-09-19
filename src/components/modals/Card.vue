@@ -24,8 +24,15 @@
               <div class="col">{{ card.type_line }}</div>
               <div class="col">{{ card.rarity }}</div>
             </div>
-            <div v-if="card.oracle_text" class="mt-2 p-1 border border-dark row row-cols-1">
-              <div class="col"><MtgText :text="card.oracle_text"></MtgText></div>
+            <div
+              v-if="card.oracle_text || card.flavor_text || card.isCreature"
+              class="mt-2 p-1 border border-dark row row-cols-1"
+            >
+              <div class="col">
+                <MtgText v-if="card.oracle_text" :text="card.oracle_text"></MtgText>
+                <MtgText class="font-italic" v-if="card.flavor_text" :text="card.flavor_text"></MtgText>
+                <div v-if="card.isCreature" class="float-right">{{ card.power }} / {{ card.toughness }}</div>
+              </div>
             </div>
             <div id="legalities" class="mt-2 row row-cols-3 row-cols-sm-4 row-cols-xl-6">
               <div v-for="el in card.legalities" :key="el.format" :class="el.legal + ' m-1 col'" :title="el.legal">

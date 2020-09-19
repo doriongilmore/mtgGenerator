@@ -26,14 +26,16 @@
     </div>
 
     <div class="row mt-2">
-      <div class="col col-6 h4">Card Sorting</div>
+      <details class="col col-6 h4 pointer" @click="displayCardSorting = !displayCardSorting">
+        <summary>Card Sorting</summary>
+      </details>
       <div class="col col-3" />
       <div class="col col-3">
         <div @click="reset(settingKeys.sorting)" class="btn btn-danger">Reset</div>
       </div>
     </div>
 
-    <div class="row mt-1" v-for="(sort, index) in settingsDeck.sorting">
+    <div v-if="displayCardSorting" class="row mt-1" v-for="(sort, index) in settingsDeck.sorting">
       <div class="col col-2 col-md-1">
         <div
           :class="`btn  btn-light text-center${!index ? ' disabled' : ''}`"
@@ -54,7 +56,13 @@
     </div>
 
     <div class="row mt-2">
-      <div class="col col-6 h4">Type Grouping</div>
+      <div class="col col-6 h4" v-if="!settingsDeck.typeGrouping">Type Grouping</div>
+      <details
+        class="col col-6 h4 pointer"
+        @click="displayTypeGrouping = !displayTypeGrouping"
+        v-if="settingsDeck.typeGrouping"
+        ><summary>Type Grouping</summary></details
+      >
       <div class="col col-3">
         <div
           @click="update(settingKeys.typeGrouping)"
@@ -67,7 +75,11 @@
         <div @click="reset(settingKeys.typeGrouping)" class="btn btn-danger">Reset</div>
       </div>
     </div>
-    <div class="row mt-1" v-for="(type, index) in settingsDeck.typePriority" v-if="settingsDeck.typeGrouping || !deck">
+    <div
+      class="row mt-1"
+      v-for="(type, index) in settingsDeck.typePriority"
+      v-if="displayTypeGrouping && (settingsDeck.typeGrouping || !deck)"
+    >
       <div class="col col-2 col-md-1">
         <div
           :class="`btn  btn-light text-center${!index ? ' disabled' : ''}`"
@@ -103,6 +115,8 @@ export default {
       typeList: CONST.sorting.typeList,
       backgroundDefaultList: CONST.settings.backgroundDefault.list.map(e => ({ text: e.value, value: e.key })),
       settingKeys: CONST.settings.keys,
+      displayCardSorting: false,
+      displayTypeGrouping: false,
     };
   },
   computed: {

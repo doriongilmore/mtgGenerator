@@ -14,6 +14,19 @@
         <div @click="reset(settingKeys.favoriteLanguage)" class="btn btn-danger">Reset</div>
       </div>
     </div>
+    <div class="row mt-1">
+      <div class="col col-5 h4">Favorite Card Display</div>
+      <div class="col col-4">
+        <b-form-select
+          :options="displayList"
+          v-model="settings.favoriteDisplay"
+          @change="update(settingKeys.favoriteDisplay, null, null, settings.favoriteDisplay)"
+        ></b-form-select>
+      </div>
+      <div class="col col-3">
+        <div @click="reset(settingKeys.favoriteDisplay)" class="btn btn-danger">Reset</div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -26,6 +39,7 @@ export default {
   data() {
     return {
       actualLanguage: null,
+      displayList: CONST.settings.favoriteDisplay.list.map(e => ({ text: e.value, value: e.key })),
       langList: CONST.search.lang.list.map(e => ({ text: e.value, value: e.key })),
       settingKeys: CONST.settings.keys,
     };

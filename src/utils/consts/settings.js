@@ -26,7 +26,17 @@ const first = { key: 'first', value: 'First', fn: dontChange };
 const expensive = { key: 'expensive', value: 'Highest ccm', fn: sortByCmc };
 const rarest = { key: 'rarest', value: 'Rarest', fn: sortByRarity };
 
+const basic = { key: 'basic', value: 'Basic' };
+const detailed = { key: 'detailed', value: 'Detailed' };
+const complete = { key: 'complete', value: 'Complete' };
+
 const settings = {
+  favoriteDisplay: {
+    basic,
+    detailed,
+    complete,
+    list: [basic, detailed, complete],
+  },
   backgroundDefault: {
     none,
     first,
@@ -38,6 +48,7 @@ const settings = {
     global: 'global',
     deck: 'deck',
     favoriteLanguage: { global: true, key: 'favoriteLanguage', type: String, store: 'setFavoriteLanguage' },
+    favoriteDisplay: { global: true, key: 'favoriteDisplay', type: String, store: 'setFavoriteDisplay' },
     typeGrouping: { global: false, key: 'typeGrouping', type: Boolean, store: 'setTypeGrouping' },
     typePriority: { global: false, key: 'typePriority', type: Array, store: 'setTypePriority' },
     sorting: { global: false, key: 'sorting', type: Array, store: 'setSorting' },
