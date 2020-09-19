@@ -139,7 +139,7 @@
         <Stats :deck="deck" :cardsInfo="cardsInfo"></Stats>
       </b-card-body>
       <b-card-body class="text-center h-100" v-if="sectionToDisplay === 'settings'">
-        <Settings :deck="deck"></Settings>
+        <Settings :deck="deck" :cardsInfo="cardsInfo"></Settings>
       </b-card-body>
       <b-card-footer footer-tag="nav">
         <b-nav card-footer tabs>

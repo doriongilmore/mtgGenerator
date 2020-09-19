@@ -9,7 +9,7 @@ function getDefaultState() {
       typeGrouping: true,
       typePriority: [...CONST.sorting.defaultTypePriority],
       sorting: [...CONST.sorting.defaultSortPriority],
-      backgroundDefault: CONST.settings.backgroundDefault[1].key,
+      backgroundDefault: CONST.settings.backgroundDefault.none.key,
       backgroundImage: null,
       backgroundArtist: null,
     },
@@ -62,7 +62,7 @@ export const settings = {
       const resetSpecific = !!setting;
       if (deck) {
         const newByDeck = { ...state.byDeck };
-        if (resetSpecific) {
+        if (newByDeck[deck.id] && resetSpecific) {
           if (newByDeck[deck.id][setting.key] !== undefined) {
             delete newByDeck[deck.id][setting.key];
           }

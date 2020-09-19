@@ -29,6 +29,7 @@ function simplifyCard(c) {
     oracle_id: c.oracle_id,
     oracle_text,
     rarity: c.rarity,
+    card_faces: c.card_faces,
     rulings: c.rulings,
     mana_cost,
     color_identity: c.color_identity,

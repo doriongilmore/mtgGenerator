@@ -8,11 +8,20 @@
         <b-form-select
           :options="backgroundDefaultList"
           v-model="settingsDeck.backgroundDefault"
-          @change="update(settingKeys.backgroundDefault, null, null, settingsDeck.backgroundDefault)"
+          @change="updateDefaultBackground()"
         ></b-form-select>
       </div>
       <div class="col col-3">
         <div @click="reset(settingKeys.backgroundDefault)" class="btn btn-danger">Reset</div>
+      </div>
+    </div>
+    <div class="row mt-1" v-if="deck">
+      <div class="col col-5 h4">Background</div>
+      <div class="col col-4">
+        <b-form-select :options="backgroundList" v-model="deck.background"></b-form-select>
+      </div>
+      <div class="col col-3">
+        <div @click="resetBackground()" class="btn btn-danger">Reset</div>
       </div>
     </div>
 
@@ -84,14 +93,15 @@
 import { mapState } from 'vuex';
 import CONST from 'src/utils/CONST';
 import { changeListOrder } from 'src/utils/dragDrop';
+import DeckFactory from '../../../utils/DeckFactory';
 
 export default {
   name: 'Deck',
-  props: ['deck'],
+  props: ['deck', 'cardsInfo'],
   data() {
     return {
       typeList: CONST.sorting.typeList,
-      backgroundDefaultList: CONST.settings.backgroundDefault.map(e => ({ text: e.value, value: e.key })),
+      backgroundDefaultList: CONST.settings.backgroundDefault.list.map(e => ({ text: e.value, value: e.key })),
       settingKeys: CONST.settings.keys,
     };
   },
@@ -104,16 +114,85 @@ export default {
       const deckSettings = (this.deck && this.settings.byDeck[this.deck.id]) || {};
       return Object.assign({}, globalSettings, deckSettings);
     },
+    allCardIds() {
+      if (!this.deck) {
+        return [];
+      }
+      return DeckFactory.getCardsFromDecks([this.deck]).map(c => c.id);
+    },
+    backgroundList() {
+      const cards = this.allCardIds.map(id => this.cardsInfo[id]);
+      const defaultBackgroundSetting = this.settingsDeck[CONST.settings.keys.backgroundDefault.key];
+      const sorted = cards.sort(CONST.settings.backgroundDefault[defaultBackgroundSetting].fn);
+      const faces = [];
+      const add = (id, face) => {
+        const art_crop = face.image_uris.art_crop ? face.image_uris.art_crop : face.art_crop[0];
+        faces.push({
+          id,
+          art_crop,
+          artist: face.artist,
+          name: face.name,
+        });
+      };
+      for (let i = 0; i < sorted.length; i++) {
+        const card = sorted[i];
+        if (card.card_faces) {
+          for (let j = 0; j < card.card_faces.length; j++) {
+            add(card.id, card.card_faces[j]);
+          }
+        } else {
+          add(card.id, card);
+        }
+      }
+
+      return [{ text: 'None', value: null }, ...faces.map(c => ({ text: c.name, value: c }))];
+    },
+    defaultBackground() {
+      let index = 0;
+      if (this.settingsDeck[CONST.settings.keys.backgroundDefault.key] !== CONST.settings.backgroundDefault.none.key) {
+        index = 1;
+      }
+      const defaultBackground = this.backgroundList[index];
+      console.info('defaultBackground', { index, defaultBackground });
+      return defaultBackground && this.backgroundList[index].value;
+    },
+    isBackgroundDefault() {
+      return this.defaultBackground && this.deck.background
+        ? this.defaultBackground.art_crop === this.deck.background.art_crop
+        : this.defaultBackground === this.deck.background;
+    },
   },
   methods: {
     reset(setting) {
-      this.$emit('resetKey', setting);
+      const shouldResetBackground =
+        setting.key === CONST.settings.keys.backgroundDefault.key && this.isBackgroundDefault;
+      const shouldResetTypePriority = setting.key === CONST.settings.keys.typeGrouping.key;
+      const cbSuccess = () => {
+        shouldResetBackground && this.resetBackground();
+        shouldResetTypePriority &&
+          this.$store.commit('settings/reset', {
+            setting: CONST.settings.keys.typePriority,
+            deck: this.deck,
+          });
+      };
+      this.$emit('resetKey', { setting, cbSuccess });
     },
     update(setting, index = null, up = null, value = null) {
       this.$emit('updateKey', { setting, index, up, value });
     },
-    async changeDefaultBackground() {
-      this.update(CONST.settings.keys.backgroundDefault, null, null, this.backgroundDefault);
+    async resetBackground(confirm = false) {
+      const art_crop = this.defaultBackground && this.defaultBackground.art_crop;
+      const artist = this.defaultBackground && this.defaultBackground.artist;
+      this.update(CONST.settings.keys.backgroundImage, null, null, art_crop);
+      this.update(CONST.settings.keys.backgroundArtist, null, null, artist);
+      this.deck.background = this.defaultBackground;
+    },
+    updateDefaultBackground() {
+      const isBackgroundDefault = this.isBackgroundDefault;
+      this.update(CONST.settings.keys.backgroundDefault, null, null, this.settingsDeck.backgroundDefault);
+      if (isBackgroundDefault) {
+        this.resetBackground();
+      }
     },
   },
 };

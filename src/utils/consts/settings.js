@@ -1,10 +1,39 @@
+const dontChange = (cardA, cardB) => 0;
+
+// reversed compared to sorting.sortByCmc
+const sortByCmc = (cardA, cardB) => {
+  if (cardA.cmc < cardB.cmc) {
+    return 1;
+  } else if (cardA.cmc > cardB.cmc) {
+    return -1;
+  }
+  return 0;
+};
+
+const rarityList = ['common', 'uncommon', 'rare', 'mythic'];
+const sortByRarity = (cardA, cardB) => {
+  const rarityAIndex = rarityList.indexOf(cardA.rarity);
+  const rarityBIndex = rarityList.indexOf(cardB.rarity);
+  if (rarityAIndex < rarityBIndex) {
+    return -1;
+  } else if (rarityAIndex > rarityBIndex) {
+    return 1;
+  }
+  return 0;
+};
+const none = { key: 'none', value: 'None', fn: dontChange };
+const first = { key: 'first', value: 'First', fn: dontChange };
+const expensive = { key: 'expensive', value: 'Highest ccm', fn: sortByCmc };
+const rarest = { key: 'rarest', value: 'Rarest', fn: sortByRarity };
+
 const settings = {
-  backgroundDefault: [
-    { key: 'none', value: 'None' },
-    { key: 'first', value: 'First' },
-    { key: 'expensive', value: 'Highest ccm' },
-    { key: 'rarest', value: 'Rarest' },
-  ],
+  backgroundDefault: {
+    none,
+    first,
+    expensive,
+    rarest,
+    list: [none, first, expensive, rarest],
+  },
   keys: {
     global: 'global',
     deck: 'deck',
