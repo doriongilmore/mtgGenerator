@@ -1,5 +1,5 @@
 <template>
-  <b-dropdown class="toto" text="+" size="sm" :variant="variant || 'light'" lazy dropright no-caret>
+  <b-dropdown class="toto" text="+" size="sm" variant="light" lazy dropright no-caret>
     <div v-for="(deck, deckIndex) in addList">
       <div v-for="(list, listIndex) in deck.lists">
         <b-dropdown-item
@@ -20,7 +20,7 @@
 <script>
 export default {
   name: 'AddToListButton',
-  props: ['card', 'addList', 'ignoreIndex', 'variant'],
+  props: ['card', 'addList', 'ignoreIndex'],
   methods: {
     addCardToList(card, deck = null, listIndex = null) {
       this.$store.dispatch('decks/addCardToList', { card, deck, listIndex });

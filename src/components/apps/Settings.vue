@@ -84,9 +84,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-#settings.deck {
-  max-height: 250px;
-}
 #settings {
   height: 95%;
   overflow-x: hidden;

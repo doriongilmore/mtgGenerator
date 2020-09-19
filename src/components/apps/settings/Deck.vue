@@ -170,6 +170,9 @@ export default {
       return defaultBackground && defaultBackground.value;
     },
     isBackgroundDefault() {
+      if (!this.deck) {
+        return false;
+      }
       return this.defaultBackground && this.deck.background
         ? this.defaultBackground.art_crop === this.deck.background.art_crop
         : this.defaultBackground === this.deck.background;
