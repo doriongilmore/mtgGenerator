@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container h-75">
     <div class="row mt-2">
       <div class="col col-1"></div>
       <div class="col col-3">Art</div>
@@ -7,15 +7,15 @@
         <div class="col col-6">Name</div>
         <div class="col col-6 text-left">Cost</div>
         <div class="col col-6">Type</div>
-        <div class="col col-6">Power / Toughness</div>
+        <div class="col col-6">P/T</div>
         <div class="col col-6">Artist</div>
         <div class="col col-6">Set</div>
       </div>
       <div class="col col-3">Oracle</div>
     </div>
-    <div class="list-group h-100" id="resultsBody">
+    <div class="list-group h-75" id="resultsBody">
       <div class="row mt-2 mb-2" v-for="result in results" :key="result.id">
-        <AddToListButton class="col col-1" :add-list="addList" :card="result" variant="secondary"></AddToListButton>
+        <AddToListButton class="col col-1" :add-list="addList" :card="result"></AddToListButton>
         <div class="col col-3 align-self-center">
           <img :src="result.art_crop" :alt="result.name" class="mw-100 mh-100 pointer" @click="openCard(result.id)" />
         </div>
@@ -24,7 +24,7 @@
           <div class="col col-6"><Mana :mana-cost="result.mana_cost"></Mana></div>
           <div class="col col-6">{{ result.type_line }}</div>
           <div class="col col-6">
-            <div v-if="result.type_line.includes('Creature')">{{ result.power }} / {{ result.toughness }}</div>
+            <div v-if="result.type_line.includes('Creature')">{{ result.power }}/{{ result.toughness }}</div>
           </div>
           <div class="col col-6"><b-icon-pencil></b-icon-pencil> {{ result.artist }}</div>
           <div class="col col-6">{{ result.set_name }}</div>
@@ -55,6 +55,5 @@ export default {
 #resultsBody {
   overflow-x: hidden;
   overflow-y: auto;
-  max-height: 200px;
 }
 </style>

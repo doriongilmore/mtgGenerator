@@ -1,5 +1,32 @@
 <template>
   <div ref="container" id="container">
+    <ul class="bg-light pl-4 nav nav-tabs">
+      <li
+        @click="sectionToDisplay = 'none'"
+        :class="`pointer nav-item nav-link ${sectionToDisplay === 'none' ? 'active' : ''}`"
+      >
+        Cards
+      </li>
+      <li
+        @click="sectionToDisplay = 'search'"
+        :class="`pointer nav-item nav-link ${sectionToDisplay === 'search' ? 'active' : ''}`"
+      >
+        Search
+      </li>
+      <li
+        @click="sectionToDisplay = 'stats'"
+        :class="`pointer nav-item nav-link ${sectionToDisplay === 'stats' ? 'active' : ''}`"
+      >
+        Stats
+      </li>
+      <li
+        @click="sectionToDisplay = 'settings'"
+        :class="`pointer nav-item nav-link ${sectionToDisplay === 'settings' ? 'active' : ''}`"
+      >
+        Settings
+      </li>
+    </ul>
+
     <div id="deckEdition" ref="deckEdition" v-if="deck">
       <div id="deckHeader">
         <b-navbar toggleable="sm" fixed="sm" class="w-100">
@@ -29,8 +56,7 @@
           </b-collapse>
         </b-navbar>
       </div>
-      <!--    TOP    -->
-      <div id="deckContent">
+      <div class="content" v-if="sectionToDisplay === 'none'">
         <div class="container lists mt-3" v-for="(deckList, listIndex) in deck.lists" :key="`deckList-${listIndex}`">
           <div class="row listHeader">
             <div class="col col-6 col-md-3">
@@ -126,29 +152,16 @@
           </div>
         </div>
       </div>
-    </div>
-    <!--    BOTTOM    -->
-    <b-card title="Card Title" no-body id="footer" v-if="deck">
-      <b-card-body class="text-center h-100" v-if="sectionToDisplay === 'search'">
+      <div class="content" v-if="sectionToDisplay === 'search'">
         <Search :deck="deck"></Search>
-      </b-card-body>
-      <b-card-body class="text-center h-100" v-if="sectionToDisplay === 'stats'">
+      </div>
+      <div class="content" v-if="sectionToDisplay === 'stats'">
         <Stats :deck="deck" :cardsInfo="cardsInfo"></Stats>
-      </b-card-body>
-      <b-card-body class="text-center h-100" v-if="sectionToDisplay === 'settings'">
+      </div>
+      <div class="content" v-if="sectionToDisplay === 'settings'">
         <Settings :deck="deck" :cardsInfo="cardsInfo"></Settings>
-      </b-card-body>
-      <b-card-footer footer-tag="nav">
-        <b-nav card-footer tabs>
-          <b-nav-item :active="sectionToDisplay === 'none'" @click="sectionToDisplay = 'none'">Hide</b-nav-item>
-          <b-nav-item :active="sectionToDisplay === 'search'" @click="sectionToDisplay = 'search'">Search</b-nav-item>
-          <b-nav-item :active="sectionToDisplay === 'stats'" @click="sectionToDisplay = 'stats'">Stats</b-nav-item>
-          <b-nav-item :active="sectionToDisplay === 'settings'" @click="sectionToDisplay = 'settings'"
-            >Settings</b-nav-item
-          >
-        </b-nav>
-      </b-card-footer>
-    </b-card>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -440,59 +453,17 @@ function getTypeKey(priority, typeLine) {
 </script>
 
 <style lang="less" scoped>
-#deckContent {
-  max-height: 150px;
-}
-@media screen and (min-height: 430px) {
-  #deckContent {
-    max-height: 250px;
-  }
-}
-@media screen and (min-height: 530px) {
-  #deckContent {
-    max-height: 350px;
-  }
-}
-@media screen and (min-height: 630px) {
-  #deckContent {
-    max-height: 450px;
-  }
-}
-@media screen and (min-height: 730px) {
-  #deckContent {
-    max-height: 550px;
-  }
-}
-@media screen and (min-height: 830px) {
-  #deckContent {
-    max-height: 650px;
-  }
-}
-@media screen and (min-height: 930px) {
-  #deckContent {
-    max-height: 750px;
-  }
-}
-@media screen and (min-height: 1030px) {
-  #deckContent {
-    max-height: 850px;
-  }
-}
-@media screen and (min-height: 1130px) {
-  #deckContent {
-    max-height: 950px;
-  }
-}
 #container {
-  height: 100%;
+  height: 95%;
   padding-top: 0;
 
   #deckEdition {
     height: 85%;
     max-height: inherit;
-    #deckContent {
+    .content {
       overflow-x: hidden;
       overflow-y: auto;
+      height: 100%;
       .deckQte {
         .input {
           background-color: transparent;

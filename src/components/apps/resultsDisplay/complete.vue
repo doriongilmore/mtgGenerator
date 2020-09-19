@@ -1,16 +1,15 @@
 <template>
-  <div class="container">
+  <div class="container h-75">
     <div class="list-group h-100" id="resultsBody">
-      <div class="row row-cols-3">
-        <div v-for="result in results" :key="result.id">
-          <div class="col row mt-3" v-for="imgSrc in result.image_uris">
-            <img
-              :src="imgSrc"
-              :alt="result.name"
-              class="mw-100 mh-100 pointer col col-12"
-              @click="openCard(result.id)"
-            />
-            <AddToListButton class="col col-12" :add-list="addList" :card="result" variant="secondary" />
+      <div class="row row-cols-2 row-cols-md-3">
+        <div v-for="result in results" :key="result.id" class="col mt-3">
+          <div class="row d-inline-flex flex-nowrap ml-1 mr-1">
+            <div class="mr-1" v-for="imgSrc in result.image_uris">
+              <img :src="imgSrc" :alt="result.name" class="mw-100 mh-100 pointer" @click="openCard(result.id)" />
+            </div>
+          </div>
+          <div class="row">
+            <AddToListButton class="col" :add-list="addList" :card="result" />
           </div>
         </div>
       </div>
@@ -37,6 +36,5 @@ export default {
 #resultsBody {
   overflow-x: hidden;
   overflow-y: auto;
-  max-height: 200px;
 }
 </style>
