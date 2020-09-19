@@ -1,7 +1,7 @@
 <template>
   <div :class="`container ${deck ? 'deck' : ''}`" id="settings">
     <Global v-if="!deck" v-on:resetKey="reset" v-on:updateKey="update"></Global>
-    <Deck :deck="deck" v-on:resetKey="reset" v-on:updateKey="update"></Deck>
+    <Deck :deck="deck" :cardsInfo="cardsInfo" v-on:resetKey="reset" v-on:updateKey="update"></Deck>
     <div class="row mt-3 h2">
       <div class="col col-3" />
       <div class="col col-6">
@@ -39,6 +39,7 @@ export default {
   },
   methods: {
     async update({ setting, index, up, value }) {
+      console.info('update', { setting, index, up, value });
       if (!setting) {
         return;
       }
@@ -55,11 +56,12 @@ export default {
       } else if (setting.type === Boolean) {
         payload = { value: !oldValue, deck: this.deck };
       } else if (setting.type === String) {
-        payload = { value };
+        payload = { value, deck: this.deck };
       }
+      console.info('update', setting.key, payload);
       payload && this.$store.commit(`settings/${setting.store}`, payload);
     },
-    async reset(setting = null) {
+    async reset({ setting = null, cbSuccess = () => {}, cbCanceled = () => {} } = {}) {
       try {
         const message = setting
           ? CONST.modals.confirmationMessage.settingLost
@@ -69,13 +71,12 @@ export default {
           : CONST.modals.confirmationMessage.globalSetting;
         await this.confirmModal(message + precision);
         this.$store.commit('settings/reset', { setting, deck: this.deck });
-        if (setting && setting.key === CONST.settings.keys.typeGrouping.key) {
-          this.$store.commit('settings/reset', { setting: CONST.settings.keys.typePriority, deck: this.deck });
-        }
+        cbSuccess();
         // todo toast message
       } catch (e) {
         // todo toast message
         console.info('reset setting canceled', e);
+        cbCanceled();
       }
     },
   },
