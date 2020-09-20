@@ -14,7 +14,9 @@
           </div>
         </div>
         <div class="col col-6 col-lg-3">
-          <div class="btn btn-light" @click="toggleDisplay">Toggle display</div>
+          <div class="btn btn-light" @click="toggleDisplay">
+            <b-icon-eye-fill></b-icon-eye-fill><span class="d-inline btn-light"> Toggle Display</span>
+          </div>
         </div>
         <div class="col col-6 col-lg-3 d-inline-flex">
           <div class="btn-sm btn-light" @click="previousPage()"><b-icon-arrow-left></b-icon-arrow-left></div>
