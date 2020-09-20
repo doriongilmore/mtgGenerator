@@ -61,8 +61,15 @@ export default {
     async doImport() {
       let listOrDeck;
       const notFound = [];
+      const cardIds = [];
       try {
         listOrDeck = JSON.parse(this.importText);
+        const cards = listOrDeck.lists
+          ? DeckFactory.getCardsFromDecks([listOrDeck])
+          : DeckFactory.getCardsFromLists([listOrDeck]);
+        for (let i = 0; i < cards.length; i++) {
+          cardIds.push(cards[i].id);
+        }
       } catch (e) {
         const lists = [];
         let actualList = { name: 'Main', list: [] };
@@ -78,6 +85,7 @@ export default {
             card = await this.formatCardRow(row, false);
           }
           if (card) {
+            cardIds.push(card.id);
             list.list.push(card);
           }
         };
@@ -116,7 +124,7 @@ export default {
         listOrDeck.lists = lists;
       }
       this.isLoading = false;
-      this.close({ listOrDeck, notFound });
+      this.close({ listOrDeck, notFound, cardIds });
     },
     async formatCardRow(row, withSet = true) {
       const noSet = '';

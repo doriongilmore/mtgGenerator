@@ -1,6 +1,6 @@
 <template>
   <div ref="container" id="container">
-    <ul class="bg-light pl-4 nav nav-tabs">
+    <ul class="bg-light pl-4 nav nav-tabs" id="deckMenu">
       <li
         @click="sectionToDisplay = 'none'"
         :class="`pointer nav-item nav-link ${sectionToDisplay === 'none' ? 'active' : ''}`"
@@ -53,7 +53,7 @@
         </b-navbar>
       </div>
       <div class="content" v-if="sectionToDisplay === 'none'">
-        <div class="container">
+        <div class="container" id="displayButtons">
           <div class="row">
             <div class="col col-6 btn btn-light center" @click="toggleDisplay">
               <b-icon-eye-fill></b-icon-eye-fill><span class="d-inline btn-light"> Toggle Display</span>
@@ -97,10 +97,10 @@
           </div>
           <div
             v-for="(cardList, groupIndex) in groupedList(deckList.list)"
-            :class="`row mt-1 ${cardList.list.length ? '' : 'd-none'}`"
+            :class="`deckList row mt-1 ${cardList.list.length ? '' : 'd-none'}`"
             :key="`deckList-${listIndex}-${cardList.value || groupIndex}`"
           >
-            <div class="col col-12" v-if="cardList.value && cardList.list.length">{{ cardList.value }}</div>
+            <div class="listHeader col col-12" v-if="cardList.value && cardList.list.length">{{ cardList.value }}</div>
             <basic
               v-if="cardDisplay === settingsFavoriteDisplay.basic.key"
               :results="cardList.list"
@@ -127,7 +127,7 @@
             />
           </div>
         </div>
-        <div class="container mt-3 mb-2">
+        <div class="container mt-3 mb-2" id="addListButton">
           <div class="row row-cols-1">
             <div class="col-3"></div>
             <div class="col-6">
@@ -280,10 +280,11 @@ export default {
       }
     },
     async onImport() {
-      let listOrDeck, notFound;
+      let listOrDeck, notFound, cardIds;
       try {
         const res = await this.importModal();
         listOrDeck = res.listOrDeck;
+        cardIds = res.cardIds;
         notFound = res.notFound;
       } catch (e) {
         console.info('import canceled', e);
@@ -308,7 +309,7 @@ export default {
       } else {
         this.deck.lists = listOrDeck;
       }
-      this.cardsInfo = await this.getCardsInfo(this.allCardIds);
+      this.cardsInfo = await this.getCardsInfo(cardIds);
       this.onChange(true);
     },
     /**
@@ -448,18 +449,6 @@ function getTypeKey(priority, typeLine) {
     background-color: transparent;
     text-align-last: center;
     width: 100%;
-  }
-  #footer {
-    position: absolute;
-    width: 100%;
-    max-height: 60%;
-    left: 0;
-    bottom: 0;
-
-    .card-body {
-      overflow: hidden;
-      height: 100%;
-    }
   }
 }
 </style>

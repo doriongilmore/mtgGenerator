@@ -1,6 +1,6 @@
 <template>
-  <div class="mainContainer">
-    <b-nav tabs class="bg-light pl-4">
+  <div id="mainContainer">
+    <b-nav tabs class="bg-light pl-4" id="menu">
       <b-navbar-brand to="/">Mtg - Builder</b-navbar-brand>
       <b-nav-item to="/decks" exact exact-active-class="active">Decks</b-nav-item>
       <b-nav-item to="/settings" exact exact-active-class="active">Settings</b-nav-item>
@@ -23,7 +23,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.mainContainer {
+#mainContainer {
   position: absolute;
   height: 100%;
   width: 100%;
