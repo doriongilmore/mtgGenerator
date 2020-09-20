@@ -1,4 +1,3 @@
-import jsPDF from 'jspdf';
 import CONST from 'src/utils/CONST';
 
 function createNewList(list = [], name = 'Choose a name') {
@@ -244,33 +243,6 @@ class DeckFactory {
       };
     });
     return newDeck;
-  }
-  /**
-   * @param {Deck} deck
-   * @returns {Promise<void>}
-   */
-  static async print(deck) {
-    const doc = new jsPDF({ unit: 'mm', format: 'a4' }); // 210 x 297
-    const cards = DeckFactory.getCardsFromDecks([deck]);
-    for (let i = 0, printedCardCount = 0, l = cards.length; i < l; i++) {
-      const card = cards[i];
-      if (card.printConfig !== CONST.printConfig.DONT_PRINT.key) {
-        const { w, h } = CONST.printConfig[card.printConfig];
-        for (let j = 0; j < card.deckQte; j++) {
-          for (let k = 0, l = card.image_uris.length; k < l; k++) {
-            const posKey = printedCardCount % 9;
-            const { x, y } = CONST.printConfig.PDF_POS[posKey];
-            if (printedCardCount && posKey === 0) {
-              doc.addPage();
-            }
-            const image = await createImage(card.image_uris[k]);
-            doc.addImage(image, 'JPEG', x, y, w, h);
-            printedCardCount++;
-          }
-        }
-      }
-    }
-    doc.save(`${deck.name}.pdf`);
   }
 }
 
