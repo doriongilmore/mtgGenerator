@@ -1,6 +1,6 @@
 <template>
   <div class="container h-75">
-    <div class="row mt-2">
+    <div class="row mt-2" v-if="!withoutHeader">
       <div class="col col-1"></div>
       <div class="col col-3">Art</div>
       <div class="col col-5 row">
@@ -14,22 +14,52 @@
       <div class="col col-3">Oracle</div>
     </div>
     <div class="list-group h-75" id="resultsBody">
-      <div class="row mt-2 mb-2" v-for="result in results" :key="result.id">
+      <div class="row mt-2 mb-2" v-for="result in results" :key="cardsInfo[result.id] && cardsInfo[result.id].id">
         <AddToListButton class="col col-1" :add-list="addList" :card="result"></AddToListButton>
-        <div class="col col-3 align-self-center">
-          <img :src="result.art_crop" :alt="result.name" class="mw-100 mh-100 pointer" @click="openCard(result.id)" />
-        </div>
-        <div class="col col-5 row align-content-center">
-          <div class="col col-6 pointer" @click="openCard(result.id)">{{ result.name }}</div>
-          <div class="col col-6"><Mana :mana-cost="result.mana_cost"></Mana></div>
-          <div class="col col-6">{{ result.type_line }}</div>
-          <div class="col col-6">
-            <div v-if="result.type_line.includes('Creature')">{{ result.power }}/{{ result.toughness }}</div>
+        <div class="col col-1 row deckQte" v-if="increment">
+          <div class="col col-12 btn btn-outline-light" @click="increment(result, true)">
+            <b-icon-plus-circle-fill class="mt-1"></b-icon-plus-circle-fill>
           </div>
-          <div class="col col-6"><b-icon-pencil></b-icon-pencil> {{ result.artist }}</div>
-          <div class="col col-6">{{ result.set_name }}</div>
+          <b-input
+            type="text"
+            class="col col-12 form-control input-number input text-center"
+            min="1"
+            max="99"
+            v-model="result.deckQte"
+          />
+          <div class="minus col col-12 btn btn-outline-light" @click="increment(result, false)">
+            <b-icon-dash-circle-fill class="mt-1"></b-icon-dash-circle-fill>
+          </div>
         </div>
-        <div class="col col-3 align-self-center"><MtgText :text="result.oracle_text"></MtgText></div>
+        <div class="col col-3 align-self-center">
+          <img
+            :src="cardsInfo[result.id] && cardsInfo[result.id].art_crop"
+            :alt="cardsInfo[result.id] && cardsInfo[result.id].name"
+            class="mw-100 mh-100 pointer"
+            @click="openCard(cardsInfo[result.id] && cardsInfo[result.id].id)"
+          />
+        </div>
+        <div class="col col-4 row align-content-center">
+          <div class="col col-6 pointer" @click="openCard(cardsInfo[result.id] && cardsInfo[result.id].id)">
+            {{ cardsInfo[result.id] && cardsInfo[result.id].name }}
+          </div>
+          <div class="col col-6"><Mana :mana-cost="cardsInfo[result.id] && cardsInfo[result.id].mana_cost"></Mana></div>
+          <div class="col col-6">{{ cardsInfo[result.id] && cardsInfo[result.id].type_line }}</div>
+          <div class="col col-6">
+            <div v-if="cardsInfo[result.id] && cardsInfo[result.id].type_line.includes('Creature')">
+              {{ cardsInfo[result.id] && cardsInfo[result.id].power }}/{{
+                cardsInfo[result.id] && cardsInfo[result.id].toughness
+              }}
+            </div>
+          </div>
+          <div class="col col-6">
+            <b-icon-pencil></b-icon-pencil> {{ cardsInfo[result.id] && cardsInfo[result.id].artist }}
+          </div>
+          <div class="col col-6">{{ cardsInfo[result.id] && cardsInfo[result.id].set_name }}</div>
+        </div>
+        <div class="col col-3 align-self-center">
+          <MtgText :text="(cardsInfo[result.id] && cardsInfo[result.id].oracle_text) || ''"></MtgText>
+        </div>
       </div>
       <div class="row mt-1 text-center"></div>
     </div>
@@ -40,11 +70,18 @@
 import Mana from '../../uiElements/Mana.vue';
 import AddToListButton from '../../uiElements/AddToListButton.vue';
 import MtgText from '../MtgText.vue';
+import cardsInfo from '../../../mixins/cardsInfo';
 
 export default {
   name: 'detailed',
-  props: ['results', 'addList', 'openCard'],
+  props: ['results', 'addList', 'openCard', 'increment', 'withoutHeader'],
   components: { Mana, AddToListButton, MtgText },
+  mixins: [cardsInfo],
+  computed: {
+    allCards() {
+      return this.results.map(c => c);
+    },
+  },
 };
 </script>
 
@@ -52,5 +89,15 @@ export default {
 #resultsBody {
   overflow-x: hidden;
   overflow-y: auto;
+}
+
+.deckQte {
+  .input {
+    background-color: transparent;
+    width: 100%;
+  }
+  .minus {
+    margin-top: -10px !important;
+  }
 }
 </style>
