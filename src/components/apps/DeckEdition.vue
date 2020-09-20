@@ -38,10 +38,6 @@
                 <b-icon-clipboard-check :variant="!updateDone ? 'secondary' : 'light'"></b-icon-clipboard-check>
                 <span :class="`d-sm-none d-lg-inline ${updateDone ? 'btn-primary' : 'btn-light'}`"> Save</span>
               </b-nav-item>
-              <b-nav-item class="btn btn-light rounded-pill" @click="onPrint()">
-                <b-icon-printer></b-icon-printer><span class="d-sm-none d-lg-inline btn-light"> Print</span>
-                <div v-if="isPrinting" class="spinner-border-sm"></div>
-              </b-nav-item>
               <b-nav-item class="btn btn-light rounded-pill" @click="onImport()">
                 <b-icon-download></b-icon-download><span class="d-sm-none d-lg-inline btn-light"> Import</span>
               </b-nav-item>
@@ -57,6 +53,16 @@
         </b-navbar>
       </div>
       <div class="content" v-if="sectionToDisplay === 'none'">
+        <div class="container">
+          <div class="row">
+            <div class="col col-4 btn btn-light center" @click="toggleDisplay">
+              <b-icon-eye-fill></b-icon-eye-fill><span class="d-inline btn-light"> Toggle Display</span>
+            </div>
+            <div class="col col-8 btn btn-light center" @click="onPrint()" v-if="cardDisplay === completeDisplayKey">
+              <b-icon-printer></b-icon-printer><span class="d-inline btn-light"> Print</span>
+            </div>
+          </div>
+        </div>
         <div class="container lists mt-3" v-for="(deckList, listIndex) in deck.lists" :key="`deckList-${listIndex}`">
           <div class="row listHeader">
             <div class="col col-6 col-md-3">
@@ -185,6 +191,8 @@ export default {
   data() {
     return {
       isPrinting: false,
+      chosenDisplay: null,
+      completeDisplayKey: CONST.settings.favoriteDisplay.complete.key,
       sectionToDisplay: 'none',
       tmpList: [],
       updateDone: false,
@@ -196,6 +204,7 @@ export default {
     ...mapState({
       settings: state => state.settings,
       decks: state => Object.values(state.decks.decksByIds),
+      favoriteDisplay: state => state.settings.global.favoriteDisplay,
     }),
     settingsDeck() {
       const globalSettings = this.settings.deck;
@@ -219,6 +228,9 @@ export default {
     allCardIds() {
       const all = DeckFactory.getCardsFromDecks([this.deck]);
       return all.map(c => c.id);
+    },
+    cardDisplay() {
+      return this.chosenDisplay ? this.chosenDisplay : this.favoriteDisplay;
     },
   },
   watch: {
@@ -340,14 +352,8 @@ export default {
     /**
      * Fires when user click on print button
      */
-    async onPrint() {
-      this.isPrinting = true;
-      try {
-        await DeckFactory.print(this.deck);
-      } catch (e) {
-        alert('only works on Firefox at the moment, will be fixed soon.');
-      }
-      this.isPrinting = false;
+    onPrint() {
+      window.print();
     },
     /**
      * Fires when user click on delete button
@@ -428,6 +434,15 @@ export default {
         this.deck.lists = changeListOrder(this.deck.lists, index, up);
       } catch (e) {
         console.warn('card list order change blocked', e);
+      }
+    },
+    toggleDisplay() {
+      if (this.cardDisplay === CONST.settings.favoriteDisplay.basic.key) {
+        this.chosenDisplay = CONST.settings.favoriteDisplay.detailed.key;
+      } else if (this.cardDisplay === CONST.settings.favoriteDisplay.detailed.key) {
+        this.chosenDisplay = CONST.settings.favoriteDisplay.complete.key;
+      } else if (this.cardDisplay === CONST.settings.favoriteDisplay.complete.key) {
+        this.chosenDisplay = CONST.settings.favoriteDisplay.basic.key;
       }
     },
   },
