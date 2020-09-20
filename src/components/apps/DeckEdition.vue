@@ -55,21 +55,21 @@
       <div class="content" v-if="sectionToDisplay === 'none'">
         <div class="container">
           <div class="row">
-            <div class="col col-4 btn btn-light center" @click="toggleDisplay">
+            <div class="col col-6 btn btn-light center" @click="toggleDisplay">
               <b-icon-eye-fill></b-icon-eye-fill><span class="d-inline btn-light"> Toggle Display</span>
             </div>
-            <div class="col col-8 btn btn-light center" @click="onPrint()" v-if="cardDisplay === completeDisplayKey">
+            <div class="col col-6 btn btn-light center" @click="onPrint()" v-if="cardDisplay === completeDisplayKey">
               <b-icon-printer></b-icon-printer><span class="d-inline btn-light"> Print</span>
             </div>
           </div>
         </div>
         <div class="container lists mt-3" v-for="(deckList, listIndex) in deck.lists" :key="`deckList-${listIndex}`">
           <div class="row listHeader">
-            <div class="col col-6 col-md-3">
+            <div class="col col-6">
               <b-input type="text" v-model="deckList.name" @change="onChange" />
             </div>
-            <div class="d-none d-md-block col col-3">{{ getCardCount(deckList.list, true) }}</div>
-            <div class="col col-1 d-inline-flex">
+            <div class="d-none d-md-inline-flex col col-2">{{ getCardCount(deckList.list, true) }}</div>
+            <div class="col col-6 col-md-4 d-inline-flex btn-group">
               <div
                 :class="`btn btn-${deckList.ignoreStat ? 'secondary' : 'light'}`"
                 :title="`${deckList.ignoreStat ? 'ignored' : 'used'} in stats`"
@@ -78,8 +78,6 @@
                 <b-icon-graph-down font-scale="1.2" v-if="deckList.ignoreStat"></b-icon-graph-down>
                 <b-icon-graph-up font-scale="1.2" v-else></b-icon-graph-up>
               </div>
-            </div>
-            <div class="col col-4 d-inline-flex">
               <div class="btn btn-sm btn-light" @click="onExport(deckList)">
                 <b-icon-upload></b-icon-upload><span class="d-none d-md-inline"> Export</span>
               </div>
@@ -103,47 +101,30 @@
             :key="`deckList-${listIndex}-${cardList.value || groupIndex}`"
           >
             <div class="col col-12" v-if="cardList.value && cardList.list.length">{{ cardList.value }}</div>
-            <div
-              v-for="card in cardList.list"
-              class="row col-12 mt-1 flex-nowrap"
-              v-if="cardList.list.length"
-              :key="`deckList-${listIndex}-${cardList.value}-${card.id}`"
-            >
-              <!-- list body -->
-              <AddToListButton
-                class="col col-1"
-                :card="card"
-                :add-list="addList"
-                :ignore-index="listIndex"
-              ></AddToListButton>
-              <div class="col col-4 col-sm-3 deckQte d-inline-flex">
-                <div class="btn btn-sm btn-outline-light" @click="increment(card, false)">
-                  <b-icon-dash-circle-fill class="mt-1"></b-icon-dash-circle-fill>
-                </div>
-                <b-input
-                  type="text"
-                  class="form-control input-number input text-center"
-                  min="1"
-                  max="99"
-                  v-model="card.deckQte"
-                  @change="onChange()"
-                />
-                <div class="btn btn-sm btn-outline-light" @click="increment(card, true)">
-                  <b-icon-plus-circle-fill class="mt-1"></b-icon-plus-circle-fill>
-                </div>
-              </div>
-              <div class="col col-4 col-sm-3 pointer" v-on:click="openCard(card.id)">
-                {{ cardsInfo[card.id] && cardsInfo[card.id].name }}
-              </div>
-              <div class="d-none d-sm-block col col-3">
-                <Mana :mana-cost="cardsInfo[card.id] && cardsInfo[card.id].mana_cost"></Mana>
-              </div>
-              <div class="col col-3">
-                <select v-model="card.printConfig" @change="onChange">
-                  <option v-for="conf in printConfig.list" :key="conf.key" :value="conf.key">{{ conf.text }}</option>
-                </select>
-              </div>
-            </div>
+            <basic
+              v-if="cardDisplay === settingsFavoriteDisplay.basic.key"
+              :results="cardList.list"
+              :open-card="openCard"
+              :increment="increment"
+              :add-list="addList"
+              :without-header="true"
+            />
+            <detailed
+              v-if="cardDisplay === settingsFavoriteDisplay.detailed.key"
+              :results="cardList.list"
+              :open-card="openCard"
+              :increment="increment"
+              :add-list="addList"
+              :without-header="true"
+            />
+            <complete
+              v-if="cardDisplay === settingsFavoriteDisplay.complete.key"
+              :results="cardList.list"
+              :open-card="openCard"
+              :increment="increment"
+              :on-change="onChange"
+              :add-list="addList"
+            />
           </div>
         </div>
         <div class="container mt-3 mb-2">
@@ -179,32 +160,34 @@ import DeckFactory from 'src/utils/DeckFactory';
 import Mana from '../uiElements/Mana.vue';
 import AddToListButton from '../uiElements/AddToListButton.vue';
 import modalHandler from '../../mixins/modalHandler';
+import cardsInfo from '../../mixins/cardsInfo';
 import Search from './Search.vue';
 import Stats from './Stats.vue';
 import Settings from './Settings.vue';
+import basic from './resultsDisplay/basic.vue';
+import detailed from './resultsDisplay/detailed.vue';
+import complete from './resultsDisplay/complete.vue';
+import cardDisplay from '../../mixins/cardDisplay';
 
 export default {
   name: 'DeckEdition',
   props: ['deck'],
-  components: { Settings, Mana, Search, Stats, AddToListButton },
-  mixins: [modalHandler],
+  components: { basic, detailed, complete, Settings, Mana, Search, Stats, AddToListButton },
+  mixins: [modalHandler, cardsInfo, cardDisplay],
   data() {
     return {
       isPrinting: false,
-      chosenDisplay: null,
       completeDisplayKey: CONST.settings.favoriteDisplay.complete.key,
       sectionToDisplay: 'none',
       tmpList: [],
       updateDone: false,
       printConfig: CONST.printConfig,
-      cardsInfo: {},
     };
   },
   computed: {
     ...mapState({
       settings: state => state.settings,
       decks: state => Object.values(state.decks.decksByIds),
-      favoriteDisplay: state => state.settings.global.favoriteDisplay,
     }),
     settingsDeck() {
       const globalSettings = this.settings.deck;
@@ -225,17 +208,8 @@ export default {
       }
       return list;
     },
-    allCardIds() {
-      const all = DeckFactory.getCardsFromDecks([this.deck]);
-      return all.map(c => c.id);
-    },
-    cardDisplay() {
-      return this.chosenDisplay ? this.chosenDisplay : this.favoriteDisplay;
-    },
-  },
-  watch: {
-    async allCardIds(newIds, oldIds) {
-      this.cardsInfo = await this.getCardsInfo(newIds);
+    allCards() {
+      return DeckFactory.getCardsFromDecks([this.deck]);
     },
   },
   beforeDestroy() {
@@ -250,7 +224,6 @@ export default {
           this.saveDeck();
           window.onbeforeunload = () => {};
         };
-        this.cardsInfo = await this.getCardsInfo(this.allCardIds);
       }
     } catch (e) {
       console.error('Error when opening DeckEdition ', e);
@@ -390,20 +363,6 @@ export default {
       const lib = `card${count > 1 ? 's' : ''}`;
       return `${count} ${lib}`;
     },
-    async getCardsInfo(newIds) {
-      const cardsInfo = { ...this.cardsInfo };
-      for (let i = 0, l = newIds.length; i < l; i++) {
-        const cardId = newIds[i];
-        if (!cardsInfo[cardId]) {
-          try {
-            cardsInfo[cardId] = await this.$store.dispatch('mtg/getCardById', { cardId });
-          } catch (e) {
-            console.error('fetching card ', cardId, e);
-          }
-        }
-      }
-      return cardsInfo;
-    },
     /**
      *
      * @param {Array<Card>} list
@@ -434,15 +393,6 @@ export default {
         this.deck.lists = changeListOrder(this.deck.lists, index, up);
       } catch (e) {
         console.warn('card list order change blocked', e);
-      }
-    },
-    toggleDisplay() {
-      if (this.cardDisplay === CONST.settings.favoriteDisplay.basic.key) {
-        this.chosenDisplay = CONST.settings.favoriteDisplay.detailed.key;
-      } else if (this.cardDisplay === CONST.settings.favoriteDisplay.detailed.key) {
-        this.chosenDisplay = CONST.settings.favoriteDisplay.complete.key;
-      } else if (this.cardDisplay === CONST.settings.favoriteDisplay.complete.key) {
-        this.chosenDisplay = CONST.settings.favoriteDisplay.basic.key;
       }
     },
   },

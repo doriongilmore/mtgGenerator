@@ -52,18 +52,16 @@ import { mapState, mapGetters } from 'vuex';
 import basic from './resultsDisplay/basic.vue';
 import detailed from './resultsDisplay/detailed.vue';
 import complete from './resultsDisplay/complete.vue';
-import CONST from '../../utils/CONST';
+import cardDisplay from '../../mixins/cardDisplay';
 
 export default {
   name: 'Search',
   components: { basic, detailed, complete },
   props: ['deck'],
-  mixins: [modalHandler],
+  mixins: [modalHandler, cardDisplay],
   data() {
     return {
       isSearching: false,
-      chosenDisplay: null,
-      settingsFavoriteDisplay: CONST.settings.favoriteDisplay,
       results: [],
     };
   },
@@ -84,7 +82,6 @@ export default {
     ...mapState({
       search: state => state.search,
       pageIndex: state => state.search.pageIndex,
-      favoriteDisplay: state => state.settings.global.favoriteDisplay,
       decks: state => Object.values(state.decks.decksByIds),
     }),
     ...mapGetters({
@@ -105,9 +102,6 @@ export default {
         list.unshift(this.deck);
       }
       return list;
-    },
-    cardDisplay() {
-      return this.chosenDisplay ? this.chosenDisplay : this.favoriteDisplay;
     },
   },
   methods: {
@@ -140,15 +134,6 @@ export default {
         console.error('error during search', { args: this.searchParams, error });
       }
       this.isSearching = false;
-    },
-    toggleDisplay() {
-      if (this.cardDisplay === CONST.settings.favoriteDisplay.basic.key) {
-        this.chosenDisplay = CONST.settings.favoriteDisplay.detailed.key;
-      } else if (this.cardDisplay === CONST.settings.favoriteDisplay.detailed.key) {
-        this.chosenDisplay = CONST.settings.favoriteDisplay.complete.key;
-      } else if (this.cardDisplay === CONST.settings.favoriteDisplay.complete.key) {
-        this.chosenDisplay = CONST.settings.favoriteDisplay.basic.key;
-      }
     },
   },
   mounted() {
