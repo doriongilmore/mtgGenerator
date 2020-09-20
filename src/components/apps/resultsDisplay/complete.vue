@@ -26,9 +26,6 @@ export default {
   name: 'detailed',
   props: ['results', 'addList', 'openCard'],
   components: { Mana, AddToListButton, MtgText },
-  mounted() {
-    console.info('toto one result', this.results && this.results[0]);
-  },
 };
 </script>
 
