@@ -18,10 +18,14 @@
     <div class="row mt-1" v-if="deck">
       <div class="col col-5 h4">Background</div>
       <div class="col col-4">
-        <b-form-select :options="backgroundList" v-model="deck.background"></b-form-select>
+        <b-form-select
+          :options="backgroundList"
+          v-model="deck.background"
+          @change="updateBackground(deck.background)"
+        />
       </div>
       <div class="col col-3">
-        <div @click="resetBackground()" class="btn btn-danger">Reset</div>
+        <div @click="updateBackground(defaultBackground, true)" class="btn btn-danger">Reset</div>
       </div>
     </div>
 
@@ -184,7 +188,7 @@ export default {
         setting.key === CONST.settings.keys.backgroundDefault.key && this.isBackgroundDefault;
       const shouldResetTypePriority = setting.key === CONST.settings.keys.typeGrouping.key;
       const cbSuccess = () => {
-        shouldResetBackground && this.resetBackground();
+        shouldResetBackground && this.updateBackground(this.defaultBackground);
         shouldResetTypePriority &&
           this.$store.commit('settings/reset', {
             setting: CONST.settings.keys.typePriority,
@@ -196,18 +200,19 @@ export default {
     update(setting, index = null, up = null, value = null) {
       this.$emit('updateKey', { setting, index, up, value });
     },
-    async resetBackground(confirm = false) {
-      const art_crop = this.defaultBackground && this.defaultBackground.art_crop;
-      const artist = this.defaultBackground && this.defaultBackground.artist;
+    async updateBackground(background, confirm = false) {
+      const art_crop = background && background.art_crop;
+      const artist = background && background.artist;
       this.update(CONST.settings.keys.backgroundImage, null, null, art_crop);
       this.update(CONST.settings.keys.backgroundArtist, null, null, artist);
-      this.deck.background = this.defaultBackground;
+      this.deck.background = background;
+      console.info('updateBackground this.deck.background', this.deck.background);
     },
     updateDefaultBackground() {
       const isBackgroundDefault = this.isBackgroundDefault;
       this.update(CONST.settings.keys.backgroundDefault, null, null, this.settingsDeck.backgroundDefault);
       if (isBackgroundDefault) {
-        this.resetBackground();
+        this.updateBackground(this.defaultBackground);
       }
     },
   },

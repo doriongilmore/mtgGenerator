@@ -17,8 +17,8 @@
         <div class="col" v-for="deck in decks" :key="deck.id">
           <!--        todo get card covers   -->
           <!--           img-src="https://picsum.photos/600/300/?image=25"-->
-          <b-card img-top :img-src="deck.background ? deck.background.art_crop : ''">
-            <div class="badge badge-secondary badge-pill float-right" v-if="deck.background">
+          <b-card img-top :img-src="deck.background ? String(deck.background.art_crop) : ''">
+            <div class="row badge badge-secondary badge-pill float-right" v-if="deck.background">
               <b-icon-pencil></b-icon-pencil> {{ deck.background.artist }}
             </div>
             <b-card-title>{{ deck.name }}</b-card-title>
@@ -26,7 +26,7 @@
               <div class="badge badge-light" v-if="deck.colors"><Mana :mana-cost="deck.colors"></Mana></div>
               <div class="badge badge-secondary">{{ deck.cardCount }}</div>
               <div class="">created: {{ moment(deck.dateCreation).format('YY-MM-DD HH:mm') }}</div>
-              <div class="">updated: {{ moment(deck.dateEdition).format('YY-MM-DD HH:mm') }}</div>
+              <div class="">visited: {{ moment(deck.dateEdition).format('YY-MM-DD HH:mm') }}</div>
             </b-card-text>
             <div class="btn btn-primary" @click="editDeck(deck)"><b-icon-pen></b-icon-pen><span> Edit</span></div>
             <div class="btn btn-danger" @click="deleteDeck(deck)">

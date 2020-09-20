@@ -1,5 +1,5 @@
 <template>
-  <b-dropdown class="toto" text="+" size="sm" variant="light" lazy dropright no-caret>
+  <b-dropdown id="dropdown" text="+" size="sm" variant="light" lazy dropright no-caret>
     <div v-for="(deck, deckIndex) in addList">
       <div v-for="(list, listIndex) in deck.lists">
         <b-dropdown-item
@@ -30,7 +30,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.toto {
+#dropdown {
   button {
     font-size: larger;
   }
