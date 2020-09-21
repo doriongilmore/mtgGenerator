@@ -12,6 +12,16 @@
           <div @click="openSearch()" class="btn btn-light d-inline-flex">
             <b-icon-tools></b-icon-tools><span class="d-none d-xl-inline"> Filters</span>
           </div>
+          <div class="btn btn-light d-inline-flex disabled" v-if="!isAdvancedSearchUnderstood">
+            click on <b-icon-tools></b-icon-tools>
+          </div>
+          <div
+            class="btn btn-sm btn-light small"
+            @click="advancedSearchUnderstood()"
+            v-if="!isAdvancedSearchUnderstood"
+          >
+            Understood
+          </div>
         </div>
         <div class="col col-6 col-lg-3">
           <div class="btn btn-light" @click="toggleDisplay">
@@ -48,7 +58,7 @@
 
 <script>
 import modalHandler from '../../mixins/modalHandler';
-import { mapState, mapGetters } from 'vuex';
+import { mapState, mapGetters, mapMutations } from 'vuex';
 import basic from './resultsDisplay/basic.vue';
 import detailed from './resultsDisplay/detailed.vue';
 import complete from './resultsDisplay/complete.vue';
@@ -82,6 +92,7 @@ export default {
       search: state => state.search,
       pageIndex: state => state.search.pageIndex,
       decks: state => Object.values(state.decks.decksByIds),
+      isAdvancedSearchUnderstood: state => state.tutorial.advancedSearch,
     }),
     ...mapGetters({
       pageCount: 'search/pageCount',
@@ -104,15 +115,17 @@ export default {
     },
   },
   methods: {
+    ...mapMutations({
+      advancedSearchUnderstood: 'tutorial/advancedSearchUnderstood',
+      _previousPage: 'search/previousPage',
+      _nextPage: 'search/nextPage',
+      _setResults: 'search/setResults',
+    }),
     previousPage() {
-      if (this.pageIndex) {
-        this.$store.commit('search/previousPage');
-      }
+      this.pageIndex && this._previousPage();
     },
     nextPage() {
-      if (this.pageIndex < this.pageCount - 1) {
-        this.$store.commit('search/nextPage');
-      }
+      this.pageIndex < this.pageCount - 1 && this._nextPage();
     },
     openSearch() {
       this.searchModal().then(this.handleSearch);
@@ -128,7 +141,7 @@ export default {
       this.isSearching = true;
       try {
         await this.$store.dispatch('mtg/search', this.searchParams);
-        this.$store.commit('search/setResults', { results: [], searchParams: this.searchParams });
+        this._setResults({ results: [], searchParams: this.searchParams });
       } catch (error) {
         console.error('error during search', { args: this.searchParams, error });
       }
@@ -137,6 +150,7 @@ export default {
   },
   mounted() {
     this.$root.$on('bv::dropdown::show', bvEvent => {
+      console.info('still useful');
       bvEvent.target.style['max-height'] = '100px';
       bvEvent.target.style['overflow-y'] = 'auto';
     });

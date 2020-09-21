@@ -40,7 +40,7 @@
       </div>
       <div class="row container">
         <div id="legalities" class="mt-2 row w-100">
-          <div class="col col-2 m-1 h5">Legal in</div>
+          <div class="col m-1 h5 d-inline-flex flex-nowrap">Legal in</div>
           <div v-for="el in card.legalities" :key="el.format" :class="el.legal + ' col m-1 '" :title="el.legal">
             {{ el.format }}
           </div>

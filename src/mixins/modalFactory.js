@@ -11,7 +11,7 @@ export default {
   methods: {
     close(data) {
       this.modalDataToReturn = data;
-      this.$refs.modal.hide(CONST.modals.closeReason.confirm);
+      this.$refs.modal && this.$refs.modal.hide(CONST.modals.closeReason.confirm);
     },
     listenEvents(cbOpen = () => {}) {
       if (!this.eventConfig || !this.modalId || !this.$refs.modal) {
@@ -33,7 +33,7 @@ export default {
 
       this.$root.$on(this.eventConfig.open, data => {
         cbOpen(data);
-        this.$refs.modal.show();
+        this.$refs.modal && this.$refs.modal.show();
       });
     },
   },

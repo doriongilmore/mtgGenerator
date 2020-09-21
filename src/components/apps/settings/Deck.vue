@@ -29,6 +29,14 @@
       </div>
     </div>
 
+    <div class="row mt-2 tuto" v-if="!isSettingsListsUnderstood">
+      <details class="col col-12">
+        <summary>Click me</summary>
+        To display a list you can order!
+        <div class="btn btn-light" @click="settingsListsUnderstood()">Understood, don't display again.</div>
+      </details>
+    </div>
+
     <div class="row mt-2">
       <details class="col col-6 h4 pointer" @click="displayCardSorting = !displayCardSorting">
         <summary>Card Sorting</summary>
@@ -106,7 +114,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapMutations, mapState } from 'vuex';
 import CONST from 'src/utils/CONST';
 import { changeListOrder } from 'src/utils/dragDrop';
 import DeckFactory from '../../../utils/DeckFactory';
@@ -125,6 +133,7 @@ export default {
   computed: {
     ...mapState({
       settings: state => state.settings,
+      isSettingsListsUnderstood: state => state.tutorial.settingsLists,
     }),
     settingsDeck() {
       const globalSettings = this.settings.deck;
@@ -182,17 +191,17 @@ export default {
     },
   },
   methods: {
+    ...mapMutations({
+      settingsListsUnderstood: 'tutorial/settingsListsUnderstood',
+      _reset: 'settings/reset',
+    }),
     reset(setting) {
       const shouldResetBackground =
         setting.key === CONST.settings.keys.backgroundDefault.key && this.isBackgroundDefault;
       const shouldResetTypePriority = setting.key === CONST.settings.keys.typeGrouping.key;
       const cbSuccess = () => {
         shouldResetBackground && this.updateBackground(this.defaultBackground);
-        shouldResetTypePriority &&
-          this.$store.commit('settings/reset', {
-            setting: CONST.settings.keys.typePriority,
-            deck: this.deck,
-          });
+        shouldResetTypePriority && this._reset({ setting: CONST.settings.keys.typePriority, deck: this.deck });
       };
       this.$emit('resetKey', { setting, cbSuccess });
     },
