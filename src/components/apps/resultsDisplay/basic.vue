@@ -27,13 +27,41 @@
         </div>
 
         <div class="col col-3 col-md-3 pointer" @click="cardsInfo[result.id] && openCard(cardsInfo[result.id].id)">
-          {{ cardsInfo[result.id] && cardsInfo[result.id].name }}
+          {{ cardsInfo[result.id] && cardsInfo[result.id].card_faces[0].name }}
         </div>
         <div class="col col-3 col-md-2">
-          <Mana :mana-cost="cardsInfo[result.id] && cardsInfo[result.id].mana_cost" />
+          <Mana :mana-cost="cardsInfo[result.id] && cardsInfo[result.id].card_faces[0].mana_cost" />
         </div>
-        <div class="col col-3 col-md-2">{{ cardsInfo[result.id] && cardsInfo[result.id].type_line }}</div>
-        <div class="col col-3 col-md-2">{{ cardsInfo[result.id] && cardsInfo[result.id].set_name }}</div>
+        <div class="col col-3 col-md-2" v-if="increment">
+          {{
+            cardsInfo[result.id] && cardsInfo[result.id].card_faces[0].isCreature
+              ? `${cardsInfo[result.id].card_faces[0].power}/${cardsInfo[result.id].card_faces[0].toughness}`
+              : ''
+          }}
+          {{
+            cardsInfo[result.id] && cardsInfo[result.id].card_faces[0].isPlaneswalker
+              ? `${cardsInfo[result.id].card_faces[0].loyalty}`
+              : ''
+          }}
+        </div>
+        <div class="col col-3 col-md-2" v-else>
+          {{ cardsInfo[result.id] && cardsInfo[result.id].card_faces[0].type_line }}
+        </div>
+        <div class="col col-3 col-md-2" v-if="increment">
+          <div class="badge badge-secondary" v-if="cardsInfo[result.id] && cardsInfo[result.id].card_faces[0].isLegend">
+            Legend
+          </div>
+          <div class="badge badge-secondary" v-if="cardsInfo[result.id] && cardsInfo[result.id].card_faces[0].isToken">
+            Token
+          </div>
+          <div class="badge badge-secondary" v-if="cardsInfo[result.id] && cardsInfo[result.id].card_faces[0].isSnow">
+            Snow
+          </div>
+          <div class="badge badge-secondary" v-if="cardsInfo[result.id] && cardsInfo[result.id].isDoubleFace">
+            Double Face
+          </div>
+        </div>
+        <div class="col col-3 col-md-2" v-else>{{ cardsInfo[result.id] && cardsInfo[result.id].set_name }}</div>
 
         <div class="d-inline-flex d-md-none col col-6 deckQte" v-if="increment">
           <div class="btn btn-sm btn-outline-light" @click="increment(result, false)">

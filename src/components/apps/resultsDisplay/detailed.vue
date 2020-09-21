@@ -33,32 +33,40 @@
         </div>
         <div class="col col-3 align-self-center">
           <img
-            :src="cardsInfo[result.id] && cardsInfo[result.id].art_crop"
-            :alt="cardsInfo[result.id] && cardsInfo[result.id].name"
+            :src="cardsInfo[result.id] && cardsInfo[result.id].card_faces[0].art_crop"
+            :alt="cardsInfo[result.id] && cardsInfo[result.id].card_faces[0].name"
             class="mw-100 mh-100 pointer"
-            @click="openCard(cardsInfo[result.id] && cardsInfo[result.id].id)"
+            @click="openCard(cardsInfo[result.id] && cardsInfo[result.id].card_faces[0].id)"
           />
         </div>
         <div class="col col-4 row align-content-center">
-          <div class="col col-6 pointer" @click="openCard(cardsInfo[result.id] && cardsInfo[result.id].id)">
+          <div
+            class="col col-6 pointer"
+            @click="openCard(cardsInfo[result.id] && cardsInfo[result.id].card_faces[0].id)"
+          >
             {{ cardsInfo[result.id] && cardsInfo[result.id].name }}
+            <div class="badge badge-secondary" v-if="cardsInfo[result.id] && cardsInfo[result.id].isDoubleFace">
+              Double Face
+            </div>
           </div>
-          <div class="col col-6"><Mana :mana-cost="cardsInfo[result.id] && cardsInfo[result.id].mana_cost"></Mana></div>
-          <div class="col col-6">{{ cardsInfo[result.id] && cardsInfo[result.id].type_line }}</div>
           <div class="col col-6">
-            <div v-if="cardsInfo[result.id] && cardsInfo[result.id].type_line.includes('Creature')">
-              {{ cardsInfo[result.id] && cardsInfo[result.id].power }}/{{
-                cardsInfo[result.id] && cardsInfo[result.id].toughness
+            <Mana :mana-cost="cardsInfo[result.id] && cardsInfo[result.id].card_faces[0].mana_cost"></Mana>
+          </div>
+          <div class="col col-6">{{ cardsInfo[result.id] && cardsInfo[result.id].card_faces[0].type_line }}</div>
+          <div class="col col-6">
+            <div v-if="cardsInfo[result.id] && cardsInfo[result.id].card_faces[0].type_line.includes('Creature')">
+              {{ cardsInfo[result.id] && cardsInfo[result.id].card_faces[0].power }}/{{
+                cardsInfo[result.id] && cardsInfo[result.id].card_faces[0].toughness
               }}
             </div>
           </div>
           <div class="col col-6">
-            <b-icon-pencil></b-icon-pencil> {{ cardsInfo[result.id] && cardsInfo[result.id].artist }}
+            <b-icon-pencil></b-icon-pencil> {{ cardsInfo[result.id] && cardsInfo[result.id].card_faces[0].artist }}
           </div>
           <div class="col col-6">{{ cardsInfo[result.id] && cardsInfo[result.id].set_name }}</div>
         </div>
         <div class="col col-3 align-self-center">
-          <MtgText :text="(cardsInfo[result.id] && cardsInfo[result.id].oracle_text) || ''"></MtgText>
+          <MtgText :text="(cardsInfo[result.id] && cardsInfo[result.id].card_faces[0].oracle_text) || ''"></MtgText>
         </div>
       </div>
       <div class="row mt-1 text-center"></div>

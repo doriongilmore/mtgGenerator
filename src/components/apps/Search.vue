@@ -67,7 +67,6 @@ export default {
   },
   watch: {
     resultIds(newIds, oldIds) {
-      console.info('resultIds', oldIds, newIds);
       Promise.all(newIds.map(async cardId => await this.$store.dispatch('mtg/getCardById', { cardId })))
         .then(res => {
           this.results = res;

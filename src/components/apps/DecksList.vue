@@ -76,7 +76,6 @@ export default {
         // todo toast message
       } catch (e) {
         // todo toast message
-        console.info('delete canceled');
       }
     },
     async resetAll() {
@@ -86,7 +85,6 @@ export default {
         // todo toast message
       } catch (e) {
         // todo toast message
-        console.info('delete canceled');
       }
     },
   },

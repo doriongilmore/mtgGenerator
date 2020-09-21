@@ -13,7 +13,7 @@
         >
           <img :src="result.uri" :alt="result.name" class="col-12 mw-100 mh-100 pointer" @click="openCard(result.id)" />
           <div class="col col-12 m-0 row cardOption" v-if="increment">
-            <div class="col col-3 btn btn-sm btn-outline-light" @click="increment(result.original, false)">
+            <div class="col col-3 btn btn-sm btn-outline-light" @click="increment(result.originalCard, false)">
               <b-icon-dash-circle-fill class="mt-1"></b-icon-dash-circle-fill>
             </div>
             <b-input
@@ -21,9 +21,9 @@
               class="col col-6 form-control input-number input text-center"
               min="1"
               max="99"
-              v-model="result.original.deckQte"
+              v-model="result.originalCard.deckQte"
             />
-            <div class="col col-3 btn btn-sm btn-outline-light" @click="increment(result.original, true)">
+            <div class="col col-3 btn btn-sm btn-outline-light" @click="increment(result.originalCard, true)">
               <b-icon-plus-circle-fill class="mt-1"></b-icon-plus-circle-fill>
             </div>
           </div>
@@ -35,7 +35,7 @@
               </option>
             </select>
           </div>
-          <AddToListButton class="col col-12 cardOption" :add-list="addList" :card="result.original" />
+          <AddToListButton class="col col-12 cardOption" :add-list="addList" :card="result.originalCard" />
         </div>
       </div>
     </div>
@@ -66,21 +66,19 @@ export default {
         const id = _card.id;
         const deckQte = !!_card.deckQte ? +_card.deckQte : 1;
         const printConfig = !!_card.printConfig ? _card.printConfig : CONST.printConfig.BORDER_3.key;
-        const image_uris = this.cardsInfo[id] ? this.cardsInfo[id].image_uris : [];
-        const name = this.cardsInfo[id] ? this.cardsInfo[id].name : '';
-        for (let j = 0; j < image_uris.length; j++) {
-          const uri = image_uris[j];
-          for (let k = 0; k < deckQte; k++) {
-            const pageBreak = !((1 + cards.length) % 9);
+        const faceCount = this.cardsInfo[id] ? this.cardsInfo[id].card_faces.length : 0;
+        for (let k = 0; k < deckQte; k++) {
+          for (let j = 0; j < faceCount; j++) {
+            const face = this.cardsInfo[id].card_faces[j];
+            const name = face.name;
             const card = {
               id,
-              vueKey: `${id}-${k}`,
+              vueKey: `${id}-${name}-${k}`,
               printConfig,
-              printClass: CONST.printConfig[printConfig].class,
-              uri,
+              uri: face.image_uri,
               name,
-              pageBreak,
-              original: _card,
+              originalFace: face,
+              originalCard: _card,
             };
             cards.push(card);
           }
@@ -97,7 +95,7 @@ export default {
   },
   methods: {
     changePrintConfig(card) {
-      card.original.printConfig = card.printConfig;
+      card.originalCard.printConfig = card.printConfig;
       this.onChange();
     },
   },

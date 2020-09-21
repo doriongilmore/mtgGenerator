@@ -39,7 +39,6 @@ export default {
   },
   methods: {
     async update({ setting, index, up, value }) {
-      console.info('update', { setting, index, up, value });
       if (!setting) {
         return;
       }
@@ -58,7 +57,6 @@ export default {
       } else if (setting.type === String) {
         payload = { value, deck: this.deck };
       }
-      console.info('update', setting.key, payload);
       payload && this.$store.commit(`settings/${setting.store}`, payload);
     },
     async reset({ setting = null, cbSuccess = () => {}, cbCanceled = () => {} } = {}) {
@@ -75,7 +73,6 @@ export default {
         // todo toast message
       } catch (e) {
         // todo toast message
-        console.info('reset setting canceled', e);
         cbCanceled();
       }
     },

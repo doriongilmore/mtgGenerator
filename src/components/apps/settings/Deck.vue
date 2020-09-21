@@ -116,7 +116,6 @@ export default {
   props: ['deck', 'cardsInfo'],
   data() {
     return {
-      typeList: CONST.sorting.typeList,
       backgroundDefaultList: CONST.settings.backgroundDefault.list.map(e => ({ text: e.value, value: e.key })),
       settingKeys: CONST.settings.keys,
       displayCardSorting: false,
@@ -206,7 +205,6 @@ export default {
       this.update(CONST.settings.keys.backgroundImage, null, null, art_crop);
       this.update(CONST.settings.keys.backgroundArtist, null, null, artist);
       this.deck.background = background;
-      console.info('updateBackground this.deck.background', this.deck.background);
     },
     updateDefaultBackground() {
       const isBackgroundDefault = this.isBackgroundDefault;

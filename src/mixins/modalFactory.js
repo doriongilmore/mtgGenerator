@@ -27,14 +27,12 @@ export default {
         if (modalId === this.modalId) {
           const event =
             bvEvent.trigger === CONST.modals.closeReason.confirm ? this.eventConfig.resolve : this.eventConfig.reject;
-          console.info(this.modalId, 'closed by', bvEvent.trigger, event);
           this.$root.$emit(event, this.modalDataToReturn);
         }
       });
 
       this.$root.$on(this.eventConfig.open, data => {
         cbOpen(data);
-        console.info(this.modalId, 'opened with', data);
         this.$refs.modal.show();
       });
     },

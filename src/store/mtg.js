@@ -61,6 +61,45 @@ function saveList(newCardsByIds) {
   window.sessionStorage.setItem(CONST.storageKeys.cards, list);
 }
 
+function initData(context, card) {
+  if (!card.__legalities) {
+    const legalities = Object.entries(card.legalities)
+      .map(([format, legal]) => ({ format, legal }))
+      .filter(l => l.legal === 'legal' || l.legal === 'restricted');
+    card.__legalities = card.legalities;
+    card.legalities = legalities;
+  }
+  if (!card.rulings && !card.getRulingsPromise) {
+    card.getRulingsPromise = () =>
+      context.dispatch('fetchRulings', { card }).then(() => context.commit('setCards', [card]));
+  }
+}
+
+const RETRY_TIMEOUT = 2000;
+const MAX_RETRIES = 5;
+const notUrgent = {
+  freeze: false,
+  _list: [],
+  retryCount: 0,
+  run() {
+    const promise = notUrgent._list[0];
+    if (!promise || notUrgent.freeze) {
+      if (notUrgent.retryCount < MAX_RETRIES) {
+        notUrgent.retryCount += 1;
+        setTimeout(notUrgent.run.bind(notUrgent), RETRY_TIMEOUT);
+      }
+    } else {
+      notUrgent.retryCount = 0;
+      notUrgent._list.shift();
+      promise().then(notUrgent.run.bind(notUrgent));
+    }
+  },
+  push(promise) {
+    notUrgent._list.push(promise);
+  },
+};
+notUrgent.run();
+
 /**
  *
  * @typedef Card
@@ -86,6 +125,10 @@ export const mtg = {
   namespaced: true,
   state: {
     cardsByIds: cardsMock.cardsByIds,
+    cardsPromiseByIds: {},
+    preload: true,
+    preloadingCards: true,
+    preloadingRulings: false,
   },
   mutations: {
     setCards(state, cards) {
@@ -97,14 +140,30 @@ export const mtg = {
       state.cardsByIds = newCardsByIds;
       saveList(newCardsByIds);
     },
+    setPromise(state, { cardId, promise }) {
+      const newCardsPromiseByIds = { ...state.cardsPromiseByIds };
+      newCardsPromiseByIds[cardId] = promise;
+      state.cardsPromiseByIds = newCardsPromiseByIds;
+    },
+    preloadCardsFinished(state) {
+      state.preloadingCards = false;
+    },
+    preloadRulingsStarted(state) {
+      state.preloadingRulings = true;
+    },
+    preloadRulingsFinished(state) {
+      state.preloadingRulings = false;
+    },
   },
   actions: {
     async fetch({ dispatch, commit, state }, uri) {
+      notUrgent.freeze = true;
       const path = uri.replace('https://api.scryfall.com/', '');
-      return (await Cards.query(path)).data;
+      const res = (await Cards.query(path)).data;
+      notUrgent.freeze = false;
+      return res;
     },
     search(context, searchParams) {
-      console.info('launch search', searchParams, context);
       const options = { unique: 'prints', page: 1 };
       const query = isCorrectQuery(searchParams) ? getQuery(searchParams) : '';
       const results = [];
@@ -117,6 +176,7 @@ export const mtg = {
         if (!query) {
           return reject('wrong query');
         }
+        notUrgent.freeze = true;
         Cards.search(query, options)
           .on('cancel', res => {
             reject('no result', res);
@@ -133,39 +193,80 @@ export const mtg = {
             results.push(c.id);
           })
           .on('end', res => {
+            notUrgent.freeze = false;
             context.commit('search/setResults', { results: [], searchParams, finished: true }, { root: true });
             resolve(results);
           });
       }).then(res => {
-        console.info('results for search', { searchParams, res });
         return res;
       });
     },
-    async getCardById(context, { cardId, forceRefresh = false }) {
-      let card;
-      if (context.state.cardsByIds[cardId] && !forceRefresh) {
-        card = context.state.cardsByIds[cardId];
-        console.info(`card ${cardId} found in storage`, card);
-      } else {
-        try {
-          card = await Cards.byId(cardId);
-        } catch (e) {
-          console.error('error fetching card', cardId, e);
-          throw e;
-        }
-
-        try {
-          const rulings = await context.dispatch('fetch', card.rulings_uri);
-          card.rulings = rulings.map(r => `[${r.published_at}] ${r.comment}`);
-        } catch (e) {
-          console.error('error fetching rules for ', card.id, e);
-          card.rulings = [];
-        }
-
-        context.commit('setCards', [card]);
-        console.info(`card ${cardId} found with scryfall`, card);
+    async fetchRulings(context, { card }) {
+      try {
+        const rulings = await context.dispatch('fetch', card.rulings_uri);
+        card.rulings = rulings.map(r => `[${r.published_at}] ${r.comment}`);
+      } catch (e) {
+        console.error('error fetching rules for ', card.id, e);
+        card.rulings = [];
       }
-      return DeckFactory.simplifyCard(card);
+    },
+    async getCardById(context, { cardId, forceRefresh = false }) {
+      let promise = context.state.cardsPromiseByIds[cardId];
+
+      if (!promise) {
+        promise = new Promise(async (resolve, reject) => {
+          let card;
+          if (context.state.cardsByIds[cardId] && !forceRefresh) {
+            card = context.state.cardsByIds[cardId];
+            initData(context, card);
+          } else {
+            try {
+              notUrgent.freeze = true;
+              card = await Cards.byId(cardId);
+              notUrgent.freeze = false;
+              initData(context, card);
+            } catch (e) {
+              console.error('error fetching card', cardId, e);
+              reject(e);
+            }
+            context.commit('setCards', [card]);
+          }
+          resolve(DeckFactory.simplifyCard(card));
+        });
+        context.commit('setPromise', { cardId, promise });
+      }
+
+      return promise;
+    },
+    searchIdsInBackground(context, { cardIds }) {
+      if (!cardIds.length) {
+        return context.commit('preloadCardsFinished');
+      }
+      let shouldTransition = true;
+      const transition = () => {
+        shouldTransition && context.commit('preloadCardsFinished');
+        shouldTransition && context.commit('preloadRulingsStarted');
+        shouldTransition = false;
+      };
+      const getNopPromise = () => Promise.resolve();
+      const getFinalCb = index =>
+        async function promise() {
+          return index !== cardIds.length - 1 ? getNopPromise() : context.commit('preloadRulingsFinished');
+        };
+      const getRulingsPromise = (p, index) =>
+        function rulingsPromise() {
+          transition();
+          return p().then(getFinalCb(index));
+        };
+      const getPromise = index =>
+        function promise() {
+          return context.dispatch('getCardById', { cardId: cardIds[index] }).then(c => {
+            notUrgent.push(getRulingsPromise(c.getRulingsPromise || getNopPromise, index));
+          });
+        };
+      for (let i = 0, l = cardIds.length; i < l; i++) {
+        notUrgent.push(getPromise(i));
+      }
     },
   },
 };
