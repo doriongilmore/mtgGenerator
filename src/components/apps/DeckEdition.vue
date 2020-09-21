@@ -26,6 +26,13 @@
         Settings
       </li>
     </ul>
+    <ul class="bg-light pl-4 nav nav-tabs" v-if="!isEditionHeaderUnderstood">
+      <li class="nav-item nav-link tuto">Your list</li>
+      <li class="nav-item nav-link tuto">Search for<br />cards to add</li>
+      <li class="nav-item nav-link tuto">Generated based<br />on your list</li>
+      <li class="nav-item nav-link tuto">Specific settings for this deck,<br />like background in deck list</li>
+      <li class="nav-item nav-link pointer" @click="editionHeaderUnderstood()">Understood, don't display again.</li>
+    </ul>
 
     <div id="deckEdition" ref="deckEdition" v-if="deck">
       <div id="deckHeader">
@@ -55,11 +62,27 @@
       <div class="content" v-if="sectionToDisplay === 'none'">
         <div class="container" id="displayButtons">
           <div class="row">
-            <div class="col col-6 btn btn-light center" @click="toggleDisplay">
-              <b-icon-eye-fill></b-icon-eye-fill><span class="d-inline btn-light"> Toggle Display</span>
+            <div class="col col-6 center" v-if="!isPrintUnderstood">
+              <div class="btn btn-light w-100 disabled">
+                You can toggle until you reach "complete cards" display. A print button will appear
+              </div>
             </div>
-            <div class="col col-6 btn btn-light center" @click="onPrint()" v-if="cardDisplay === completeDisplayKey">
-              <b-icon-printer></b-icon-printer><span class="d-inline btn-light"> Print</span>
+            <div
+              class="col col-6 center"
+              @click="printUnderstood()"
+              v-if="!isPrintUnderstood && cardDisplay === completeDisplayKey"
+            >
+              <div class="btn btn-light w-100">Understood, don't display again</div>
+            </div>
+            <div class="col col-6 center" @click="toggleDisplay">
+              <div class="btn btn-light w-100">
+                <b-icon-eye-fill></b-icon-eye-fill><span class="d-inline btn-light"> Toggle Display</span>
+              </div>
+            </div>
+            <div class="col col-6 center" @click="onPrint()" v-if="cardDisplay === completeDisplayKey">
+              <div class="btn btn-light w-100">
+                <b-icon-printer></b-icon-printer><span class="d-inline btn-light"> Print</span>
+              </div>
             </div>
           </div>
         </div>
@@ -155,7 +178,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapMutations, mapState } from 'vuex';
 import { changeListOrder } from 'src/utils/dragDrop';
 import CONST from 'src/utils/CONST';
 import DeckFactory from 'src/utils/DeckFactory';
@@ -190,6 +213,8 @@ export default {
     ...mapState({
       settings: state => state.settings,
       decks: state => Object.values(state.decks.decksByIds),
+      isEditionHeaderUnderstood: state => state.tutorial.editionHeader,
+      isPrintUnderstood: state => state.tutorial.print,
     }),
     settingsDeck() {
       const globalSettings = this.settings.deck;
@@ -232,6 +257,12 @@ export default {
     }
   },
   methods: {
+    ...mapMutations({
+      editionHeaderUnderstood: 'tutorial/editionHeaderUnderstood',
+      printUnderstood: 'tutorial/printUnderstood',
+      _saveDecks: 'decks/setDecks',
+      _deleteDeck: 'decks/deleteDeck',
+    }),
     increment(card, inc) {
       if ((inc && +card.deckQte < 99) || (!inc && +card.deckQte)) {
         card.deckQte = String(+card.deckQte + (inc ? 1 : -1));
@@ -252,7 +283,7 @@ export default {
         return;
       }
       this.onChange(true); // sort lists
-      this.$store.commit('decks/setDecks', [this.deck]);
+      this._saveDecks([this.deck]);
       this.updateDone = false;
     },
     /**
@@ -336,7 +367,7 @@ export default {
         await this.confirmModal(CONST.modals.confirmationMessage.deckLost);
         // return to list before deleting because deck will be saved when leaving this page.
         await this.$router.push({ name: 'deckList' });
-        this.$store.commit('decks/deleteDeck', this.deck);
+        this._deleteDeck(this.deck);
         // todo toast message
       } catch (e) {
         // todo toast message

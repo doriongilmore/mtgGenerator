@@ -9,12 +9,24 @@
       <b-nav-item to="/decks" exact exact-active-class="active">Decks</b-nav-item>
       <b-nav-item to="/settings" exact exact-active-class="active">Settings</b-nav-item>
     </b-nav>
+    <b-nav tabs class="bg-light pl-4 tuto" v-if="!isHomeUnderstood">
+      <b-nav-item disabled>
+        Link to home
+      </b-nav-item>
+      <b-nav-item disabled v-if="isPreloadingCards || preloadingRulings">
+        App is pre-loading, you can navigate but some features wont work
+      </b-nav-item>
+      <b-nav-item disabled>
+        Other links
+      </b-nav-item>
+      <b-nav-item @click="homeUnderstood()">Understood, don't display again.</b-nav-item>
+    </b-nav>
     <div class="content"><router-view></router-view></div>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapMutations } from 'vuex';
 
 export default {
   name: 'MainContainer',
@@ -22,6 +34,7 @@ export default {
     ...mapState({
       isPreloadingCards: state => state.mtg.preloadingCards,
       preloadingRulings: state => state.mtg.preloadingRulings,
+      isHomeUnderstood: state => state.tutorial.home,
     }),
   },
   data() {
@@ -30,6 +43,11 @@ export default {
       toOpen: '',
       currentOpen: '',
     };
+  },
+  methods: {
+    ...mapMutations({
+      homeUnderstood: 'tutorial/homeUnderstood',
+    }),
   },
 };
 </script>

@@ -1,6 +1,12 @@
 <template>
   <b-modal class="cardModal" :id="modalId" title="Search" size="lg" ref="modal" lazy hide-footer centered>
     <div class="container-fluid">
+      <div class="row flex-nowrap" v-if="!isSearchLanguageUnderstood">
+        <div class="col-6">/!\ The search language only works for card name</div>
+        <div class="col-6">
+          <div class="btn btn-light w-100" @click="searchLanguageUnderstood">Understood, don't display again.</div>
+        </div>
+      </div>
       <div class="row flex-nowrap">
         <div class="col-3"><label for="lang">Language</label></div>
         <div class="col-9">
@@ -83,7 +89,7 @@
           <div class="btn btn-secondary w-100" @click="clearSearch()"><b-icon-trash></b-icon-trash> Clean</div>
         </div>
         <div class="col-6">
-          <div class="btn btn-primary w-100" @click="close()"><b-icon-search></b-icon-search> Search</div>
+          <div class="btn btn-primary w-100" @click="onClose()"><b-icon-search></b-icon-search> Search</div>
         </div>
       </div>
     </div>
@@ -91,7 +97,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapMutations, mapState } from 'vuex';
 import Mana from 'src/components/uiElements/Mana.vue';
 import CONST from 'src/utils/CONST';
 import modalFactory from '../../mixins/modalFactory';
@@ -119,6 +125,7 @@ export default {
     ...mapState({
       defaultLang: state => state.settings.global.favoriteLanguage,
       searchParams: state => state.search,
+      isSearchLanguageUnderstood: state => state.tutorial.searchLanguage,
     }),
     inclusionList() {
       return this.lists.inclusion.map(parseList);
@@ -134,23 +141,30 @@ export default {
     },
   },
   methods: {
-    clearSearch() {
-      this.$store.commit('search/clearSearch', CONST.search.lang[this.defaultLang]);
-      this.tmpText = '';
+    ...mapMutations({
+      searchLanguageUnderstood: 'tutorial/searchLanguageUnderstood',
+      _clearSearch: 'search/clearSearch',
+      removeText: 'search/removeText',
+      removeType: 'search/removeType',
+      _addText: 'search/addText',
+      _addType: 'search/addType',
+    }),
+    onClose() {
+      this.addText();
+      this.addType();
+      this.close();
     },
-    removeText(index) {
-      this.$store.commit('search/removeText', index);
+    clearSearch() {
+      this._clearSearch(CONST.search.lang[this.defaultLang]);
+      this.tmpText = '';
     },
     addText() {
-      this.$store.commit('search/addText', this.tmpText);
+      this._addText(this.tmpText);
       this.tmpText = '';
-    },
-    removeType(index) {
-      this.$store.commit('search/removeType', index);
     },
     addType() {
       const newType = this.tmpType;
-      this.$store.commit('search/addType', newType);
+      this._addType(newType);
       this.tmpType = '';
       const subTypeIndex = CONST.search.typeList.findIndex(t => t.key === `${newType}-types`);
       if (subTypeIndex !== -1) {

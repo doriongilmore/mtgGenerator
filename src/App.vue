@@ -87,6 +87,10 @@ export default {
     border-left: 1px solid black;
   }
 }
+.tuto {
+  font-style: italic;
+  font-size: smaller;
+}
 .pointer {
   cursor: pointer;
 }
