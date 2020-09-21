@@ -130,7 +130,7 @@ export default {
       return this.lists.rarityList.map(parseList);
     },
     typeList() {
-      return this.lists.typeList.map(parseList);
+      return this.lists.typeList.filter(t => !!t.value).map(parseList);
     },
   },
   methods: {
@@ -149,8 +149,16 @@ export default {
       this.$store.commit('search/removeType', index);
     },
     addType() {
-      this.$store.commit('search/addType', this.tmpType);
+      const newType = this.tmpType;
+      this.$store.commit('search/addType', newType);
       this.tmpType = '';
+      const subTypeIndex = CONST.search.typeList.findIndex(t => t.key === `${newType}-types`);
+      if (subTypeIndex !== -1) {
+        const [subType] = CONST.search.typeList.splice(subTypeIndex, 1);
+        this.$store
+          .dispatch('mtg/fetch', subType.uri)
+          .then(res => CONST.search.typeList.push(...res.map(t => ({ key: t, value: t }))));
+      }
     },
   },
 };

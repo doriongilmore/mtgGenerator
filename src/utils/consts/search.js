@@ -98,12 +98,12 @@ const search = {
     { key: 'Instant', value: 'Instant' },
     { key: 'Ritual', value: 'Ritual' },
 
-    { key: 'artifact-types', uri: 'https://api.scryfall.com/catalog/artifact-types' },
-    { key: 'creature-types', uri: 'https://api.scryfall.com/catalog/creature-types' },
-    { key: 'enchantment-types', uri: 'https://api.scryfall.com/catalog/enchantment-types' },
-    { key: 'land-types', uri: 'https://api.scryfall.com/catalog/land-types' },
-    { key: 'planeswalker-types', uri: 'https://api.scryfall.com/catalog/planeswalker-types' },
-    { key: 'spell-types', uri: 'https://api.scryfall.com/catalog/spell-types' },
+    { key: 'Artifact-types', uri: 'https://api.scryfall.com/catalog/artifact-types' },
+    { key: 'Creature-types', uri: 'https://api.scryfall.com/catalog/creature-types' },
+    { key: 'Enchantment-types', uri: 'https://api.scryfall.com/catalog/enchantment-types' },
+    { key: 'Land-types', uri: 'https://api.scryfall.com/catalog/land-types' },
+    { key: 'Planeswalker-types', uri: 'https://api.scryfall.com/catalog/planeswalker-types' },
+    { key: 'Spell-types', uri: 'https://api.scryfall.com/catalog/spell-types' },
   ],
 };
 

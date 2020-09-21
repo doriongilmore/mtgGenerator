@@ -12,7 +12,7 @@ export const search = {
       return (state.resultsByHash[hash] || { results: [] }).results;
     },
     pageCount(state, getters) {
-      return 1 + Math.floor(getters.searchResults.length / state.resultByPage);
+      return 1 + Math.floor((getters.searchResults.length - 1) / state.resultByPage);
     },
     resultPage(state, getters) {
       const startIndex = state.pageIndex * state.resultByPage;
@@ -40,8 +40,6 @@ export const search = {
       const newResultsByHash = { ...state.resultsByHash };
       const hash = JSON.stringify(searchParams);
       const oldResults = newResultsByHash[hash] ? newResultsByHash[hash].results : [];
-
-      console.info('setResults', { hash, results, oldResults });
 
       const newResults = [...oldResults, ...results];
       newResultsByHash[hash] = {

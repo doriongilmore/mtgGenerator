@@ -10,39 +10,43 @@
     centered
   >
     <div class="container" v-if="card">
-      <div class="row">
+      <div class="row" v-for="face in card.card_faces">
         <div class="col-12 col-lg-6">
-          <img class="card mh-100 mw-100" v-for="uri in card.image_uris" :alt="card.name" :src="uri" />
+          <img class="card mh-100 mw-100" :alt="face.name" :src="face.image_uri" />
         </div>
         <div class="col-12 col-lg-6">
           <div class="container">
             <div class="mt-2 row row-cols-2">
-              <div class="col">{{ card.name }}</div>
-              <div class="col"><Mana class="manaCost" :mana-cost="card.mana_cost" /></div>
+              <div class="col">{{ face.name }}</div>
+              <div class="col"><Mana class="manaCost" :mana-cost="face.mana_cost" /></div>
             </div>
             <div class="mt-2 row row-cols-2">
-              <div class="col">{{ card.type_line }}</div>
+              <div class="col">{{ face.type_line }}</div>
               <div class="col">{{ card.rarity }}</div>
             </div>
             <div
-              v-if="card.oracle_text || card.flavor_text || card.isCreature"
+              v-if="face.oracle_text || face.flavor_text || face.isCreature"
               class="mt-2 p-1 border border-dark row row-cols-1"
             >
               <div class="col">
-                <MtgText v-if="card.oracle_text" :text="card.oracle_text"></MtgText>
-                <MtgText class="font-italic" v-if="card.flavor_text" :text="card.flavor_text"></MtgText>
-                <div v-if="card.isCreature" class="float-right">{{ card.power }} / {{ card.toughness }}</div>
+                <MtgText v-if="face.oracle_text" :text="face.oracle_text"></MtgText>
+                <MtgText class="font-italic" v-if="face.flavor_text" :text="face.flavor_text"></MtgText>
+                <div v-if="face.isCreature" class="float-right">{{ face.power }} / {{ face.toughness }}</div>
+                <div v-if="face.isPlaneswalker" class="float-right">{{ face.loyalty }}</div>
               </div>
-            </div>
-            <div id="legalities" class="mt-2 row row-cols-3 row-cols-sm-4 row-cols-xl-6">
-              <div v-for="el in card.legalities" :key="el.format" :class="el.legal + ' m-1 col'" :title="el.legal">
-                {{ el.format }}
-              </div>
-            </div>
-            <div class="rule mt-2 row row-cols-1" v-for="rule in card.rulings" :key="rule">
-              <div class="col"><MtgText :text="rule"></MtgText></div>
             </div>
           </div>
+        </div>
+      </div>
+      <div class="row container">
+        <div id="legalities" class="mt-2 row w-100">
+          <div class="col col-2 m-1 h5">Legal in</div>
+          <div v-for="el in card.legalities" :key="el.format" :class="el.legal + ' col m-1 '" :title="el.legal">
+            {{ el.format }}
+          </div>
+        </div>
+        <div class="rule mt-2 row row-cols-1" v-for="rule in card.rulings" :key="rule">
+          <div class="col"><MtgText :text="rule"></MtgText></div>
         </div>
       </div>
     </div>
@@ -66,7 +70,7 @@ export default {
           this.card = null;
           this.card = await this.$store.dispatch('mtg/getCardById', { cardId });
         } catch (e) {
-          console.error('fetching card', cardId, e);
+          console.error('fetching card and rulings', cardId, e);
         }
       }
     });

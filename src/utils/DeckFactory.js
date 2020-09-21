@@ -13,42 +13,30 @@ function getDefaultList() {
 }
 
 function simplifyCard(c) {
-  const oracle_text = c.card_faces ? c.card_faces.map(face => face.oracle_text).join(' // ') : c.oracle_text;
-  const mana_cost = c.card_faces ? c.card_faces.map(face => face.mana_cost).join(' // ') : c.mana_cost;
-  const image_uris = c.image_uris
-    ? [c.image_uris.large || c.image_uris.normal]
-    : c.card_faces.map(face => face.image_uris.large || face.image_uris.normal);
-  const art_crop = c.image_uris ? [c.image_uris.art_crop] : c.card_faces.map(face => face.image_uris.art_crop);
-  return {
-    // cards from search
-    id: c.id,
-    name: c.name,
-    cmc: c.cmc,
-    legalities: Object.entries(c.legalities).map(([format, legal]) => ({ format, legal })),
-    oracle_id: c.oracle_id,
-    oracle_text,
-    rarity: c.rarity,
-    card_faces: c.card_faces,
-    rulings: c.rulings,
-    mana_cost,
-    color_identity: c.color_identity,
-    artist: c.artist,
-    art_crop,
-    image_uris,
-    set: c.set,
-    set_name: c.set_name,
-    type_line: c.type_line,
-    power: c.power,
-    toughness: c.toughness,
-    flavor_text: c.flavor_text,
-    isCreature: c.type_line.includes('Creature'),
-    isToken: c.type_line.includes('Token'),
-    isLegend: c.type_line.includes('Legend'),
-    isSnow: c.type_line.includes('Snow'),
-    // for deck cards
-    deckQte: c.deckQte,
-    printConfig: c.printConfig,
+  const card_faces = [];
+  const isDoubleFace = !!c.card_faces && c.card_faces.length > 1;
+  const addFace = face => {
+    const cardFace = { ...face };
+    cardFace.id = c.id;
+    cardFace.art_crop = cardFace.image_uris.art_crop;
+    cardFace.image_uri = cardFace.image_uris.large || cardFace.image_uris.normal;
+    cardFace.isCreature = cardFace.type_line.includes('Creature');
+    cardFace.isPlaneswalker = cardFace.type_line.includes('Planeswalker');
+    cardFace.isToken = cardFace.type_line.includes('Token');
+    cardFace.isLegend = cardFace.type_line.includes('Legend');
+    cardFace.isSnow = cardFace.type_line.includes('Snow');
+    card_faces.push(cardFace);
   };
+  if (isDoubleFace) {
+    for (let i = 0; i < c.card_faces.length; i++) {
+      addFace(c.card_faces[i]);
+    }
+  } else {
+    addFace(c);
+  }
+  c.card_faces = card_faces;
+  c.isDoubleFace = isDoubleFace;
+  return c;
 }
 function simplifyList(list) {
   return list.list.map(simplifyCard);

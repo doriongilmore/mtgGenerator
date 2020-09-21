@@ -100,7 +100,9 @@
             :class="`deckList row mt-1 ${cardList.list.length ? '' : 'd-none'}`"
             :key="`deckList-${listIndex}-${cardList.value || groupIndex}`"
           >
-            <div class="listHeader col col-12" v-if="cardList.value && cardList.list.length">{{ cardList.value }}</div>
+            <div class="listHeader h3 col col-12" v-if="cardList.value && cardList.list.length">
+              {{ cardList.value }}
+            </div>
             <basic
               v-if="cardDisplay === settingsFavoriteDisplay.basic.key"
               :results="cardList.list"
@@ -287,17 +289,14 @@ export default {
         cardIds = res.cardIds;
         notFound = res.notFound;
       } catch (e) {
-        console.info('import canceled', e);
         return;
       }
 
       const len = notFound.length;
       if (!!len) {
         const message = 'Some cards have not been imported';
-        console.info(message);
         for (let i = 0; i < len; i++) {
           const row = notFound[i];
-          console.info(row);
         }
         // todo toast message
         return;
@@ -341,7 +340,6 @@ export default {
         // todo toast message
       } catch (e) {
         // todo toast message
-        console.info('delete canceled');
       }
     },
     /**
