@@ -26,12 +26,14 @@
         Settings
       </li>
     </ul>
-    <ul class="bg-light pl-4 nav nav-tabs" v-if="!isEditionHeaderUnderstood">
+    <ul class="alert-secondary pl-4 nav nav-tabs" v-if="!isEditionHeaderUnderstood">
       <li class="nav-item nav-link tuto">Your list</li>
       <li class="nav-item nav-link tuto">Search for<br />cards to add</li>
       <li class="nav-item nav-link tuto">Generated based<br />on your list</li>
       <li class="nav-item nav-link tuto">Specific settings for this deck,<br />like background in deck list</li>
-      <li class="nav-item nav-link pointer" @click="editionHeaderUnderstood()">Understood, don't display again.</li>
+      <li class="nav-item nav-link tuto" @click="editionHeaderUnderstood()">
+        <a class="nav-link" href="#">Understood, don't display again.</a>
+      </li>
     </ul>
 
     <div id="deckEdition" ref="deckEdition" v-if="deck">
