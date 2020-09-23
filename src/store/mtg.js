@@ -260,7 +260,8 @@ export const mtg = {
         };
       const getPromise = index =>
         function promise() {
-          return context.dispatch('getCardById', { cardId: cardIds[index] }).then(c => {
+          const forceRefresh = !context.rootState.tutorial.home;
+          return context.dispatch('getCardById', { cardId: cardIds[index], forceRefresh }).then(c => {
             notUrgent.push(getRulingsPromise(c.getRulingsPromise || getNopPromise, index));
           });
         };
