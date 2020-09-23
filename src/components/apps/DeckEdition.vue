@@ -82,6 +82,7 @@
             <div class="col col-6 center" @click="onPrint()" v-if="cardDisplay === completeDisplayKey">
               <div class="btn btn-light w-100">
                 <b-icon-printer></b-icon-printer><span class="d-inline btn-light"> Print</span>
+                <span class="d-block btn-light"> Please remove default margin from your printer configuration</span>
               </div>
             </div>
           </div>
@@ -356,8 +357,15 @@ export default {
     /**
      * Fires when user click on print button
      */
-    onPrint() {
+    async onPrint() {
+      const setting = CONST.settings.keys.typeGrouping;
+      const oldValue = this.settingsDeck[setting.key];
+      if (oldValue) {
+        this.$store.commit(`settings/${setting.store}`, { value: false, deck: this.deck });
+        await new Promise(resolve => setTimeout(resolve, 1));
+      }
       window.print();
+      oldValue && this.$store.commit(`settings/${setting.store}`, { value: oldValue, deck: this.deck });
     },
     /**
      * Fires when user click on delete button
