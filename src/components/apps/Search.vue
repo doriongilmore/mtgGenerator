@@ -148,13 +148,6 @@ export default {
       this.isSearching = false;
     },
   },
-  mounted() {
-    this.$root.$on('bv::dropdown::show', bvEvent => {
-      console.info('still useful');
-      bvEvent.target.style['max-height'] = '100px';
-      bvEvent.target.style['overflow-y'] = 'auto';
-    });
-  },
 };
 </script>
 
