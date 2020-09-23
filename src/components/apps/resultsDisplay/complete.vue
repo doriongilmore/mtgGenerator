@@ -115,108 +115,74 @@ export default {
     height: inherit !important;
   }
   body {
-    //width: 210mm;
-    //height: 297mm;
     visibility: hidden;
-    #mainContainer {
-      overflow: visible !important;
-      .content {
-        overflow: visible !important;
-      }
-    }
-    #background {
+    #menu,
+    #deckMenu,
+    #deckHeader,
+    #displayButtons,
+    #background,
+    #addListButton,
+    .cardOption,
+    .listHeader {
       display: none;
-    }
-    #menu {
-      display: none;
-    }
-    #deckMenu {
-      display: none;
-    }
-    #deckHeader {
-      display: none;
-    }
-    #displayButtons {
-      display: none;
-    }
-    #container {
-      height: inherit !important;
-      #deckEdition {
-        height: inherit !important;
-        .content {
-          overflow: visible !important;
-        }
-        .listHeader {
-          display: none;
-        }
-        .content {
-          overflow: visible;
-        }
-        .cardOption {
-          display: none;
-        }
-        #addListButton {
-          display: none;
-        }
-      }
     }
   }
   #resultsBody {
-    margin-left: 5mm !important;
-    text-align: center;
-    vertical-align: middle;
-    overflow: visible;
+    margin-left: 8mm !important;
     visibility: visible;
-    .cardContainer {
-      height: max-content !important;
-      padding: 0;
-    }
     .mtg_none {
       display: none;
     }
+    .cardContainer {
+      margin: 6mm 1mm !important;
+      min-width: min-content;
+      max-width: min-content;
+    }
+    .cardContainer.break {
+      margin-bottom: 14mm !important;
+    }
     img {
-      margin: 0;
       padding: 0;
-      object-fit: contain;
     }
-    // todo fix these values and improve dynamism (actually limited to ~100 cards)
-    .mtg_0 {
-      margin: 13mm 5mm !important;
-      max-width: 70mm;
-      max-height: 103mm;
+    // todo fix these values and improve dynamism (actually limited to ~150 cards)
+    .mtg_0 img {
+      //margin: 13mm 5mm !important;
+      margin: 3mm !important;
+      min-width: 75mm !important;
+      max-width: 75mm !important;
     }
-    .mtg_1 {
-      margin: 11mm 4mm !important;
-      max-width: 73mm;
-      max-height: 106mm;
+    .mtg_1 img {
+      //margin: 11mm 4mm !important;
+      margin: 2mm !important;
+      min-width: 76mm !important;
+      max-width: 76mm !important;
     }
-    .mtg_2 {
-      margin: 9mm 3mm 8.5mm 3mm !important;
-      max-width: 76mm;
-      max-height: 109mm;
+    .mtg_2 img {
+      margin: 1mm !important;
+      min-width: 77mm !important;
+      max-width: 77mm !important;
     }
-    .mtg_3 {
-      margin: 7mm 3mm 6.5mm 2mm !important;
-      max-width: 79mm;
-      max-height: 112mm;
+    .mtg_3 img {
+      //margin: 2mm !important;
+      min-width: 78mm !important;
+      max-width: 78mm !important;
     }
-  }
-  .break {
-    margin-bottom: 15mm !important;
   }
 }
-#resultsBody {
-  overflow-x: hidden;
-  overflow-y: auto;
-  .cardOption {
-    input,
-    select {
-      background-color: transparent;
-      width: 100%;
+@media only screen {
+  #resultsBody {
+    overflow-x: hidden;
+    overflow-y: auto;
+    .cardOption {
+      input,
+      select {
+        background-color: transparent;
+        width: 100%;
+      }
     }
-  }
-  .cardContainer {
-    margin-bottom: 10px;
+    .cardContainer {
+      margin-bottom: 10px;
+    }
   }
 }
 </style>
