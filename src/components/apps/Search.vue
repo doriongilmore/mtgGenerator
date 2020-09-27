@@ -91,10 +91,10 @@ export default {
     ...mapState({
       search: state => state.search,
       pageIndex: state => state.search.pageIndex,
-      decks: state => Object.values(state.decks.decksByIds),
       isAdvancedSearchUnderstood: state => state.tutorial.advancedSearch,
     }),
     ...mapGetters({
+      decks: 'decks/lastModified',
       pageCount: 'search/pageCount',
       searchParams: 'search/searchParams',
       resultIds: 'search/resultPage',

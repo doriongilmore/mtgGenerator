@@ -12,7 +12,7 @@
 import CONST from '../../utils/CONST';
 import BarChart from '../chartjs/BarChart.vue';
 import PieChart from '../chartjs/PieChart.vue';
-import { getStats, getEmptyStats } from 'src/utils/DeckStats';
+import { getStats } from 'src/utils/DeckStats';
 
 export default {
   name: 'Stats',

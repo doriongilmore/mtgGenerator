@@ -181,7 +181,7 @@
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex';
+import { mapGetters, mapMutations, mapState } from 'vuex';
 import { changeListOrder } from 'src/utils/dragDrop';
 import CONST from 'src/utils/CONST';
 import DeckFactory from 'src/utils/DeckFactory';
@@ -215,9 +215,11 @@ export default {
   computed: {
     ...mapState({
       settings: state => state.settings,
-      decks: state => Object.values(state.decks.decksByIds),
       isEditionHeaderUnderstood: state => state.tutorial.editionHeader,
       isPrintUnderstood: state => state.tutorial.print,
+    }),
+    ...mapGetters({
+      decks: 'decks/lastModified',
     }),
     settingsDeck() {
       const globalSettings = this.settings.deck;

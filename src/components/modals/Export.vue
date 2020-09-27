@@ -107,7 +107,6 @@ export default {
         const firstLine = isMagic ? '' : `// ${list.name}${newLine}`;
         text += `${firstLine}${formatList(list, sb)}${newLine}`;
       }
-      this.exportText = text;
       return text;
     },
   },

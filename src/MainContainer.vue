@@ -23,8 +23,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex';
-import moment from 'moment';
+import { mapState, mapMutations, mapGetters } from 'vuex';
 
 export default {
   name: 'MainContainer',
@@ -33,11 +32,9 @@ export default {
       isPreloadingCards: state => state.mtg.preloadingCards,
       isPreloadingRulings: state => state.mtg.preloadingRulings,
       isHomeUnderstood: state => state.tutorial.home,
-      decks: state => {
-        const time = date => moment(date).unix();
-        const decks = Object.values(state.decks.decksByIds);
-        return decks.sort((deckA, deckB) => time(deckB.dateEdition) - time(deckA.dateEdition));
-      },
+    }),
+    ...mapGetters({
+      decks: 'decks/lastModified',
     }),
     idsByPriority() {
       const cardOccurrencesById = {};

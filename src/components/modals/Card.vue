@@ -79,8 +79,8 @@ export default {
     return {
       eventConfig: CONST.modals.events.card,
       modalId: 'modal-card',
-      /** @returns {Card} */
       cardId: null,
+      /** @returns {Card} */
       card: null,
     };
   },

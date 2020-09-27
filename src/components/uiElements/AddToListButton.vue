@@ -11,9 +11,7 @@
       </div>
       <b-dropdown-item @click="addCardToList(card, deck)"> {{ deck.name }} - New list </b-dropdown-item>
     </div>
-    <b-dropdown-item @click="addCardToList(card)">
-      New deck
-    </b-dropdown-item>
+    <b-dropdown-item @click="addCardToList(card)">New deck</b-dropdown-item>
   </b-dropdown>
 </template>
 

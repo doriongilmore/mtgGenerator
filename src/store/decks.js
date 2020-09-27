@@ -2,6 +2,7 @@ import decksMock from 'src/utils/mock/decks';
 const mockList = JSON.stringify(decksMock.decksByIds);
 import CONST from 'src/utils/CONST';
 import DeckFactory from 'src/utils/DeckFactory';
+import moment from 'moment';
 
 /**
  * @typedef DeckList
@@ -29,6 +30,12 @@ export const decks = {
   namespaced: true,
   state: {
     decksByIds: JSON.parse(window.localStorage.getItem(CONST.storageKeys.deckList) || mockList),
+  },
+  getters: {
+    lastModified(state) {
+      const time = date => moment(date).unix();
+      return Object.values(state.decksByIds).sort((deckA, deckB) => time(deckB.dateEdition) - time(deckA.dateEdition));
+    },
   },
   mutations: {
     deleteDeck(state, deck) {
